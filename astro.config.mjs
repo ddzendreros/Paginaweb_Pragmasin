@@ -1,10 +1,9 @@
 import sitemap from "@astrojs/sitemap";
 import { defineConfig } from "astro/config";
 
-// Site URL is a reserved-TLD placeholder until the real domain exists
-// ([[PENDIENTE: dominio]] in TODO-CONTENIDO.md). Canonicals and the sitemap
-// derive from it, so they regenerate correctly the day it is set.
-const SITE_URL = process.env.SITE_URL ?? "https://pragmasyn.example";
+// Canonicals, og:url/og:image, the sitemap and robots.txt all derive from
+// this. SITE_URL stays overridable for preview environments.
+const SITE_URL = process.env.SITE_URL ?? "https://pragmasyn.com";
 
 export default defineConfig({
   site: SITE_URL,
