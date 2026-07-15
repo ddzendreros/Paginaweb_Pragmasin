@@ -56,7 +56,16 @@ const nextSteps = [
               Sin esto no podemos ayudarte: cuéntanos aunque sea en una línea.
             </p>
           </div>
-          <button class="btn btn--primary" type="submit">Enviar mensaje</button>
+          <div class="field" data-field="consent">
+            <label class="small consent">
+              <input id="cf-consent" name="consent" type="checkbox" />
+              <span>
+                Acepto que Pragmasyn use mis datos para responderme.
+                <a class="link" href="/privacidad">Aviso de privacidad</a>.
+              </span>
+            </label>
+          </div>
+          <button class="btn btn--primary" type="submit" disabled>Enviar mensaje</button>
           <p class="small contact-form__status" role="status" aria-live="polite"></p>
         </form>
       </div>
@@ -90,6 +99,13 @@ const nextSteps = [
   // form degrades to the error message pointing at direct contact.
   const endpoint = import.meta.env.PUBLIC_FORM_ENDPOINT as string | undefined;
   const form = document.querySelector<HTMLFormElement>(".contact-form");
+
+  // The submit button stays disabled until the privacy consent is checked.
+  const consent = form?.querySelector<HTMLInputElement>("#cf-consent");
+  const submitBtn = form?.querySelector<HTMLButtonElement>("button[type=submit]");
+  consent?.addEventListener("change", () => {
+    if (submitBtn) submitBtn.disabled = !consent.checked;
+  });
 
   function setFieldError(name: string, on: boolean): void {
     const wrap = form?.querySelector<HTMLElement>(`[data-field="${name}"]`);
@@ -137,6 +153,7 @@ const nextSteps = [
       .then((res) => {
         if (!res.ok) throw new Error(String(res.status));
         form.reset();
+        button.disabled = true; // reset unchecks the consent box
         status.textContent = "Recibido. Te contesta una persona, no un autoresponder.";
       })
       .catch(fail)
@@ -180,6 +197,12 @@ const nextSteps = [
   }
   .contact-form__status:empty {
     display: none;
+  }
+  .consent {
+    display: flex;
+    gap: var(--space-2);
+    align-items: baseline;
+    cursor: pointer;
   }
   .next-steps {
     list-style: none;
