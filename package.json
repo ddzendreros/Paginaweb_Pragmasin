@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
+    "postbuild": "node scripts/guard-contenido.mjs",
     "preview": "astro preview"
   },
   "dependencies": {
