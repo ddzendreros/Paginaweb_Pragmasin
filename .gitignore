@@ -1,3 +1,11 @@
 node_modules/
 dist/
 .astro/
+
+# Contexto de trabajo local — nunca se commitea (CLAUDE.md, Regla #5)
+CLAUDE.md
+docs/PLAN-REMEDIACION.md
+docs/DATOS.md
+docs/MAPA.md
+docs/PROPUESTAS-COPY.md
+.claude/
