@@ -1,0 +1,114 @@
+---
+// The color logo here is gradient appearance #1 of 2 site-wide (BRIEF §2.5);
+// the second is the OG image. Everything else uses the mono mark.
+import logoSvg from "../../branding/logo/logo.svg?raw";
+
+const links = [
+  { href: "/metodo", label: "Método" },
+  { href: "/servicios", label: "Servicios" },
+  { href: "/contacto", label: "Contacto" },
+];
+const current = Astro.url.pathname.replace(/\/$/, "");
+---
+
+<header class="ground-dark site-header">
+  <div class="site-header__inner">
+    <a href="/" class="site-header__brand" aria-label="Pragmasyn — inicio">
+      <span class="site-header__mark" aria-hidden="true" set:html={logoSvg} />
+      <span class="site-header__word">Pragmasyn</span>
+    </a>
+    <nav aria-label="Principal">
+      <ul class="site-header__nav">
+        {
+          links.map((l) => (
+            <li>
+              <a
+                class="site-header__link"
+                href={l.href}
+                aria-current={current === l.href ? "page" : undefined}
+              >
+                {l.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    border-bottom: var(--hairline) solid var(--hairline-color);
+  }
+  .site-header__inner {
+    max-width: var(--content-max);
+    margin-inline: auto;
+    padding-inline: var(--margin);
+    padding-block: var(--space-4);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--gutter);
+  }
+  .site-header__brand {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+    text-decoration: none;
+    color: var(--fg);
+    min-height: 44px;
+  }
+  .site-header__mark :global(svg) {
+    display: block;
+    height: var(--space-6);
+    width: auto;
+    transition: rotate var(--dur-3) var(--ease-swift);
+  }
+  /* rotation is the mark's implied movement; 120 deg is its own symmetry */
+  .site-header__brand:hover .site-header__mark :global(svg) {
+    rotate: 120deg;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .site-header__brand:hover .site-header__mark :global(svg) {
+      rotate: none;
+    }
+  }
+  .site-header__word {
+    font-weight: var(--weight-medium);
+    letter-spacing: var(--tracking-small);
+  }
+  .site-header__nav {
+    list-style: none;
+    display: flex;
+    gap: var(--space-5);
+    padding: 0;
+    margin: 0;
+  }
+  .site-header__link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    color: var(--fg-secondary);
+    text-decoration: none;
+    font-size: var(--text-small);
+    letter-spacing: var(--tracking-small);
+    border-bottom: var(--hairline-strong) solid transparent;
+    transition: color var(--dur-1) var(--ease-swift);
+  }
+  .site-header__link:hover {
+    color: var(--fg);
+  }
+  .site-header__link[aria-current="page"] {
+    color: var(--fg);
+    border-bottom-color: var(--interactive);
+  }
+  @media (max-width: 30rem) {
+    .site-header__word {
+      display: none;
+    }
+    .site-header__nav {
+      gap: var(--space-4);
+    }
+  }
+</style>

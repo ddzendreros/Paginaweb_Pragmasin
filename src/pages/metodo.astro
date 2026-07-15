@@ -1,0 +1,204 @@
+---
+import Seam from "../components/Seam.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const notWeDo = [
+  "Reportes de ochenta láminas que nadie abre dos veces.",
+  "Recomendaciones sin responsable ni fecha.",
+  "Facturar por estar sentados en tus juntas.",
+  "Prometer plazos antes de entender el problema.",
+];
+---
+
+<BaseLayout
+  title="El método — Pragmasyn"
+  description="Análisis, síntesis, ejecución: el método Pragmasyn completo, con entregables y responsables por etapa. Sin pasos secretos."
+  path="/metodo"
+>
+  <!-- Apertura + etapa 01 en oscuro: el análisis vive en la tinta -->
+  <section class="ground-dark act opening" aria-labelledby="method-title">
+    <div class="act__inner">
+      <p class="label">El método</p>
+      <h1 id="method-title" class="display opening__title">
+        Análisis. Síntesis. Ejecución.
+      </h1>
+      <p class="body opening__lead">
+        Una consultora recién fundada no puede enseñarte logotipos de clientes.
+        Puede enseñarte algo mejor: exactamente cómo va a trabajar tu problema.
+        Este es el método completo, sin adornos ni pasos secretos.
+      </p>
+
+      <article class="stage" aria-labelledby="stage-1">
+        <div class="rule--labeled"><span class="label">Etapa 01</span></div>
+        <h2 id="stage-1" class="h2">Análisis</h2>
+        <dl class="stage__detail">
+          <dt class="h4">Qué hacemos</dt>
+          <dd class="body">
+            Leemos los datos antes que las opiniones. Entrevistamos a quien
+            opera, no solo a quien dirige. Levantamos las restricciones reales:
+            presupuesto, sistemas, gente, política interna.
+          </dd>
+          <dt class="h4">Qué entregamos</dt>
+          <dd class="body">
+            Un diagnóstico de una página. Si no cabe en una página, todavía no
+            entendimos el problema.
+          </dd>
+          <dt class="h4">Qué necesitamos de ti</dt>
+          <dd class="body">Acceso. A los datos, a la gente, a lo que no funciona.</dd>
+        </dl>
+      </article>
+    </div>
+  </section>
+
+  <!-- Etapa 02 ES la costura: la síntesis une el análisis con la ejecución -->
+  <Seam ground="ground-light">
+    <article aria-labelledby="stage-2">
+      <p class="label">Etapa 02 · La costura</p>
+      <h2 id="stage-2" class="h3 stage-seam__title">Síntesis</h2>
+      <dl class="stage-seam__detail">
+        <dt>Qué hacemos</dt>
+        <dd>
+          Convertimos el diagnóstico en opciones — cada una con costo, riesgo y
+          tiempo — y tomamos partido por una. Síntesis no es resumir: es decidir
+          qué importa.
+        </dd>
+        <dt>Qué entregamos</dt>
+        <dd>La recomendación firmada y el plan: responsables, secuencia, indicadores.</dd>
+        <dt>Qué necesitamos de ti</dt>
+        <dd>Una decisión. Para eso está hecho el documento.</dd>
+      </dl>
+    </article>
+  </Seam>
+
+  <!-- Etapa 03 en claro: la ejecución sucede a la luz -->
+  <section class="ground-light act execution" aria-labelledby="stage-3">
+    <div class="act__inner">
+      <article class="stage">
+        <div class="rule--labeled"><span class="label">Etapa 03</span></div>
+        <h2 id="stage-3" class="h2">Ejecución</h2>
+        <dl class="stage__detail">
+          <dt class="h4">Qué hacemos</dt>
+          <dd class="body">
+            Construimos, medimos y corregimos en ciclos cortos. Los indicadores
+            se acuerdan antes de empezar, para que nadie mueva la portería a
+            medio partido.
+          </dd>
+          <dt class="h4">Qué entregamos</dt>
+          <dd class="body">
+            El resultado acordado, funcionando, y la capacidad instalada en tu
+            equipo para operarlo sin nosotros.
+          </dd>
+          <dt class="h4">Qué necesitamos de ti</dt>
+          <dd class="body">Un responsable de tu lado con poder de decisión.</dd>
+        </dl>
+      </article>
+
+      <section class="not-we-do" aria-labelledby="not-title">
+        <div class="rule--labeled"><span class="label">Qué no hacemos</span></div>
+        <h2 id="not-title" class="h3">También hay que decirlo.</h2>
+        <ul class="not-we-do__list">
+          {notWeDo.map((item) => <li class="body">{item}</li>)}
+        </ul>
+      </section>
+    </div>
+  </section>
+
+  <!-- Cierre -->
+  <section class="ground-dark act closing" aria-labelledby="closing-title">
+    <div class="act__inner">
+      <h2 id="closing-title" class="display-2">
+        El método empieza igual siempre: con una conversación.
+      </h2>
+      <a class="btn btn--primary closing__cta" href="/contacto">Agendar una conversación</a>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .opening {
+    padding-block: var(--space-11) var(--space-10);
+  }
+  .opening__title {
+    margin-top: var(--space-6);
+    max-width: 14ch;
+  }
+  .opening__lead {
+    margin-top: var(--space-6);
+  }
+  .stage {
+    margin-top: var(--space-6);
+  }
+  .stage__detail {
+    margin: var(--space-6) 0 0;
+    display: grid;
+    gap: var(--space-2) var(--gutter);
+  }
+  .stage__detail dd {
+    margin: 0 0 var(--space-5);
+  }
+  /* the answers step right of their questions on wide screens: Q&A weave */
+  @media (min-width: 64rem) {
+    .stage__detail {
+      grid-template-columns: minmax(12rem, 1fr) 2fr;
+    }
+    .stage__detail dt {
+      grid-column: 1;
+    }
+    .stage__detail dd {
+      grid-column: 2;
+    }
+  }
+
+  .stage-seam__title {
+    margin-top: var(--space-2);
+    /* the brand-named stage speaks in the display voice */
+    font-family: var(--font-display);
+    font-weight: var(--weight-display);
+    letter-spacing: var(--tracking-h3);
+  }
+  .stage-seam__detail {
+    margin: var(--space-4) 0 0;
+    font-size: var(--text-small);
+    line-height: var(--leading-small);
+  }
+  .stage-seam__detail dt {
+    font-weight: var(--weight-strong);
+    margin-top: var(--space-3);
+  }
+  .stage-seam__detail dd {
+    margin: var(--space-1) 0 0;
+    color: var(--fg-secondary);
+  }
+
+  .execution {
+    padding-top: var(--space-11);
+  }
+  .not-we-do {
+    margin-top: var(--space-9);
+  }
+  .not-we-do__list {
+    list-style: none;
+    margin: var(--space-6) 0 0;
+    padding: 0;
+    max-width: var(--measure);
+  }
+  .not-we-do__list li {
+    padding-block: var(--space-4);
+    border-top: var(--hairline) solid var(--hairline-color);
+  }
+  /* struck through before you can ask: the "no" is typographic.
+     (fg, not --reserve: magenta's single site-wide use is form errors) */
+  .not-we-do__list li::before {
+    content: "✕";
+    color: var(--fg);
+    margin-inline-end: var(--space-3);
+    font-weight: var(--weight-strong);
+  }
+
+  .closing {
+    padding-block: var(--space-11);
+  }
+  .closing__cta {
+    margin-top: var(--space-7);
+  }
+</style>

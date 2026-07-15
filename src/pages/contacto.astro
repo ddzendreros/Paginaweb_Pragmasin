@@ -1,0 +1,198 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const nextSteps = [
+  "Leemos tu mensaje. Lo contesta quien trabajaría tu caso, no un vendedor.",
+  "Llamada de 30 minutos: preguntas directas, cero presentación de ventas.",
+  "Si tiene sentido, propuesta en una página. Si no, te lo decimos en la llamada.",
+];
+---
+
+<BaseLayout
+  title="Contacto — Pragmasyn"
+  description="Cuéntanos qué está atorado. Sin brief formal, sin NDA para la primera llamada, sin compromiso."
+  path="/contacto"
+>
+  <section class="ground-dark act opening" aria-labelledby="contact-title">
+    <div class="act__inner">
+      <p class="label">Contacto</p>
+      <h1 id="contact-title" class="display opening__title">
+        Hablemos del problema, no del contrato.
+      </h1>
+      <p class="body opening__lead">
+        Escríbenos qué está atorado. Sin brief formal, sin NDA para la primera
+        llamada, sin compromiso.
+      </p>
+    </div>
+  </section>
+
+  <section class="ground-light act form-act" aria-labelledby="form-title">
+    <div class="act__inner form-act__grid">
+      <div>
+        <h2 id="form-title" class="h3">Cuéntanos</h2>
+        <form class="contact-form" novalidate>
+          <div class="field" data-field="name">
+            <label class="small" for="cf-name">Nombre</label>
+            <input id="cf-name" name="name" type="text" autocomplete="name"
+              placeholder="¿Cómo te llamamos?" required />
+            <p class="caption field__msg" hidden>
+              Sin esto no podemos ayudarte: cuéntanos aunque sea en una línea.
+            </p>
+          </div>
+          <div class="field" data-field="email">
+            <label class="small" for="cf-email">Correo de trabajo</label>
+            <input id="cf-email" name="email" type="email" autocomplete="email"
+              placeholder="nombre@empresa.mx" required />
+            <p class="caption field__msg" hidden>
+              Ese correo no parece completo. Revísalo y volvemos a intentar.
+            </p>
+          </div>
+          <div class="field" data-field="message">
+            <label class="small" for="cf-message">¿Qué está atorado?</label>
+            <textarea id="cf-message" name="message" rows="5" required
+              placeholder="Dos o tres líneas bastan. Ej.: ‘El ERP nuevo lleva 14 meses y seguimos facturando en el sistema viejo.’"
+            ></textarea>
+            <p class="caption field__msg" hidden>
+              Sin esto no podemos ayudarte: cuéntanos aunque sea en una línea.
+            </p>
+          </div>
+          <button class="btn btn--primary" type="submit">Enviar mensaje</button>
+          <p class="small contact-form__status" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+      <aside aria-labelledby="next-title">
+        <h2 id="next-title" class="h3">Qué sigue</h2>
+        <ol class="next-steps">
+          {
+            nextSteps.map((step, i) => (
+              <li class="next-steps__item">
+                <span class="caption next-steps__num" aria-hidden="true">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <p class="small">{step}</p>
+              </li>
+            ))
+          }
+        </ol>
+        <div class="rule--labeled"><span class="label">Directo</span></div>
+        <p class="small">
+          ¿Prefieres el correo? [[PENDIENTE: correo de contacto real]]
+        </p>
+      </aside>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  // Progressive enhancement: validation + submit with the brand's voice.
+  // The endpoint is a launch requirement (TODO-CONTENIDO.md); without it the
+  // form degrades to the error message pointing at direct contact.
+  const endpoint = import.meta.env.PUBLIC_FORM_ENDPOINT as string | undefined;
+  const form = document.querySelector<HTMLFormElement>(".contact-form");
+
+  function setFieldError(name: string, on: boolean): void {
+    const wrap = form?.querySelector<HTMLElement>(`[data-field="${name}"]`);
+    const msg = wrap?.querySelector<HTMLElement>(".field__msg");
+    const input = wrap?.querySelector<HTMLInputElement | HTMLTextAreaElement>("input, textarea");
+    wrap?.classList.toggle("field--error", on);
+    if (msg) msg.hidden = !on;
+    input?.setAttribute("aria-invalid", String(on));
+  }
+
+  form?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const data = new FormData(form);
+    const name = String(data.get("name") ?? "").trim();
+    const email = String(data.get("email") ?? "").trim();
+    const message = String(data.get("message") ?? "").trim();
+
+    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    setFieldError("name", name.length === 0);
+    setFieldError("email", !emailOk);
+    setFieldError("message", message.length === 0);
+    if (name.length === 0 || !emailOk || message.length === 0) return;
+
+    const status = form.querySelector<HTMLElement>(".contact-form__status");
+    const button = form.querySelector<HTMLButtonElement>("button[type=submit]");
+    if (!status || !button) return;
+
+    const fail = (): void => {
+      status.textContent =
+        "El mensaje no salió — es cosa nuestra, no tuya. Intenta de nuevo o escríbenos directo.";
+    };
+
+    if (!endpoint) {
+      fail();
+      return;
+    }
+
+    button.classList.add("btn--loading");
+    button.setAttribute("aria-busy", "true");
+    fetch(endpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, message }),
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error(String(res.status));
+        form.reset();
+        status.textContent = "Recibido. Te contesta una persona, no un autoresponder.";
+      })
+      .catch(fail)
+      .finally(() => {
+        button.classList.remove("btn--loading");
+        button.removeAttribute("aria-busy");
+      });
+  });
+</script>
+
+<style>
+  .opening {
+    padding-block: var(--space-11) var(--space-10);
+  }
+  .opening__title {
+    margin-top: var(--space-6);
+    max-width: 13ch;
+  }
+  .opening__lead {
+    margin-top: var(--space-6);
+  }
+  .form-act {
+    padding-block: var(--space-10);
+  }
+  .form-act__grid {
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    gap: var(--space-9) var(--space-9);
+    align-items: start;
+  }
+  @media (max-width: 56rem) {
+    .form-act__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  .contact-form {
+    margin-top: var(--space-6);
+    display: grid;
+    gap: var(--space-5);
+    max-width: var(--measure);
+  }
+  .contact-form__status:empty {
+    display: none;
+  }
+  .next-steps {
+    list-style: none;
+    margin: var(--space-6) 0 0;
+    padding: 0;
+  }
+  .next-steps__item {
+    display: grid;
+    grid-template-columns: var(--space-7) 1fr;
+    gap: var(--space-3);
+    padding-block: var(--space-4);
+    border-top: var(--hairline) solid var(--hairline-color);
+  }
+  .next-steps__num {
+    font-stretch: var(--width-condensed);
+  }
+</style>

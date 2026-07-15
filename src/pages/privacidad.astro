@@ -1,0 +1,87 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const sections = [
+  {
+    title: "Responsable",
+    text: "[[PENDIENTE: razón social y domicilio]], responsable del tratamiento de tus datos conforme a la Ley Federal de Protección de Datos Personales en Posesión de los Particulares (LFPDPPP).",
+  },
+  {
+    title: "Qué recabamos",
+    text: "Lo que escribas en el formulario: tu nombre, tu correo de trabajo y la descripción de tu problema. Nada más. Este sitio no usa cookies de seguimiento ni analítica que te identifique.",
+  },
+  {
+    title: "Para qué",
+    text: "Para responderte. Esa es la única finalidad. No hay boletines, no hay lista de correos, no hay reventa de datos.",
+  },
+  {
+    title: "Con quién se comparte",
+    text: "Con nadie. Tus datos no se transfieren a terceros salvo obligación legal.",
+  },
+  {
+    title: "Tus derechos (ARCO)",
+    text: "Puedes pedirnos acceso, rectificación, cancelación u oposición escribiendo a [[PENDIENTE: correo de contacto real]]. Respondemos en los plazos que marca la ley.",
+  },
+  {
+    title: "Cambios",
+    text: "Si este aviso cambia, la fecha de abajo cambia con él.",
+  },
+];
+---
+
+<BaseLayout
+  title="Aviso de privacidad — Pragmasyn"
+  description="Aviso de privacidad de Pragmasyn. Corto, porque recabamos poco: nombre, correo y tu mensaje. Nada más."
+  path="/privacidad"
+>
+  <section class="ground-dark act opening" aria-labelledby="privacy-title">
+    <div class="act__inner">
+      <p class="label">Legal</p>
+      <h1 id="privacy-title" class="h1 opening__title">Aviso de privacidad</h1>
+      <p class="body opening__lead">Corto, porque recabamos poco.</p>
+    </div>
+  </section>
+
+  <section class="ground-light act notice">
+    <div class="act__inner">
+      {
+        sections.map((s) => (
+          <section class="notice__section">
+            <h2 class="h4">{s.title}</h2>
+            <p class="body">{s.text}</p>
+          </section>
+        ))
+      }
+      <p class="caption notice__updated">
+        Última actualización: [[PENDIENTE: fecha al publicar]]
+      </p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .opening {
+    padding-block: var(--space-10) var(--space-9);
+  }
+  .opening__title {
+    margin-top: var(--space-5);
+  }
+  .opening__lead {
+    margin-top: var(--space-4);
+  }
+  .notice__section {
+    max-width: var(--measure);
+    padding-block: var(--space-5);
+    border-top: var(--hairline) solid var(--hairline-color);
+  }
+  .notice__section:first-child {
+    border-top: 0;
+    padding-top: 0;
+  }
+  .notice__section p {
+    margin-top: var(--space-2);
+  }
+  .notice__updated {
+    margin-top: var(--space-7);
+  }
+</style>

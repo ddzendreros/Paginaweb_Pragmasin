@@ -1,0 +1,201 @@
+---
+import Seam from "../components/Seam.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout
+  title="Servicios — Pragmasyn"
+  description="Estrategia tecnológica, ejecución de proyectos, datos y decisión. Tres líneas de servicio con un criterio: si el resultado no se puede medir, no lo vendemos."
+  path="/servicios"
+>
+  <!-- Apertura + servicio 1 en oscuro -->
+  <section class="ground-dark act opening" aria-labelledby="services-title">
+    <div class="act__inner">
+      <p class="label">Servicios</p>
+      <h1 id="services-title" class="display opening__title">
+        Tres maneras de trabajar juntos.
+      </h1>
+      <p class="body opening__lead">
+        Un criterio para las tres: si el resultado no se puede medir, no lo
+        vendemos.
+      </p>
+
+      <article class="service" aria-labelledby="svc-1">
+        <div class="rule--labeled"><span class="label">Servicio 1</span></div>
+        <h2 id="svc-1" class="h2">Estrategia tecnológica</h2>
+        <p class="body service__text">
+          Decidir qué construir, qué comprar y qué apagar — con arquitectura,
+          datos y presupuesto alineados al negocio, no a la moda.
+        </p>
+        <h3 class="h4 service__subhead">Es para ti si…</h3>
+        <ul class="service__signals">
+          <li>tu mapa de sistemas creció sin plan y cada área tiene su propia verdad;</li>
+          <li>tienes que justificar una inversión tecnológica ante dirección;</li>
+          <li>sospechas que pagas por software que nadie usa.</li>
+        </ul>
+        <p class="small service__start">
+          <strong class="service__start-label">Empieza con</strong>
+          un diagnóstico de arquitectura y gasto. Una página, prioridades claras.
+        </p>
+      </article>
+    </div>
+  </section>
+
+  <!-- Servicio 2 ES la costura: la ejecución une los dos mundos -->
+  <Seam ground="ground-light">
+    <article aria-labelledby="svc-2">
+      <p class="label">Servicio 2 · La costura</p>
+      <h2 id="svc-2" class="h3 svc-seam__title">Ejecución de proyectos</h2>
+      <p class="svc-seam__text">
+        El proyecto crítico sale a producción. El atorado se destraba — o se
+        cancela con argumentos, que también es avanzar. Trabajamos con tu equipo
+        o traemos el nuestro.
+      </p>
+      <ul class="svc-seam__signals">
+        <li>llevas dos fechas de salida incumplidas y nadie sabe decir por qué;</li>
+        <li>el proveedor entrega avances pero no resultados;</li>
+        <li>necesitas que algo salga este trimestre, no el próximo año.</li>
+      </ul>
+      <p class="svc-seam__start">
+        <strong>Empieza con:</strong> una revisión del proyecto: estado real,
+        riesgos, y si vale la pena continuarlo.
+      </p>
+    </article>
+  </Seam>
+
+  <!-- Servicio 3 en claro + nota de honestidad -->
+  <section class="ground-light act light-act" aria-labelledby="svc-3">
+    <div class="act__inner">
+      <article class="service">
+        <div class="rule--labeled"><span class="label">Servicio 3</span></div>
+        <h2 id="svc-3" class="h2">Datos y decisión</h2>
+        <p class="body service__text">
+          Los datos que ya tienes, convertidos en decisiones a tiempo:
+          indicadores que alguien de verdad usa, tableros que se abren solos un
+          lunes, automatización donde duele.
+        </p>
+        <h3 class="h4 service__subhead">Es para ti si…</h3>
+        <ul class="service__signals">
+          <li>cada junta empieza discutiendo de quién es la cifra correcta;</li>
+          <li>los reportes tardan tanto que llegan cuando ya no importan;</li>
+          <li>quieres usar IA pero no sabes sobre qué datos pararla.</li>
+        </ul>
+        <p class="small service__start">
+          <strong class="service__start-label">Empieza con</strong>
+          un inventario de datos y decisiones: qué se decide, con qué información,
+          y qué falta.
+        </p>
+      </article>
+
+      <aside class="honesty" aria-label="Nota de honestidad">
+        <p class="serif-italic honesty__text">
+          ¿Tu problema no cabe en estas tres líneas? Pregunta de todos modos. Si
+          no somos los indicados, te lo decimos — y si podemos, te decimos quién
+          sí.
+        </p>
+      </aside>
+    </div>
+  </section>
+
+  <!-- Cierre -->
+  <section class="ground-dark act closing" aria-labelledby="closing-title">
+    <div class="act__inner">
+      <h2 id="closing-title" class="display-2">Empecemos por el diagnóstico.</h2>
+      <a class="btn btn--primary closing__cta" href="/contacto">Agendar una conversación</a>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .opening {
+    padding-block: var(--space-11) var(--space-10);
+  }
+  .opening__title {
+    margin-top: var(--space-6);
+    max-width: 13ch;
+  }
+  .opening__lead {
+    margin-top: var(--space-6);
+  }
+  .service {
+    margin-top: var(--space-6);
+  }
+  .service__text {
+    margin-top: var(--space-5);
+  }
+  .service__subhead {
+    margin-top: var(--space-6);
+  }
+  .service__signals {
+    list-style: none;
+    margin: var(--space-4) 0 0;
+    padding: 0;
+    max-width: var(--measure);
+  }
+  .service__signals li {
+    padding-block: var(--space-3);
+    border-top: var(--hairline) solid var(--hairline-color);
+  }
+  .service__start {
+    margin-top: var(--space-6);
+    max-width: var(--measure);
+  }
+  .service__start-label {
+    /* fg, not --interactive: accent/signal are for interactive elements only */
+    color: var(--fg);
+    font-weight: var(--weight-medium);
+    text-transform: uppercase;
+    font-size: var(--text-caption);
+    letter-spacing: var(--tracking-caps);
+    margin-inline-end: var(--space-2);
+  }
+
+  .svc-seam__title {
+    margin-top: var(--space-2);
+    /* the crossing speaks in the display voice: special, not small */
+    font-family: var(--font-display);
+    font-weight: var(--weight-display);
+    letter-spacing: var(--tracking-h3);
+  }
+  .svc-seam__text,
+  .svc-seam__start {
+    margin-top: var(--space-3);
+    font-size: var(--text-small);
+    line-height: var(--leading-small);
+  }
+  .svc-seam__signals {
+    list-style: none;
+    margin: var(--space-3) 0 0;
+    padding: 0;
+    font-size: var(--text-small);
+    line-height: var(--leading-small);
+    color: var(--fg-secondary);
+  }
+  .svc-seam__signals li {
+    padding-block: var(--space-2);
+    border-top: var(--hairline) solid var(--hairline-color);
+  }
+
+  .light-act {
+    padding-top: var(--space-11);
+  }
+  .honesty {
+    margin-top: var(--space-10);
+    max-width: var(--measure);
+    /* deliberately off-grid: the aside leans right where the eye rests */
+    margin-inline-start: auto;
+    padding-inline-start: var(--space-6);
+    border-inline-start: var(--hairline-strong) solid var(--fg);
+  }
+  .honesty__text {
+    font-size: var(--text-h3);
+    line-height: var(--leading-h3);
+  }
+
+  .closing {
+    padding-block: var(--space-11);
+  }
+  .closing__cta {
+    margin-top: var(--space-7);
+  }
+</style>

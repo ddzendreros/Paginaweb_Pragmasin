@@ -1,0 +1,284 @@
+---
+import Seam from "../components/Seam.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const stages = [
+  {
+    num: "01",
+    name: "Análisis",
+    text: "Entender el problema de verdad: datos, entrevistas, restricciones. Sin diagnóstico honesto no hay proyecto que aguante.",
+    deliverable: "Un diagnóstico de una página, sin ambigüedades.",
+  },
+  {
+    num: "02",
+    name: "Síntesis",
+    text: "Convertir el hallazgo en decisión: opciones con costo y riesgo reales, y una recomendación firmada — la nuestra.",
+    deliverable: "Un plan con responsables, secuencia e indicadores.",
+  },
+  {
+    num: "03",
+    name: "Ejecución",
+    text: "Construir, medir, corregir. Indicadores acordados antes de empezar, avances semana a semana.",
+    deliverable: "Resultados que se miden, no se cuentan.",
+  },
+];
+
+const services = [
+  {
+    num: "1",
+    name: "Estrategia tecnológica",
+    text: "Decidir qué construir, qué comprar y qué apagar. Arquitectura, datos y presupuesto con criterio de negocio, no de moda.",
+  },
+  {
+    num: "2",
+    name: "Ejecución de proyectos",
+    text: "El proyecto crítico sale a producción; el atorado se destraba o se cancela con argumentos. Con tu equipo o con el nuestro.",
+  },
+  {
+    num: "3",
+    name: "Datos y decisión",
+    text: "Los datos que ya tienes, convertidos en decisiones a tiempo: indicadores que alguien usa, tableros que se abren solos un lunes.",
+  },
+];
+---
+
+<BaseLayout
+  title="Pragmasyn — Consultoría de tecnología y estrategia"
+  description="Convertimos problemas complejos en soluciones ejecutables. Análisis riguroso, síntesis clara y ejecución medible, para empresas que deciden con datos."
+  path="/"
+>
+  <!-- Acto 1 · Manifiesto -->
+  <section class="ground-dark act manifesto" aria-labelledby="manifesto-title">
+    <div class="act__inner">
+      <p class="label">Consultoría de tecnología y estrategia</p>
+      <h1 id="manifesto-title" class="display manifesto__title">
+        Lo que se decide,<br />se entrega.
+      </h1>
+      <p class="body manifesto__lead">
+        La mayoría de los proyectos no mueren por falta de ideas. Mueren en el
+        hueco entre la decisión y la entrega: comités que no cierran, planes que
+        nadie ejecuta, sistemas que no salen del piloto. Pragmasyn trabaja
+        exactamente en ese hueco.
+      </p>
+      <div class="manifesto__actions">
+        <a class="btn btn--primary" href="/contacto">Agendar una conversación</a>
+        <a class="link manifesto__secondary" href="/metodo">Ver el método →</a>
+      </div>
+      <p class="caption manifesto__etym">
+        <span lang="grc">πρᾶγμα</span> — hecho realizado · <span lang="grc">σύν</span> — junto
+        con. El nombre es la promesa: síntesis pragmática.
+      </p>
+    </div>
+  </section>
+
+  <!-- Acto 2 · Método -->
+  <section class="ground-dark act act--well method" aria-labelledby="method-title">
+    <div class="act__inner">
+      <div class="rule--labeled"><span class="label">El método</span></div>
+      <h2 id="method-title" class="h2">El método es el producto.</h2>
+      <p class="body method__intro">
+        No vendemos horas ni presentaciones: vendemos el camino corto entre un
+        problema complejo y una solución funcionando. Tres etapas, cada una con
+        entregable.
+      </p>
+      <ol class="method__stages">
+        {
+          stages.map((s) => (
+            <li class="method__stage">
+              <span class="caption method__num" aria-hidden="true">
+                {s.num}
+              </span>
+              <div>
+                <h3 class="h3">{s.name}</h3>
+                <p class="body method__text">{s.text}</p>
+                <p class="small method__deliverable">
+                  <strong class="method__deliverable-label">Entregable</strong>
+                  {s.deliverable}
+                </p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- La costura: el método cruza hacia el acto claro -->
+  <Seam ground="ground-light">
+    <p class="label">Sin pasos secretos</p>
+    <p class="seam-card__text">
+      El método completo está publicado: qué hacemos, qué entregamos y qué
+      necesitamos de ti en cada etapa.
+    </p>
+    <a class="link" href="/metodo">El método completo →</a>
+  </Seam>
+
+  <!-- Acto 3 · Servicios -->
+  <section class="ground-light act services" aria-labelledby="services-title">
+    <div class="act__inner">
+      <div class="rule--labeled"><span class="label">Servicios</span></div>
+      <h2 id="services-title" class="h2">Tres maneras de trabajar juntos.</h2>
+      <p class="body services__intro">
+        Un criterio para las tres: si el resultado no se puede medir, no lo
+        vendemos.
+      </p>
+      <ol class="services__list">
+        {
+          services.map((s) => (
+            <li class="services__item">
+              <span class="caption services__num" aria-hidden="true">
+                {s.num}
+              </span>
+              <h3 class="h4">{s.name}</h3>
+              <p class="small services__text">{s.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+      <p class="services__more">
+        <a class="link" href="/servicios">Ver los servicios →</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- Cierre -->
+  <section class="ground-dark act closing" aria-labelledby="closing-title">
+    <div class="act__inner">
+      <h2 id="closing-title" class="display-2">
+        ¿Traes un problema complejo? Buena señal.
+      </h2>
+      <p class="body closing__text">
+        Cuéntanos dónde está atorado. Te respondemos con una lectura honesta —
+        incluso si la respuesta es que no nos necesitas.
+      </p>
+      <a class="btn btn--primary" href="/contacto">Agendar una conversación</a>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  /* Acto 1: asymmetric editorial — text leans left, etymology exits right */
+  .manifesto {
+    padding-block: var(--space-11) var(--space-10);
+  }
+  .manifesto__title {
+    margin-top: var(--space-6);
+    max-width: 12ch;
+  }
+  .manifesto__lead {
+    margin-top: var(--space-6);
+  }
+  .manifesto__actions {
+    margin-top: var(--space-7);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-6);
+  }
+  .manifesto__secondary {
+    font-size: var(--text-small);
+  }
+  .manifesto__etym {
+    margin-top: var(--space-9);
+    text-align: right;
+  }
+
+  .method__intro {
+    margin-top: var(--space-4);
+  }
+  .method__stages {
+    list-style: none;
+    margin: var(--space-8) 0 0;
+    padding: 0;
+  }
+  .method__stage {
+    display: grid;
+    grid-template-columns: var(--space-8) 1fr;
+    gap: var(--gutter);
+    padding-block: var(--space-6);
+    border-top: var(--hairline) solid var(--hairline-color);
+  }
+  /* the weave, as indentation: each stage passes under the previous one */
+  @media (min-width: 48rem) {
+    .method__stage:nth-child(2) {
+      margin-inline-start: var(--space-8);
+    }
+    .method__stage:nth-child(3) {
+      margin-inline-start: var(--space-10);
+    }
+  }
+  .method__num {
+    font-stretch: var(--width-condensed);
+    padding-top: var(--space-2);
+  }
+  .method__text {
+    margin-top: var(--space-2);
+  }
+  .method__deliverable {
+    margin-top: var(--space-3);
+  }
+  .method__deliverable-label {
+    color: var(--signal);
+    font-weight: var(--weight-medium);
+    text-transform: uppercase;
+    font-size: var(--text-caption);
+    letter-spacing: var(--tracking-caps);
+    margin-inline-end: var(--space-2);
+  }
+
+  .services {
+    /* room for the seam card crossing in from the dark act */
+    padding-top: var(--space-11);
+  }
+  .services__intro {
+    margin-top: var(--space-4);
+  }
+  .services__list {
+    list-style: none;
+    margin: var(--space-8) 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--gutter);
+  }
+  .services__item {
+    border-top: var(--hairline-strong) solid var(--fg);
+    padding-top: var(--space-4);
+  }
+  /* three siblings, not three clones: the middle one sits lower (weave) */
+  @media (min-width: 48rem) {
+    .services__item:nth-child(2) {
+      margin-top: var(--space-8);
+    }
+  }
+  .services__num {
+    font-stretch: var(--width-condensed);
+  }
+  .services__item .h4 {
+    margin-top: var(--space-2);
+  }
+  .services__text {
+    margin-top: var(--space-3);
+  }
+  .services__more {
+    margin-top: var(--space-8);
+  }
+  @media (max-width: 48rem) {
+    .services__list {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .closing {
+    padding-block: var(--space-11);
+  }
+  .closing__text {
+    margin-block: var(--space-5) var(--space-7);
+  }
+
+  .seam-card__text {
+    margin-block: var(--space-2) var(--space-3);
+    font-size: var(--text-small);
+    line-height: var(--leading-small);
+  }
+</style>

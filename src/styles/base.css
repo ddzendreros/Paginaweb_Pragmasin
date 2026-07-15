@@ -1,0 +1,327 @@
+/* Shared visual language. Every value is a token reference — the only
+   numbers allowed here are grid fractions and content-driven ratios. */
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scrollbar-color: var(--ink-450) var(--ink-950);
+}
+
+body {
+  font-family: var(--font-text);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  font-weight: var(--weight-text);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* --- skip link: first tab stop, visible only on focus --- */
+.skip-link {
+  position: absolute;
+  inset-inline-start: var(--space-4);
+  inset-block-start: var(--space-4);
+  z-index: var(--z-overlay);
+  translate: 0 calc(-1 * var(--space-10) - 100%);
+  background: var(--signal);
+  color: var(--ink-900);
+  font-weight: var(--weight-medium);
+  font-size: var(--text-small);
+  padding: var(--space-3) var(--space-5);
+  border-radius: var(--radius-s);
+  text-decoration: none;
+  transition: translate var(--dur-2) var(--ease-swift);
+}
+.skip-link:focus-visible {
+  translate: 0 0;
+}
+
+/* --- acts: the site's grounds --- */
+.act {
+  padding-block: var(--space-10);
+}
+.act--well {
+  background-color: var(--bg-sunken);
+}
+.act__inner {
+  max-width: var(--content-max);
+  margin-inline: auto;
+  padding-inline: var(--margin);
+}
+
+/* --- typography --- */
+.display,
+.display-2,
+.h1,
+.h2 {
+  text-wrap: balance;
+}
+.display {
+  font-family: var(--font-display);
+  font-size: var(--text-display);
+  line-height: var(--leading-display);
+  letter-spacing: var(--tracking-display);
+  font-weight: var(--weight-display);
+}
+.display-2 {
+  font-family: var(--font-display);
+  font-size: var(--text-display-2);
+  line-height: var(--leading-display-2);
+  letter-spacing: var(--tracking-display-2);
+  font-weight: var(--weight-display-quiet);
+}
+.h1 {
+  font-family: var(--font-display);
+  font-size: var(--text-h1);
+  line-height: var(--leading-h1);
+  letter-spacing: var(--tracking-h1);
+  font-weight: var(--weight-display);
+}
+.h2 {
+  font-family: var(--font-text);
+  font-size: var(--text-h2);
+  line-height: var(--leading-h2);
+  letter-spacing: var(--tracking-h2);
+  font-weight: var(--weight-strong);
+}
+.h3 {
+  font-family: var(--font-text);
+  font-size: var(--text-h3);
+  line-height: var(--leading-h3);
+  letter-spacing: var(--tracking-h3);
+  font-weight: var(--weight-medium);
+}
+.h4 {
+  font-family: var(--font-text);
+  font-size: var(--text-h4);
+  line-height: var(--leading-h4);
+  letter-spacing: var(--tracking-h4);
+  font-weight: var(--weight-medium);
+}
+.body {
+  max-width: var(--measure);
+  text-wrap: pretty; /* orphan control on prose, where supported */
+}
+.small {
+  font-size: var(--text-small);
+  line-height: var(--leading-small);
+  letter-spacing: var(--tracking-small);
+  color: var(--fg-secondary);
+}
+.caption {
+  font-size: var(--text-caption);
+  line-height: var(--leading-caption);
+  letter-spacing: var(--tracking-caption);
+  color: var(--fg-secondary);
+}
+.label {
+  font-size: var(--text-caption);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--fg-secondary);
+  font-weight: var(--weight-medium);
+  font-stretch: var(--width-condensed);
+}
+.serif-italic {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: var(--weight-display-quiet);
+}
+
+/* --- hairlines: the hueco as a drawn element --- */
+.rule {
+  border: 0;
+  border-top: var(--hairline) solid var(--hairline-color);
+  margin-block: var(--space-6);
+}
+.rule--labeled {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-block: var(--space-9) var(--space-6);
+}
+.rule--labeled::after {
+  content: "";
+  flex: 1;
+  border-top: var(--hairline) solid var(--hairline-color);
+}
+
+/* --- interactive --- */
+.link {
+  color: var(--interactive);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  text-decoration-thickness: var(--hairline);
+  transition: color var(--dur-1) var(--ease-swift),
+    text-decoration-thickness var(--dur-1) var(--ease-swift);
+}
+.link:hover {
+  color: var(--interactive-strong);
+  text-decoration-thickness: var(--hairline-strong);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font: inherit;
+  font-weight: var(--weight-medium);
+  font-size: var(--text-small);
+  letter-spacing: var(--tracking-small);
+  padding: var(--space-3) var(--space-5);
+  border-radius: var(--radius-s);
+  border: var(--hairline) solid transparent;
+  cursor: pointer;
+  min-height: 44px;
+  text-decoration: none;
+  transition: background-color var(--dur-2) var(--ease-swift),
+    border-color var(--dur-2) var(--ease-swift),
+    color var(--dur-2) var(--ease-swift),
+    translate var(--dur-1) var(--ease-swift);
+}
+.btn--primary {
+  background: var(--interactive);
+  color: var(--on-interactive);
+}
+.btn--primary:hover {
+  background: var(--interactive-strong);
+}
+.btn--primary:active {
+  translate: 0 1px;
+}
+.btn--secondary {
+  background: transparent;
+  color: var(--fg);
+  border-color: var(--fg-muted-ui);
+}
+.btn--secondary:hover {
+  border-color: var(--fg);
+}
+.btn:disabled {
+  background: var(--bg-sunken);
+  color: var(--fg-disabled);
+  border-color: transparent;
+  cursor: not-allowed;
+}
+.btn--loading {
+  position: relative;
+  color: transparent;
+  pointer-events: none;
+}
+.btn--loading::after {
+  content: "";
+  position: absolute;
+  inset: 50% auto auto 50%;
+  width: 1em;
+  height: 1em;
+  margin: -0.5em;
+  border: var(--hairline-strong) solid var(--on-interactive);
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+  to {
+    rotate: 360deg;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .btn--loading::after {
+    animation: none;
+    border-right-color: var(--on-interactive);
+    opacity: 0.5;
+  }
+}
+
+/* --- form fields --- */
+.field {
+  display: grid;
+  gap: var(--space-2);
+}
+.field input,
+.field textarea {
+  font: inherit;
+  color: var(--fg);
+  background: var(--bg-raised);
+  border: var(--hairline) solid var(--fg-muted-ui);
+  border-radius: var(--radius-s);
+  padding: var(--space-3) var(--space-4);
+  min-height: 44px;
+  transition: border-color var(--dur-2) var(--ease-swift);
+}
+.field input::placeholder,
+.field textarea::placeholder {
+  color: var(--fg-muted-ui);
+}
+.field input:hover,
+.field textarea:hover {
+  border-color: var(--fg-secondary);
+}
+.field input:focus-visible,
+.field textarea:focus-visible {
+  outline-offset: 0;
+  border-color: var(--interactive);
+}
+.field--error input,
+.field--error textarea {
+  border-color: var(--reserve);
+}
+.ground-light .field--error input,
+.ground-light .field--error textarea {
+  border-width: var(--hairline-strong);
+}
+
+/* --- the seam: horizontal frontier, one local 30-degree crossing --- */
+.seam {
+  position: relative;
+  height: 0;
+}
+.seam__card {
+  position: relative;
+  z-index: var(--z-weave);
+  max-width: var(--measure);
+  margin-inline: calc(var(--margin) + var(--space-8)) var(--margin);
+  translate: 0 -50%;
+  rotate: calc(var(--angle-weave) * -0.016); /* ~-0.5deg deliberate imperfection */
+  background: var(--bg-raised);
+  color: var(--fg);
+  border: var(--hairline) solid var(--hairline-color);
+  border-radius: var(--radius-s);
+  padding: var(--space-5) var(--space-6);
+  clip-path: polygon(
+    0 0,
+    calc(100% - var(--space-6)) 0,
+    100% calc(var(--space-6) * var(--tan-weave)),
+    100% 100%,
+    var(--space-6) 100%,
+    0 calc(100% - var(--space-6) * var(--tan-weave))
+  );
+}
+/* The site's ONE personality gesture: the crossing element weaves through
+   the frontier when first seen. Everything else is functional micro-motion. */
+.seam__card[data-weave] {
+  opacity: 0;
+  translate: 0 calc(-50% + var(--space-6));
+  transition: opacity var(--dur-4) var(--ease-weave),
+    translate var(--dur-4) var(--ease-weave);
+}
+.seam__card.is-woven {
+  opacity: 1;
+  translate: 0 -50%;
+}
+@media (prefers-reduced-motion: reduce) {
+  .seam__card[data-weave] {
+    opacity: 1;
+    translate: 0 -50%;
+  }
+}
+
+@media (max-width: 40rem) {
+  .seam__card {
+    margin-inline: var(--margin);
+  }
+}
