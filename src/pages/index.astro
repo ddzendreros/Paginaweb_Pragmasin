@@ -1,284 +1,743 @@
 ---
-import Seam from "../components/Seam.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 
-const stages = [
+// La lista está calibrada al segmento (BRIEF v2 §6.1): cada renglón tiene que
+// provocar un "sí, eso mismo". No se agregan inventados.
+const manualWork = [
+  "Capturar facturas de proveedor que llegan en PDF o por correo",
+  "Pasar pedidos de WhatsApp al sistema",
+  "Armar el reporte de ventas del lunes en Excel",
+  "Revisar a mano que la factura coincida con la orden de compra",
+  "Copiar datos de un sistema a otro porque no se hablan",
+  "Contestar las mismas cinco preguntas de clientes todos los días",
+  "Perseguir cotizaciones y aprobaciones por correo",
+  "Sacar cifras del sistema para meterlas a otro Excel",
+  "Registrar asistencia en papel o en hoja de cálculo",
+  "Clasificar, nombrar y archivar documentos",
+];
+
+const territory = [
   {
-    num: "01",
-    name: "Análisis",
-    text: "Entender el problema de verdad: datos, entrevistas, restricciones. Sin diagnóstico honesto no hay proyecto que aguante.",
-    deliverable: "Un diagnóstico de una página, sin ambigüedades.",
+    name: "Lo que llega sin forma",
+    text: "PDFs, WhatsApp, correos, fotos, notas de voz, papel. La IA lo lee, lo estructura y lo deja donde va.",
   },
   {
-    num: "02",
-    name: "Síntesis",
-    text: "Convertir el hallazgo en decisión: opciones con costo y riesgo reales, y una recomendación firmada — la nuestra.",
-    deliverable: "Un plan con responsables, secuencia e indicadores.",
+    name: "Lo que pide criterio",
+    text: "Conciliar cuando los números no cuadran exacto. Detectar lo que se sale de lo normal. Cachar el error antes de contabilidad.",
   },
   {
-    num: "03",
-    name: "Ejecución",
-    text: "Construir, medir, corregir. Indicadores acordados antes de empezar, avances semana a semana.",
-    deliverable: "Resultados que se miden, no se cuentan.",
+    name: "Lo que no se habla entre sí",
+    text: "Tu ERP, tu Excel, tu banco, el SAT, el portal de tu cliente. Los conectamos sin migrar nada.",
   },
 ];
 
-const services = [
+const deliverables = [
   {
-    num: "1",
-    name: "Estrategia tecnológica",
-    text: "Decidir qué construir, qué comprar y qué apagar. Arquitectura, datos y presupuesto con criterio de negocio, no de moda.",
+    num: "01",
+    name: "Dónde se van tus horas",
+    text: "Mapa de tu operación con el tiempo manual medido proceso por proceso, con tus datos, no con benchmarks.",
   },
   {
-    num: "2",
-    name: "Ejecución de proyectos",
-    text: "El proyecto crítico sale a producción; el atorado se destraba o se cancela con argumentos. Con tu equipo o con el nuestro.",
+    num: "02",
+    name: "Qué se puede automatizar ya",
+    text: "Lista priorizada por horas ahorradas contra esfuerzo de implementación. Con números, no con adjetivos.",
   },
   {
-    num: "3",
-    name: "Datos y decisión",
-    text: "Los datos que ya tienes, convertidos en decisiones a tiempo: indicadores que alguien usa, tableros que se abren solos un lunes.",
+    num: "03",
+    name: "Tu situación frente a la reforma",
+    text: "Cálculo de la brecha entre tu operación actual y la jornada que la ley te va a exigir.",
+  },
+  {
+    num: "04",
+    name: "Una automatización funcionando",
+    text: "No un prototipo ni una demo. Un proceso automatizado y corriendo antes de que terminen los cinco días.",
+  },
+];
+
+// Transitorio Segundo de la reforma a la LFT (DOF 1 de mayo de 2026).
+// Las cifras están verificadas en el brief §11: no se tocan sin re-verificar.
+const journey = [
+  { year: "2026", hours: "48" },
+  { year: "2027", hours: "46" },
+  { year: "2028", hours: "44" },
+  { year: "2029", hours: "42" },
+  { year: "2030", hours: "40" },
+];
+
+const method = [
+  {
+    num: "01",
+    name: "Medir",
+    text: "Entrevistas, observación y datos reales para cuantificar cuántas horas consume cada proceso hoy.",
+    deliverable: "El mapa de tus horas, en una página.",
+  },
+  {
+    num: "02",
+    name: "Priorizar",
+    text: "Qué automatizar primero, qué después y qué no vale la pena tocar. Con costo y esfuerzo reales.",
+    deliverable: "Lista priorizada, con horas estimadas de ahorro.",
+  },
+  {
+    num: "03",
+    name: "Construir",
+    text: "Se implementa, se mide contra la línea base y se corrige. Indicadores acordados antes de empezar.",
+    deliverable: "El proceso funcionando y el ahorro medido.",
   },
 ];
 ---
 
 <BaseLayout
-  title="Pragmasyn — Consultoría de tecnología y estrategia"
-  description="Convertimos problemas complejos en soluciones ejecutables. Análisis riguroso, síntesis clara y ejecución medible, para empresas que deciden con datos."
+  title="Pragmasyn — Automatización operativa con IA para PyMEs en México"
+  description="Recupera las horas que hoy se van en captura manual, conciliaciones y reportes. Diagnóstico de 5 días con una automatización funcionando. Sobre el sistema que ya tienes."
+  ogTitle="Tu operación habla. La IA actúa."
+  ogDescription="Automatizamos con IA lo que hoy se hace a mano: facturas en PDF, pedidos por WhatsApp, reportes en Excel. Diagnóstico de 5 días, precio fijo."
   path="/"
 >
-  <!-- Acto 1 · Manifiesto -->
-  <section class="ground-dark act manifesto" aria-labelledby="manifesto-title">
-    <div class="act__inner">
-      <p class="label">Consultoría de tecnología y estrategia</p>
-      <h1 id="manifesto-title" class="display manifesto__title">
-        Lo que se decide,<br />se entrega.
+  <!-- 1 · Hero -->
+  <section class="ground-dark act hero" aria-labelledby="hero-title">
+    <div class="act__inner hero__inner">
+      <p class="label eyebrow" data-reveal>Automatización operativa con IA</p>
+      <h1 id="hero-title" class="display hero__title" data-reveal>
+        Tu operación habla.<br />La IA actúa.
       </h1>
-      <p class="body manifesto__lead">
-        La mayoría de los proyectos no mueren por falta de ideas. Mueren en el
-        hueco entre la decisión y la entrega: comités que no cierran, planes que
-        nadie ejecuta, sistemas que no salen del piloto. Pragmasyn trabaja
-        exactamente en ese hueco.
+      <p class="lead hero__lead" data-reveal>
+        Tu operación ya te está diciendo dónde se va el tiempo: en los WhatsApps
+        que alguien transcribe, en los PDFs que se capturan a mano, en el reporte
+        que toma tres horas armar cada lunes. Escucharla cuesta horas de trabajo
+        humano. Eso es lo que automatizamos.
       </p>
-      <div class="manifesto__actions">
-        <a class="btn btn--primary" href="/contacto">Agendar una conversación</a>
-        <a class="link manifesto__secondary" href="/metodo">Ver el método →</a>
+      <div class="actions actions--center hero__actions" data-reveal>
+        <a class="btn btn--primary" href="/contacto">Diagnóstico de 5 días</a>
+        <a class="btn btn--secondary" href="#a-mano">Ver qué se puede automatizar</a>
       </div>
-      <p class="caption manifesto__etym">
-        <span lang="grc">πρᾶγμα</span> — hecho realizado · <span lang="grc">σύν</span> — junto
-        con. El nombre es la promesa: síntesis pragmática.
+      <figure class="hero__flow" data-reveal>
+        <ul class="hero__flow-in">
+          <li class="hero__chip">Factura en PDF</li>
+          <li class="hero__chip">Pedido por WhatsApp</li>
+          <li class="hero__chip">Nota de voz de piso</li>
+        </ul>
+        <span class="hero__flow-arrow" aria-hidden="true">→</span>
+        <figcaption class="hero__flow-out">
+          <span class="hero__flow-title">Capturado, validado y en tu sistema</span>
+          <span class="caption">Sin que nadie lo teclee</span>
+        </figcaption>
+      </figure>
+
+      <p class="caption hero__etym" data-reveal>
+        <span class="serif-italic" lang="grc">πρᾶγμα</span> — hecho realizado ·
+        <span class="serif-italic" lang="grc">σύν</span> — junto con. El nombre es
+        la promesa: síntesis pragmática.
       </p>
     </div>
   </section>
 
-  <!-- Acto 2 · Método -->
-  <section class="ground-dark act act--well method" aria-labelledby="method-title">
+  <!-- 2 · Auto-diagnóstico: el corazón del sitio -->
+  <section class="ground-light act check" id="a-mano" aria-labelledby="check-title">
     <div class="act__inner">
-      <div class="rule--labeled"><span class="label">El método</span></div>
-      <h2 id="method-title" class="h2">El método es el producto.</h2>
-      <p class="body method__intro">
-        No vendemos horas ni presentaciones: vendemos el camino corto entre un
-        problema complejo y una solución funcionando. Tres etapas, cada una con
-        entregable.
+      <div class="act__head" data-reveal>
+        <p class="label eyebrow">El costo invisible</p>
+        <h2 id="check-title" class="h2">¿Qué sigues haciendo a mano?</h2>
+        <p class="lead">Nadie lo tiene medido. Por eso nadie lo arregla.</p>
+      </div>
+
+      <div class="card check__card" data-reveal>
+        <ul class="check__list" data-check-list>
+          {
+            manualWork.map((item, i) => (
+              <li class="check__row">
+                <label class="check__label">
+                  <input class="check__input" type="checkbox" value={String(i)} />
+                  <span class="check__box" aria-hidden="true" />
+                  <span class="check__text">{item}</span>
+                </label>
+              </li>
+            ))
+          }
+        </ul>
+
+        <div class="check__summary" data-check-summary hidden>
+          <p class="check__count">
+            <span class="numeral check__count-num" data-check-count>0</span>
+            <span class="small">de {manualWork.length} marcados</span>
+          </p>
+          <p class="small check__verdict" data-check-verdict role="status" aria-live="polite">
+            Marca lo que reconozcas de tu operación.
+          </p>
+        </div>
+      </div>
+
+      <p class="body check__close" data-reveal>
+        Si marcaste tres o más, tienes entre 40 y 120 horas al mes en la mesa. No
+        es una estimación de venta: es lo que medimos en el diagnóstico, con tus
+        datos.
       </p>
-      <ol class="method__stages">
+    </div>
+  </section>
+
+  <!-- 3 · El territorio -->
+  <section class="ground-light act act--well territory" aria-labelledby="territory-title">
+    <div class="act__inner">
+      <div class="act__head" data-reveal>
+        <p class="label eyebrow">Dónde entramos</p>
+        <h2 id="territory-title" class="h2">No tocamos lo que ya funciona.</h2>
+        <p class="lead">
+          Tu ERP ordena lo que ya está capturado: cotizaciones, órdenes,
+          inventario, contabilidad. Eso ya está resuelto y no venimos a moverlo.
+        </p>
+        <p class="lead">
+          El problema vive afuera. En lo que llega en desorden y alguien tiene
+          que ordenar a mano antes de que el sistema lo pueda usar.
+        </p>
+      </div>
+
+      <ul class="cards territory__list">
         {
-          stages.map((s) => (
-            <li class="method__stage">
-              <span class="caption method__num" aria-hidden="true">
-                {s.num}
+          territory.map((t) => (
+            <li class="card territory__item" data-reveal>
+              <h3 class="h4">{t.name}</h3>
+              <p class="small territory__text">{t.text}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- 4 · La oferta (destino del QR de la tarjeta) -->
+  <section class="ground-dark act offer" id="diagnostico" aria-labelledby="offer-title">
+    <div class="act__inner">
+      <div class="act__head" data-reveal>
+        <p class="label eyebrow">Punto de entrada</p>
+        <h2 id="offer-title" class="h2">Diagnóstico de Horas Recuperables</h2>
+        <p class="lead">Cinco días. Precio fijo. Sin propuesta de sesenta páginas.</p>
+        <p class="badge">
+          <span class="badge__dot" aria-hidden="true"></span>
+          Termina con una automatización corriendo
+        </p>
+      </div>
+
+      <ol class="cards offer__list">
+        {
+          deliverables.map((d) => (
+            <li class="card offer__item" data-reveal>
+              <span class="numeral offer__num" aria-hidden="true">
+                {d.num}
               </span>
-              <div>
-                <h3 class="h3">{s.name}</h3>
-                <p class="body method__text">{s.text}</p>
-                <p class="small method__deliverable">
-                  <strong class="method__deliverable-label">Entregable</strong>
-                  {s.deliverable}
-                </p>
-              </div>
+              <h3 class="h4 offer__name">{d.name}</h3>
+              <p class="small offer__text">{d.text}</p>
             </li>
           ))
         }
       </ol>
+
+      <div class="offer__foot" data-reveal>
+        <p class="body offer__honesty">
+          Si al quinto día no encontramos horas que valga la pena recuperar, te lo
+          decimos y ahí termina. Preferimos eso a venderte un proyecto que no
+          necesitas.
+        </p>
+        <a class="btn btn--primary" href="/contacto">Agendar el diagnóstico</a>
+      </div>
     </div>
   </section>
 
-  <!-- La costura: el método cruza hacia el acto claro -->
-  <Seam ground="ground-light">
-    <p class="label">Sin pasos secretos</p>
-    <p class="seam-card__text">
-      El método completo está publicado: qué hacemos, qué entregamos y qué
-      necesitamos de ti en cada etapa.
-    </p>
-    <a class="link" href="/metodo">El método completo →</a>
-  </Seam>
-
-  <!-- Acto 3 · Servicios -->
-  <section class="ground-light act services" aria-labelledby="services-title">
+  <!-- 5 · Urgencia: la reforma -->
+  <section class="ground-dark act act--well reform" aria-labelledby="reform-title">
     <div class="act__inner">
-      <div class="rule--labeled"><span class="label">Servicios</span></div>
-      <h2 id="services-title" class="h2">Tres maneras de trabajar juntos.</h2>
-      <p class="body services__intro">
-        Un criterio para las tres: si el resultado no se puede medir, no lo
-        vendemos.
-      </p>
-      <ol class="services__list">
+      <div class="act__head" data-reveal>
+        <p class="label eyebrow">El calendario ya corre</p>
+        <h2 id="reform-title" class="h2">
+          La reforma no te pide horas extra. Te pide operar distinto.
+        </h2>
+        <p class="lead">
+          La jornada laboral baja por ley. El salario no baja. La carga de
+          trabajo tampoco.
+        </p>
+      </div>
+
+      <ol class="reform__scale" data-reveal>
         {
-          services.map((s) => (
-            <li class="services__item">
-              <span class="caption services__num" aria-hidden="true">
-                {s.num}
-              </span>
-              <h3 class="h4">{s.name}</h3>
-              <p class="small services__text">{s.text}</p>
+          journey.map((j) => (
+            <li class="reform__step">
+              <span class="caption reform__year">{j.year}</span>
+              <span class="numeral reform__hours">{j.hours}</span>
+              <span class="caption reform__unit">horas</span>
             </li>
           ))
         }
       </ol>
-      <p class="services__more">
-        <a class="link" href="/servicios">Ver los servicios →</a>
+
+      <div class="card card--feature reform__note" data-reveal>
+        <p class="body">
+          Y desde el 1 de enero de 2027, el registro electrónico de jornada es
+          obligatorio. Cuando ese registro exista, vas a tener por primera vez el
+          dato exacto de cuántas horas consume cada proceso. La pregunta es si
+          llegas a esa fecha con un plan o con un problema.
+        </p>
+        <p class="body reform__close">
+          La ventana para ajustar procesos es este año. Después ya no es
+          planeación, es reacción.
+        </p>
+        <p class="caption reform__disclaimer">
+          Contexto de negocio, no asesoría legal. La interpretación jurídica la da
+          tu abogado laboral.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 · Cómo trabajamos -->
+  <section class="ground-light act method" aria-labelledby="method-title">
+    <div class="act__inner">
+      <div class="act__head" data-reveal>
+        <p class="label eyebrow">Cómo trabajamos</p>
+        <h2 id="method-title" class="h2">El método es el producto.</h2>
+        <p class="lead">
+          No vendemos horas ni presentaciones. Vendemos el camino corto entre un
+          proceso manual y un proceso que corre solo.
+        </p>
+      </div>
+
+      <ol class="cards method__list">
+        {
+          method.map((m) => (
+            <li class="card method__item" data-reveal>
+              <span class="numeral method__num" aria-hidden="true">
+                {m.num}
+              </span>
+              <h3 class="h3 method__name">{m.name}</h3>
+              <p class="small method__text">{m.text}</p>
+              <p class="small method__deliverable">
+                <strong class="method__deliverable-label">Entregable</strong>
+                {m.deliverable}
+              </p>
+            </li>
+          ))
+        }
+      </ol>
+
+      <p class="body method__more" data-reveal>
+        <strong>Sin pasos secretos:</strong> el método completo está publicado. Qué
+        hacemos, qué entregamos y qué necesitamos de ti en cada etapa.
+        <a class="link link--arrow method__link" href="/metodo">El método completo</a>
       </p>
     </div>
   </section>
 
-  <!-- Cierre -->
+  <!-- 7 · Cierre -->
   <section class="ground-dark act closing" aria-labelledby="closing-title">
     <div class="act__inner">
-      <h2 id="closing-title" class="display-2">
-        ¿Traes un problema complejo? Buena señal.
-      </h2>
-      <p class="body closing__text">
-        Cuéntanos dónde está atorado. Te respondemos con una lectura honesta —
-        incluso si la respuesta es que no nos necesitas.
-      </p>
-      <a class="btn btn--primary" href="/contacto">Agendar una conversación</a>
+      <div class="act__head" data-reveal>
+        <h2 id="closing-title" class="display-2">¿Qué sigues haciendo a mano?</h2>
+        <p class="lead closing__text">
+          Escríbenos qué proceso te está costando más horas. Te respondemos con
+          una lectura honesta — incluso si la respuesta es que no nos necesitas.
+        </p>
+        <a class="btn btn--primary closing__cta" href="/contacto">Agendar una conversación</a>
+      </div>
     </div>
   </section>
 </BaseLayout>
 
+<script>
+  // El auto-diagnóstico cuenta en vivo. La lista funciona sin JS: son
+  // checkboxes de verdad; el resumen solo aparece si hay JS para llenarlo.
+  const list = document.querySelector<HTMLElement>("[data-check-list]");
+  const summary = document.querySelector<HTMLElement>("[data-check-summary]");
+  const count = document.querySelector<HTMLElement>("[data-check-count]");
+  const verdict = document.querySelector<HTMLElement>("[data-check-verdict]");
+
+  if (list && summary && count && verdict) {
+    summary.hidden = false;
+    const inputs = Array.from(list.querySelectorAll<HTMLInputElement>(".check__input"));
+
+    const update = (): void => {
+      const marked = inputs.filter((i) => i.checked).length;
+      count.textContent = String(marked);
+      summary.classList.toggle("is-loaded", marked >= 3);
+      if (marked === 0) {
+        verdict.textContent = "Marca lo que reconozcas de tu operación.";
+      } else if (marked < 3) {
+        verdict.textContent = "Cada marca son horas que hoy nadie contabiliza.";
+      } else {
+        verdict.textContent = "Tienes horas suficientes en la mesa para que el diagnóstico se pague solo.";
+      }
+    };
+
+    list.addEventListener("change", update);
+    update();
+  }
+</script>
+
 <style>
-  /* Acto 1: asymmetric editorial — text leans left, etymology exits right */
-  .manifesto {
-    padding-block: var(--space-11) var(--space-10);
+  /* --- 1 · Hero: centrado, aire arriba, la marca respirando --- */
+  .hero {
+    position: relative;
+    overflow: hidden;
+    padding-block: clamp(var(--space-9), 12vw, var(--space-11)) clamp(var(--space-8), 9vw, var(--space-10));
   }
-  .manifesto__title {
-    margin-top: var(--space-6);
-    max-width: 12ch;
+  /* claridad que entra por arriba: profundidad sin meter una imagen ni un
+     segundo gradiente de marca (el de marca sale dos veces en todo el sitio) */
+  .hero::before {
+    content: "";
+    position: absolute;
+    inset: calc(var(--space-9) * -1) 0 auto;
+    height: 70%;
+    background: radial-gradient(
+      55% 100% at 50% 0%,
+      rgb(var(--rgb-surface) / 0.07),
+      transparent 70%
+    );
+    pointer-events: none;
   }
-  .manifesto__lead {
-    margin-top: var(--space-6);
+  .hero__inner {
+    position: relative;
   }
-  .manifesto__actions {
-    margin-top: var(--space-7);
+  .hero__inner {
+    display: grid;
+    justify-items: center;
+    text-align: center;
+    gap: var(--space-5);
+  }
+  .hero__title {
+    max-width: 16ch;
+  }
+  .hero__lead {
+    max-width: var(--measure-wide);
+  }
+  .hero__actions {
+    margin-top: var(--space-2);
+  }
+  /* la escena: entra en desorden, sale capturado. Es el sitio en una imagen,
+     dibujada con tipografía y hairlines — nada de capturas de pantalla falsas */
+  .hero__flow {
+    margin: var(--space-7) 0 0;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: var(--space-6);
+    justify-content: center;
+    gap: var(--space-4);
+    padding: var(--space-4) var(--space-5);
+    background: var(--surface-card);
+    border: var(--hairline) solid var(--surface-border);
+    border-radius: var(--radius-xl);
   }
-  .manifesto__secondary {
+  .hero__flow-in {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-2);
+  }
+  .hero__chip {
+    font-size: var(--text-caption);
+    letter-spacing: var(--tracking-caption);
+    color: var(--fg-secondary);
+    border: var(--hairline) dashed var(--fg-muted-ui);
+    border-radius: var(--radius-pill);
+    padding: var(--space-2) var(--space-3);
+  }
+  .hero__flow-arrow {
+    color: var(--interactive);
+    font-size: var(--text-h4);
+  }
+  .hero__flow-out {
+    display: grid;
+    gap: var(--space-1);
+    text-align: start;
+    border-inline-start: var(--hairline-strong) solid var(--interactive);
+    padding-inline-start: var(--space-4);
+  }
+  .hero__flow-title {
     font-size: var(--text-small);
+    font-weight: var(--weight-medium);
   }
-  .manifesto__etym {
-    margin-top: var(--space-9);
-    text-align: right;
+  @media (max-width: 48rem) {
+    .hero__flow {
+      flex-direction: column;
+    }
+    .hero__flow-arrow {
+      rotate: 90deg;
+    }
+    .hero__flow-out {
+      border-inline-start: 0;
+      border-block-start: var(--hairline-strong) solid var(--interactive);
+      padding-inline-start: 0;
+      padding-block-start: var(--space-3);
+      text-align: center;
+      justify-items: center;
+    }
   }
 
-  .method__intro {
-    margin-top: var(--space-4);
+  .hero__etym {
+    margin-top: var(--space-6);
+    max-width: var(--measure);
   }
-  .method__stages {
+
+  /* --- 2 · Auto-diagnóstico --- */
+  .check__card {
+    margin-top: var(--space-8);
+    padding: var(--space-4);
+  }
+  .check__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(22rem, 100%), 1fr));
+    gap: var(--space-1) var(--space-4);
+  }
+  .check__label {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-3);
+    border-radius: var(--radius-m);
+    cursor: pointer;
+    transition: background-color var(--dur-1) var(--ease-swift);
+  }
+  .check__label:hover {
+    background: var(--bg-sunken);
+  }
+  .check__input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  .check__box {
+    flex: none;
+    width: var(--space-5);
+    height: var(--space-5);
+    margin-top: var(--space-1);
+    border: var(--hairline-strong) solid var(--fg-muted-ui);
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    transition: background-color var(--dur-2) var(--ease-swift),
+      border-color var(--dur-2) var(--ease-swift);
+  }
+  /* la palomita se dibuja, no se importa: dos lados de una caja rotada */
+  .check__box::after {
+    content: "";
+    width: 0.3em;
+    height: 0.55em;
+    border-inline-end: var(--hairline-strong) solid var(--on-interactive);
+    border-block-end: var(--hairline-strong) solid var(--on-interactive);
+    rotate: 45deg;
+    translate: 0 calc(var(--space-1) * -0.25);
+    opacity: 0;
+    transition: opacity var(--dur-1) var(--ease-swift);
+  }
+  .check__input:checked + .check__box {
+    background: var(--interactive);
+    border-color: var(--interactive);
+  }
+  .check__input:checked + .check__box::after {
+    opacity: 1;
+  }
+  .check__input:focus-visible + .check__box {
+    outline: var(--focus-width) solid var(--focus-ring);
+    outline-offset: var(--focus-offset);
+  }
+  .check__text {
+    font-size: var(--text-small);
+    line-height: var(--leading-small);
+  }
+  .check__input:checked ~ .check__text {
+    color: var(--fg);
+    font-weight: var(--weight-medium);
+  }
+  .check__summary {
+    margin-top: var(--space-4);
+    padding: var(--space-4);
+    border-top: var(--hairline) solid var(--hairline-color);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+  .check__count {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-3);
+  }
+  .check__count-num {
+    font-size: var(--text-h2);
+    font-weight: var(--weight-display);
+    line-height: 1;
+    transition: color var(--dur-2) var(--ease-swift);
+  }
+  .check__summary.is-loaded .check__count-num {
+    color: var(--interactive);
+  }
+  .check__verdict {
+    text-align: right;
+  }
+  .check__close {
+    margin: var(--space-6) auto 0;
+    text-align: center;
+    max-width: var(--measure-wide);
+  }
+  @media (max-width: 40rem) {
+    .check__verdict {
+      text-align: left;
+    }
+  }
+
+  /* --- 3 · Territorio --- */
+  .territory__list {
     list-style: none;
     margin: var(--space-8) 0 0;
     padding: 0;
   }
-  .method__stage {
-    display: grid;
-    grid-template-columns: var(--space-8) 1fr;
-    gap: var(--gutter);
-    padding-block: var(--space-6);
-    border-top: var(--hairline) solid var(--hairline-color);
-  }
-  /* the weave, as indentation: each stage passes under the previous one */
-  @media (min-width: 48rem) {
-    .method__stage:nth-child(2) {
-      margin-inline-start: var(--space-8);
-    }
-    .method__stage:nth-child(3) {
-      margin-inline-start: var(--space-10);
-    }
-  }
-  .method__num {
-    font-stretch: var(--width-condensed);
-    padding-top: var(--space-2);
-  }
-  .method__text {
-    margin-top: var(--space-2);
-  }
-  .method__deliverable {
+  .territory__text {
     margin-top: var(--space-3);
   }
+
+  /* --- 4 · Oferta --- */
+  /* cuatro entregables: cuatro columnas o dos, nunca un 3+1 huérfano */
+  .offer__list {
+    list-style: none;
+    margin: var(--space-8) 0 0;
+    padding: 0;
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @media (min-width: 64rem) {
+    .offer__list {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+  @media (max-width: 34rem) {
+    .offer__list {
+      grid-template-columns: 1fr;
+    }
+  }
+  .offer__num {
+    color: var(--interactive);
+    font-size: var(--text-h4);
+    font-weight: var(--weight-strong);
+  }
+  .offer__name {
+    margin-top: var(--space-3);
+  }
+  .offer__text {
+    margin-top: var(--space-2);
+  }
+  .offer__foot {
+    margin-top: var(--space-8);
+    display: grid;
+    justify-items: center;
+    gap: var(--space-5);
+    text-align: center;
+  }
+  .offer__honesty {
+    max-width: var(--measure-wide);
+  }
+
+  /* --- 5 · Reforma: la escala es el argumento --- */
+  .reform__scale {
+    list-style: none;
+    margin: var(--space-8) 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: var(--gutter);
+    counter-reset: none;
+  }
+  .reform__step {
+    display: grid;
+    justify-items: center;
+    gap: var(--space-1);
+    padding-top: var(--space-5);
+    border-top: var(--hairline-strong) solid var(--hairline-color);
+    position: relative;
+  }
+  /* el primer año es el de hoy: se marca, los demás son el descenso */
+  .reform__step:first-child {
+    border-top-color: var(--interactive);
+  }
+  .reform__hours {
+    font-size: var(--text-numeral);
+    line-height: 1;
+    font-weight: var(--weight-display);
+  }
+  .reform__step:first-child .reform__hours {
+    color: var(--interactive);
+  }
+  .reform__note {
+    margin-top: var(--space-8);
+    max-width: var(--measure-wide);
+    margin-inline: auto;
+  }
+  .reform__close {
+    margin-top: var(--space-4);
+    font-weight: var(--weight-medium);
+  }
+  .reform__disclaimer {
+    margin-top: var(--space-5);
+    padding-top: var(--space-4);
+    border-top: var(--hairline) solid var(--hairline-color);
+  }
+  @media (max-width: 40rem) {
+    .reform__scale {
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-5);
+    }
+  }
+
+  /* --- 6 · Método --- */
+  .method__list {
+    list-style: none;
+    margin: var(--space-8) 0 0;
+    padding: 0;
+  }
+  .method__num {
+    color: var(--fg-muted-ui);
+    font-size: var(--text-h4);
+    font-weight: var(--weight-strong);
+  }
+  .method__name {
+    margin-top: var(--space-2);
+  }
+  .method__text {
+    margin-top: var(--space-3);
+  }
+  .method__deliverable {
+    margin-top: var(--space-4);
+    padding-top: var(--space-4);
+    border-top: var(--hairline) solid var(--hairline-color);
+  }
   .method__deliverable-label {
-    color: var(--signal);
+    display: block;
+    color: var(--fg);
     font-weight: var(--weight-medium);
     text-transform: uppercase;
     font-size: var(--text-caption);
     letter-spacing: var(--tracking-caps);
-    margin-inline-end: var(--space-2);
+    margin-bottom: var(--space-1);
   }
-
-  .services {
-    /* room for the seam card crossing in from the dark act */
-    padding-top: var(--space-11);
+  .method__more {
+    margin: var(--space-8) auto 0;
+    text-align: center;
+    max-width: var(--measure-wide);
   }
-  .services__intro {
-    margin-top: var(--space-4);
-  }
-  .services__list {
-    list-style: none;
-    margin: var(--space-8) 0 0;
-    padding: 0;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: var(--gutter);
-  }
-  .services__item {
-    border-top: var(--hairline-strong) solid var(--fg);
-    padding-top: var(--space-4);
-  }
-  /* three siblings, not three clones: the middle one sits lower (weave) */
-  @media (min-width: 48rem) {
-    .services__item:nth-child(2) {
-      margin-top: var(--space-8);
-    }
-  }
-  .services__num {
-    font-stretch: var(--width-condensed);
-  }
-  .services__item .h4 {
-    margin-top: var(--space-2);
-  }
-  .services__text {
+  .method__link {
+    display: inline-flex;
     margin-top: var(--space-3);
   }
-  .services__more {
-    margin-top: var(--space-8);
-  }
-  @media (max-width: 48rem) {
-    .services__list {
-      grid-template-columns: 1fr;
-    }
-  }
 
+  /* --- 7 · Cierre --- */
   .closing {
-    padding-block: var(--space-11);
+    padding-block: clamp(var(--space-9), 10vw, var(--space-11));
   }
   .closing__text {
-    margin-block: var(--space-5) var(--space-7);
+    margin-top: var(--space-2);
   }
-
-  .seam-card__text {
-    margin-block: var(--space-2) var(--space-3);
-    font-size: var(--text-small);
-    line-height: var(--leading-small);
+  .closing__cta {
+    margin-top: var(--space-4);
   }
 </style>

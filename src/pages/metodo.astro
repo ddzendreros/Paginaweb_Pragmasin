@@ -1,204 +1,223 @@
 ---
-import Seam from "../components/Seam.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
+
+const stages = [
+  {
+    num: "01",
+    name: "Medir",
+    detail: [
+      {
+        q: "Qué hacemos",
+        a: "Entrevistas, observación y datos reales. Contamos cuántas veces al mes ocurre cada proceso y cuánto tiempo consume cada vez. No preguntamos cuánto crees que tardas: lo medimos.",
+      },
+      {
+        q: "Qué entregamos",
+        a: "El mapa de tus horas, en una página. Proceso por proceso, con el tiempo manual medido y con tus datos, no con benchmarks.",
+      },
+      {
+        q: "Qué necesitamos de ti",
+        a: "Acceso a quien hace el trabajo. No a quien lo describe: a quien lo hace.",
+      },
+    ],
+  },
+  {
+    num: "02",
+    name: "Priorizar",
+    detail: [
+      {
+        q: "Qué hacemos",
+        a: "Cruzamos horas ahorradas contra esfuerzo de implementación. Qué automatizar primero, qué después y qué no vale la pena tocar.",
+      },
+      {
+        q: "Qué entregamos",
+        a: "Lista priorizada con horas estimadas de ahorro, costo y esfuerzo. Con números, no con adjetivos.",
+      },
+      {
+        q: "Qué necesitamos de ti",
+        a: "Una decisión. Para eso está hecha la lista.",
+      },
+    ],
+  },
+  {
+    num: "03",
+    name: "Construir",
+    detail: [
+      {
+        q: "Qué hacemos",
+        a: "Se implementa encima de los sistemas que ya tienes, se mide contra la línea base y se corrige. Los indicadores se acuerdan antes de empezar, para que nadie mueva la portería a medio partido.",
+      },
+      {
+        q: "Qué entregamos",
+        a: "El proceso funcionando en tu operación y el ahorro medido contra el punto de partida.",
+      },
+      {
+        q: "Qué necesitamos de ti",
+        a: "Un responsable de tu lado con poder de decisión.",
+      },
+    ],
+  },
+];
 
 const notWeDo = [
   "Reportes de ochenta láminas que nadie abre dos veces.",
   "Recomendaciones sin responsable ni fecha.",
   "Facturar por estar sentados en tus juntas.",
   "Prometer plazos antes de entender el problema.",
+  "Reemplazar el sistema que ya te está funcionando.",
+  "Vender automatización donde no hay horas que recuperar.",
 ];
 ---
 
 <BaseLayout
   title="El método — Pragmasyn"
-  description="Análisis, síntesis, ejecución: el método Pragmasyn completo, con entregables y responsables por etapa. Sin pasos secretos."
+  description="Medir, priorizar, construir: el método Pragmasyn completo, con entregables y responsables por etapa. Sin pasos secretos."
+  ogTitle="Medir. Priorizar. Construir."
+  ogDescription="El método completo, publicado: qué hacemos, qué entregamos y qué necesitamos de ti en cada etapa."
   path="/metodo"
 >
-  <!-- Apertura + etapa 01 en oscuro: el análisis vive en la tinta -->
   <section class="ground-dark act opening" aria-labelledby="method-title">
     <div class="act__inner">
-      <p class="label">El método</p>
-      <h1 id="method-title" class="display opening__title">
-        Análisis. Síntesis. Ejecución.
-      </h1>
-      <p class="body opening__lead">
-        Una consultora recién fundada no puede enseñarte logotipos de clientes.
-        Puede enseñarte algo mejor: exactamente cómo va a trabajar tu problema.
-        Este es el método completo, sin adornos ni pasos secretos.
-      </p>
-
-      <article class="stage" aria-labelledby="stage-1">
-        <div class="rule--labeled"><span class="label">Etapa 01</span></div>
-        <h2 id="stage-1" class="h2">Análisis</h2>
-        <dl class="stage__detail">
-          <dt class="h4">Qué hacemos</dt>
-          <dd class="body">
-            Leemos los datos antes que las opiniones. Entrevistamos a quien
-            opera, no solo a quien dirige. Levantamos las restricciones reales:
-            presupuesto, sistemas, gente, política interna.
-          </dd>
-          <dt class="h4">Qué entregamos</dt>
-          <dd class="body">
-            Un diagnóstico de una página. Si no cabe en una página, todavía no
-            entendimos el problema.
-          </dd>
-          <dt class="h4">Qué necesitamos de ti</dt>
-          <dd class="body">Acceso. A los datos, a la gente, a lo que no funciona.</dd>
-        </dl>
-      </article>
+      <div class="act__head" data-reveal>
+        <p class="label eyebrow">El método</p>
+        <h1 id="method-title" class="display">Medir. Priorizar. Construir.</h1>
+        <p class="lead">
+          Una consultora recién fundada no puede enseñarte logotipos de clientes.
+          Puede enseñarte algo mejor: exactamente cómo va a trabajar tu
+          operación. Este es el método completo, sin adornos ni pasos secretos.
+        </p>
+      </div>
     </div>
   </section>
 
-  <!-- Etapa 02 ES la costura: la síntesis une el análisis con la ejecución -->
-  <Seam ground="ground-light">
-    <article aria-labelledby="stage-2">
-      <p class="label">Etapa 02 · La costura</p>
-      <h2 id="stage-2" class="h3 stage-seam__title">Síntesis</h2>
-      <dl class="stage-seam__detail">
-        <dt>Qué hacemos</dt>
-        <dd>
-          Convertimos el diagnóstico en opciones — cada una con costo, riesgo y
-          tiempo — y tomamos partido por una. Síntesis no es resumir: es decidir
-          qué importa.
-        </dd>
-        <dt>Qué entregamos</dt>
-        <dd>La recomendación firmada y el plan: responsables, secuencia, indicadores.</dd>
-        <dt>Qué necesitamos de ti</dt>
-        <dd>Una decisión. Para eso está hecho el documento.</dd>
-      </dl>
-    </article>
-  </Seam>
-
-  <!-- Etapa 03 en claro: la ejecución sucede a la luz -->
-  <section class="ground-light act execution" aria-labelledby="stage-3">
+  <section class="ground-light act stages" aria-label="Etapas del método">
     <div class="act__inner">
-      <article class="stage">
-        <div class="rule--labeled"><span class="label">Etapa 03</span></div>
-        <h2 id="stage-3" class="h2">Ejecución</h2>
-        <dl class="stage__detail">
-          <dt class="h4">Qué hacemos</dt>
-          <dd class="body">
-            Construimos, medimos y corregimos en ciclos cortos. Los indicadores
-            se acuerdan antes de empezar, para que nadie mueva la portería a
-            medio partido.
-          </dd>
-          <dt class="h4">Qué entregamos</dt>
-          <dd class="body">
-            El resultado acordado, funcionando, y la capacidad instalada en tu
-            equipo para operarlo sin nosotros.
-          </dd>
-          <dt class="h4">Qué necesitamos de ti</dt>
-          <dd class="body">Un responsable de tu lado con poder de decisión.</dd>
-        </dl>
-      </article>
-
-      <section class="not-we-do" aria-labelledby="not-title">
-        <div class="rule--labeled"><span class="label">Qué no hacemos</span></div>
-        <h2 id="not-title" class="h3">También hay que decirlo.</h2>
-        <ul class="not-we-do__list">
-          {notWeDo.map((item) => <li class="body">{item}</li>)}
-        </ul>
-      </section>
+      <ol class="stages__list">
+        {
+          stages.map((s) => (
+            <li class="card card--feature stage" data-reveal>
+              <div class="stage__head">
+                <span class="numeral stage__num" aria-hidden="true">
+                  {s.num}
+                </span>
+                <h2 class="h3 stage__name">{s.name}</h2>
+              </div>
+              <dl class="stage__detail">
+                {s.detail.map((d) => (
+                  <div class="stage__pair">
+                    <dt class="label">{d.q}</dt>
+                    <dd class="small stage__answer">{d.a}</dd>
+                  </div>
+                ))}
+              </dl>
+            </li>
+          ))
+        }
+      </ol>
     </div>
   </section>
 
-  <!-- Cierre -->
+  <section class="ground-light act act--well not-we-do" aria-labelledby="not-title">
+    <div class="act__inner">
+      <div class="act__head" data-reveal>
+        <p class="label eyebrow">Qué no hacemos</p>
+        <h2 id="not-title" class="h2">También hay que decirlo.</h2>
+      </div>
+      <ul class="not-we-do__list" data-reveal>
+        {notWeDo.map((item) => <li class="not-we-do__item">{item}</li>)}
+      </ul>
+    </div>
+  </section>
+
   <section class="ground-dark act closing" aria-labelledby="closing-title">
     <div class="act__inner">
-      <h2 id="closing-title" class="display-2">
-        El método empieza igual siempre: con una conversación.
-      </h2>
-      <a class="btn btn--primary closing__cta" href="/contacto">Agendar una conversación</a>
+      <div class="act__head" data-reveal>
+        <h2 id="closing-title" class="display-2">
+          El método empieza igual siempre: midiendo.
+        </h2>
+        <p class="lead">
+          Cinco días, precio fijo, una automatización funcionando al final.
+        </p>
+        <a class="btn btn--primary closing__cta" href="/contacto">Agendar el diagnóstico</a>
+      </div>
     </div>
   </section>
 </BaseLayout>
 
 <style>
   .opening {
-    padding-block: var(--space-11) var(--space-10);
+    padding-block: clamp(var(--space-8), 10vw, var(--space-10));
   }
-  .opening__title {
-    margin-top: var(--space-6);
-    max-width: 14ch;
-  }
-  .opening__lead {
-    margin-top: var(--space-6);
+  .stages__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--gutter);
   }
   .stage {
-    margin-top: var(--space-6);
+    display: grid;
+    gap: var(--space-6) var(--space-8);
+  }
+  @media (min-width: 64rem) {
+    .stage {
+      grid-template-columns: minmax(9rem, 1fr) 4fr;
+      align-items: start;
+    }
+  }
+  .stage__num {
+    color: var(--interactive);
+    font-size: var(--text-h4);
+    font-weight: var(--weight-strong);
+  }
+  .stage__name {
+    margin-top: var(--space-2);
   }
   .stage__detail {
-    margin: var(--space-6) 0 0;
+    margin: 0;
     display: grid;
-    gap: var(--space-2) var(--gutter);
+    gap: var(--space-5);
   }
-  .stage__detail dd {
-    margin: 0 0 var(--space-5);
-  }
-  /* the answers step right of their questions on wide screens: Q&A weave */
-  @media (min-width: 64rem) {
+  @media (min-width: 48rem) {
     .stage__detail {
-      grid-template-columns: minmax(12rem, 1fr) 2fr;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--gutter);
     }
-    .stage__detail dt {
-      grid-column: 1;
-    }
-    .stage__detail dd {
-      grid-column: 2;
-    }
+  }
+  .stage__pair {
+    display: grid;
+    gap: var(--space-2);
+    align-content: start;
+    padding-top: var(--space-4);
+    border-top: var(--hairline) solid var(--hairline-color);
+  }
+  .stage__answer {
+    margin: 0;
   }
 
-  .stage-seam__title {
-    margin-top: var(--space-2);
-    /* the brand-named stage speaks in the display voice */
-    font-family: var(--font-display);
-    font-weight: var(--weight-display);
-    letter-spacing: var(--tracking-h3);
-  }
-  .stage-seam__detail {
-    margin: var(--space-4) 0 0;
-    font-size: var(--text-small);
-    line-height: var(--leading-small);
-  }
-  .stage-seam__detail dt {
-    font-weight: var(--weight-strong);
-    margin-top: var(--space-3);
-  }
-  .stage-seam__detail dd {
-    margin: var(--space-1) 0 0;
-    color: var(--fg-secondary);
-  }
-
-  .execution {
-    padding-top: var(--space-11);
-  }
-  .not-we-do {
-    margin-top: var(--space-9);
-  }
   .not-we-do__list {
     list-style: none;
-    margin: var(--space-6) 0 0;
+    margin: var(--space-8) auto 0;
     padding: 0;
-    max-width: var(--measure);
+    max-width: var(--measure-wide);
   }
-  .not-we-do__list li {
+  .not-we-do__item {
+    display: flex;
+    gap: var(--space-4);
+    align-items: baseline;
     padding-block: var(--space-4);
     border-top: var(--hairline) solid var(--hairline-color);
   }
-  /* struck through before you can ask: the "no" is typographic.
-     (fg, not --reserve: magenta's single site-wide use is form errors) */
-  .not-we-do__list li::before {
+  /* el "no" es tipográfico: se tacha antes de que preguntes */
+  .not-we-do__item::before {
     content: "✕";
-    color: var(--fg);
-    margin-inline-end: var(--space-3);
+    color: var(--fg-muted-ui);
     font-weight: var(--weight-strong);
   }
 
   .closing {
-    padding-block: var(--space-11);
+    padding-block: clamp(var(--space-9), 10vw, var(--space-11));
   }
   .closing__cta {
-    margin-top: var(--space-7);
+    margin-top: var(--space-4);
   }
 </style>

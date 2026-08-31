@@ -3,57 +3,54 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
 const destinations = [
   { href: "/", label: "Inicio" },
-  { href: "/metodo", label: "El método" },
+  { href: "/#diagnostico", label: "El diagnóstico de 5 días" },
   { href: "/servicios", label: "Servicios" },
+  { href: "/metodo", label: "El método" },
   { href: "/contacto", label: "Contacto" },
 ];
 ---
 
 <BaseLayout
   title="Página no encontrada — Pragmasyn"
-  description="Esta página no existe. Lo que sí existe: el método, los servicios y el contacto de Pragmasyn."
+  description="Esta página no existe. Lo que sí existe: el diagnóstico, los servicios, el método y el contacto de Pragmasyn."
   path="/404"
 >
   <section class="ground-dark act not-found" aria-labelledby="nf-title">
     <div class="act__inner">
-      <p class="label">Error 404</p>
-      <h1 id="nf-title" class="display not-found__title">Esta página no existe.</h1>
-      <p class="body not-found__lead">
-        El enlace está roto o apunta a algo que nunca existió — pasa hasta en los
-        mejores sistemas. Lo que sí existe:
-      </p>
-      <ul class="not-found__links">
-        {
-          destinations.map((d) => (
-            <li>
-              <a class="link" href={d.href}>
-                {d.label}
-              </a>
-            </li>
-          ))
-        }
-      </ul>
+      <div class="act__head">
+        <p class="label eyebrow">Error 404</p>
+        <h1 id="nf-title" class="display">Esta página no existe.</h1>
+        <p class="lead">
+          El enlace está roto o apunta a algo que nunca existió — pasa hasta en
+          los mejores sistemas. Lo que sí existe:
+        </p>
+        <ul class="not-found__links">
+          {
+            destinations.map((d) => (
+              <li>
+                <a class="link link--arrow" href={d.href}>
+                  {d.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
     </div>
   </section>
 </BaseLayout>
 
 <style>
   .not-found {
-    padding-block: var(--space-11);
-  }
-  .not-found__title {
-    margin-top: var(--space-6);
-    max-width: 12ch;
-  }
-  .not-found__lead {
-    margin-top: var(--space-6);
+    padding-block: clamp(var(--space-9), 10vw, var(--space-11));
   }
   .not-found__links {
     list-style: none;
-    margin: var(--space-6) 0 0;
+    margin: var(--space-4) 0 0;
     padding: 0;
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-5);
+    justify-content: center;
+    gap: var(--space-3) var(--space-6);
   }
 </style>

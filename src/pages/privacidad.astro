@@ -1,5 +1,12 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { hasWhatsapp, site } from "../site";
+
+// El canal de WhatsApp solo se declara si existe: un aviso que menciona un
+// canal que no operamos es tan incorrecto como uno que omite el que sí.
+const collected = hasWhatsapp
+  ? "Lo que escribas en el formulario: tu nombre, tu empresa, tu correo de trabajo, el número de empleados si decides indicarlo y la descripción del proceso que te está costando horas. Si nos escribes por WhatsApp, también tu número y el contenido de esos mensajes. Nada más. Este sitio no usa cookies de seguimiento ni analítica que te identifique."
+  : "Lo que escribas en el formulario: tu nombre, tu empresa, tu correo de trabajo, el número de empleados si decides indicarlo y la descripción del proceso que te está costando horas. Nada más. Este sitio no usa cookies de seguimiento ni analítica que te identifique.";
 
 const sections = [
   {
@@ -8,7 +15,7 @@ const sections = [
   },
   {
     title: "Qué recabamos",
-    text: "Lo que escribas en el formulario: tu nombre, tu correo de trabajo y la descripción de tu problema. Nada más. Este sitio no usa cookies de seguimiento ni analítica que te identifique.",
+    text: collected,
   },
   {
     title: "Para qué",
@@ -20,7 +27,7 @@ const sections = [
   },
   {
     title: "Tus derechos (ARCO)",
-    text: "Puedes pedirnos acceso, rectificación, cancelación u oposición escribiendo a info@pragmasyn.com. Respondemos en los plazos que marca la ley.",
+    text: `Puedes pedirnos acceso, rectificación, cancelación u oposición escribiendo a ${site.email}. Respondemos en los plazos que marca la ley.`,
   },
   {
     title: "Cambios",
@@ -53,7 +60,7 @@ const sections = [
         ))
       }
       <p class="caption notice__updated">
-        Última actualización: 15 de julio de 2026
+        Última actualización: 31 de agosto de 2026
       </p>
     </div>
   </section>
