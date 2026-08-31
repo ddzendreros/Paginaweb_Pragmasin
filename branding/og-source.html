@@ -1,0 +1,73 @@
+<!doctype html>
+<!-- Fuente del og-image. Para regenerarlo: copia este archivo a public/, corre
+     el dev server, abre /og-source.html en un viewport de 1200x630 exactos y
+     captura la pantalla completa sobre public/og-image.png. Después borra la
+     copia de public/ — esta página no se publica. -->
+<html lang="es-MX">
+  <head>
+    <meta charset="utf-8" />
+    <title>Fuente del OG image</title>
+    <link rel="stylesheet" href="/styles/tokens.css" />
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      .og {
+        width: 1200px;
+        height: 630px;
+        background: var(--ink-900);
+        display: flex;
+        align-items: center;
+        gap: 72px;
+        padding-inline: 96px;
+        box-sizing: border-box;
+      }
+      .og__mark svg {
+        display: block;
+        width: 300px;
+        height: auto;
+      }
+      .og__word {
+        font-family: var(--font-display);
+        font-weight: var(--weight-serif);
+        font-size: 116px;
+        line-height: 1;
+        letter-spacing: -0.01em;
+        color: var(--ink-050);
+      }
+      .og__rule {
+        width: 264px;
+        height: 4px;
+        background: var(--signal);
+        margin-block: 28px 24px;
+      }
+      .og__tagline {
+        font-family: var(--font-text);
+        font-weight: var(--weight-text);
+        font-size: 40px;
+        line-height: 1.25;
+        letter-spacing: -0.02em;
+        color: var(--ink-350);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="og">
+      <div class="og__mark" id="mark"></div>
+      <div>
+        <p class="og__word">Pragmasyn</p>
+        <div class="og__rule"></div>
+        <p class="og__tagline">Tu operación habla. La IA actúa.</p>
+      </div>
+    </div>
+    <script>
+      fetch("/favicon.svg")
+        .then((r) => r.text())
+        .then((svg) => {
+          document.getElementById("mark").innerHTML = svg;
+        });
+    </script>
+  </body>
+</html>
