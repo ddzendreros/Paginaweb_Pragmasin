@@ -10,6 +10,14 @@
 
 html {
   scrollbar-color: var(--ink-450) var(--ink-950);
+  scroll-behavior: smooth;
+  /* anchors (the QR points at #diagnostico) must clear the sticky header */
+  scroll-padding-top: var(--space-9);
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }
 
 body {
@@ -18,6 +26,13 @@ body {
   line-height: var(--leading-body);
   font-weight: var(--weight-text);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
 }
 
 /* --- skip link: first tab stop, visible only on focus --- */
@@ -32,7 +47,7 @@ body {
   font-weight: var(--weight-medium);
   font-size: var(--text-small);
   padding: var(--space-3) var(--space-5);
-  border-radius: var(--radius-s);
+  border-radius: var(--radius-pill);
   text-decoration: none;
   transition: translate var(--dur-2) var(--ease-swift);
 }
@@ -40,9 +55,14 @@ body {
   translate: 0 0;
 }
 
-/* --- acts: the site's grounds --- */
+/* --- acts: the site's grounds --------------------------------------------
+   Vertical rhythm is one decision, taken here: sections breathe the same
+   amount everywhere so the page reads as one document, not five. */
 .act {
-  padding-block: var(--space-10);
+  padding-block: clamp(var(--space-8), 8vw, var(--space-10));
+}
+.act--tight {
+  padding-block: clamp(var(--space-7), 6vw, var(--space-9));
 }
 .act--well {
   background-color: var(--bg-sunken);
@@ -51,6 +71,19 @@ body {
   max-width: var(--content-max);
   margin-inline: auto;
   padding-inline: var(--margin);
+}
+/* the centred header block: eyebrow, headline, lead. Cards below it stay
+   left-aligned — centred prose past three lines is a readability tax. */
+.act__head {
+  max-width: var(--measure-wide);
+  margin-inline: auto;
+  text-align: center;
+  display: grid;
+  gap: var(--space-4);
+  justify-items: center;
+}
+.act__head .lead {
+  margin-inline: auto;
 }
 
 /* --- typography --- */
@@ -61,21 +94,21 @@ body {
   text-wrap: balance;
 }
 .display {
-  font-family: var(--font-display);
+  font-family: var(--font-text);
   font-size: var(--text-display);
   line-height: var(--leading-display);
   letter-spacing: var(--tracking-display);
   font-weight: var(--weight-display);
 }
 .display-2 {
-  font-family: var(--font-display);
+  font-family: var(--font-text);
   font-size: var(--text-display-2);
   line-height: var(--leading-display-2);
   letter-spacing: var(--tracking-display-2);
-  font-weight: var(--weight-display-quiet);
+  font-weight: var(--weight-display);
 }
 .h1 {
-  font-family: var(--font-display);
+  font-family: var(--font-text);
   font-size: var(--text-h1);
   line-height: var(--leading-h1);
   letter-spacing: var(--tracking-h1);
@@ -93,7 +126,7 @@ body {
   font-size: var(--text-h3);
   line-height: var(--leading-h3);
   letter-spacing: var(--tracking-h3);
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-strong);
 }
 .h4 {
   font-family: var(--font-text);
@@ -101,6 +134,14 @@ body {
   line-height: var(--leading-h4);
   letter-spacing: var(--tracking-h4);
   font-weight: var(--weight-medium);
+}
+.lead {
+  font-size: var(--text-lead);
+  line-height: var(--leading-lead);
+  letter-spacing: var(--tracking-lead);
+  color: var(--fg-secondary);
+  max-width: var(--measure-wide);
+  text-wrap: pretty;
 }
 .body {
   max-width: var(--measure);
@@ -126,10 +167,25 @@ body {
   font-weight: var(--weight-medium);
   font-stretch: var(--width-condensed);
 }
+/* the eyebrow carries the category — it is the one label that gets colour */
+.eyebrow {
+  color: var(--interactive);
+}
+.numeral {
+  font-variant-numeric: tabular-nums;
+  font-stretch: var(--width-condensed);
+  letter-spacing: var(--tracking-h2);
+}
+/* Newsreader survives as the brand's accent: etymology, pull quotes, slogan */
 .serif-italic {
   font-family: var(--font-display);
   font-style: italic;
-  font-weight: var(--weight-display-quiet);
+  font-weight: var(--weight-serif-quiet);
+}
+.serif {
+  font-family: var(--font-display);
+  font-weight: var(--weight-serif);
+  letter-spacing: 0;
 }
 
 /* --- hairlines: the hueco as a drawn element --- */
@@ -142,7 +198,7 @@ body {
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  margin-block: var(--space-9) var(--space-6);
+  margin-block: var(--space-8) var(--space-5);
 }
 .rule--labeled::after {
   content: "";
@@ -163,48 +219,95 @@ body {
   color: var(--interactive-strong);
   text-decoration-thickness: var(--hairline-strong);
 }
+/* the arrow belongs to the interface, not to the copy: that way it moves */
+.link--arrow {
+  text-decoration: none;
+  font-weight: var(--weight-medium);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.link--arrow::after {
+  content: "→";
+  transition: translate var(--dur-2) var(--ease-rise);
+}
+.link--arrow:hover {
+  text-decoration: none;
+}
+.link--arrow:hover::after {
+  translate: var(--space-1) 0;
+}
 
 .btn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: var(--space-2);
   font: inherit;
   font-weight: var(--weight-medium);
-  font-size: var(--text-small);
-  letter-spacing: var(--tracking-small);
-  padding: var(--space-3) var(--space-5);
-  border-radius: var(--radius-s);
+  font-size: var(--text-body);
+  letter-spacing: var(--tracking-lead);
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--radius-pill);
   border: var(--hairline) solid transparent;
   cursor: pointer;
-  min-height: 44px;
+  min-height: 48px;
   text-decoration: none;
+  white-space: nowrap;
   transition: background-color var(--dur-2) var(--ease-swift),
     border-color var(--dur-2) var(--ease-swift),
     color var(--dur-2) var(--ease-swift),
-    translate var(--dur-1) var(--ease-swift);
+    box-shadow var(--dur-2) var(--ease-swift),
+    translate var(--dur-2) var(--ease-rise);
+}
+.btn--sm {
+  font-size: var(--text-small);
+  padding: var(--space-2) var(--space-4);
+  min-height: 36px;
 }
 .btn--primary {
   background: var(--interactive);
   color: var(--on-interactive);
+  font-weight: var(--weight-strong);
 }
 .btn--primary:hover {
   background: var(--interactive-strong);
+  translate: 0 -1px;
+  box-shadow: var(--shadow-card-hover);
 }
 .btn--primary:active {
-  translate: 0 1px;
+  translate: 0 0;
 }
+/* the glass secondary: a surface, not an outline. Reads as a control. */
 .btn--secondary {
-  background: transparent;
+  background: var(--surface-card);
   color: var(--fg);
-  border-color: var(--fg-muted-ui);
+  border-color: var(--surface-border);
+  -webkit-backdrop-filter: blur(var(--blur-glass));
+  backdrop-filter: blur(var(--blur-glass));
 }
 .btn--secondary:hover {
-  border-color: var(--fg);
+  background: var(--surface-card-hover);
+  border-color: var(--surface-border-hover);
+  translate: 0 -1px;
+}
+.btn--secondary:active {
+  translate: 0 0;
+}
+.btn--quiet {
+  background: transparent;
+  color: var(--interactive);
+  padding-inline: var(--space-2);
+}
+.btn--quiet:hover {
+  color: var(--interactive-strong);
 }
 .btn:disabled {
   background: var(--bg-sunken);
   color: var(--fg-disabled);
   border-color: transparent;
+  box-shadow: none;
+  translate: 0 0;
   cursor: not-allowed;
 }
 .btn--loading {
@@ -237,45 +340,173 @@ body {
   }
 }
 
+/* a row of actions that stacks honestly on narrow screens */
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4);
+}
+.actions--center {
+  justify-content: center;
+}
+@media (max-width: 26rem) {
+  .actions .btn {
+    width: 100%;
+  }
+}
+
+/* --- surfaces: the v2 workhorse ----------------------------------------- */
+.card {
+  background: var(--surface-card);
+  border: var(--hairline) solid var(--surface-border);
+  border-radius: var(--radius-l);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-6);
+}
+.card--flush {
+  padding: 0;
+  overflow: hidden;
+}
+.card--feature {
+  border-radius: var(--radius-xl);
+  padding: clamp(var(--space-6), 5vw, var(--space-8));
+}
+.card--link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+  transition: background-color var(--dur-2) var(--ease-swift),
+    border-color var(--dur-2) var(--ease-swift),
+    box-shadow var(--dur-3) var(--ease-rise),
+    translate var(--dur-3) var(--ease-rise);
+}
+.card--link:hover {
+  background: var(--surface-card-hover);
+  border-color: var(--surface-border-hover);
+  box-shadow: var(--shadow-card-hover);
+  translate: 0 calc(-1 * var(--space-1));
+}
+
+.cards {
+  display: grid;
+  gap: var(--gutter);
+  grid-template-columns: repeat(auto-fit, minmax(min(18rem, 100%), 1fr));
+}
+.cards--2 {
+  grid-template-columns: repeat(auto-fit, minmax(min(24rem, 100%), 1fr));
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: var(--surface-card);
+  border: var(--hairline) solid var(--surface-border);
+  border-radius: var(--radius-pill);
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--text-small);
+  font-weight: var(--weight-medium);
+  color: var(--fg-secondary);
+}
+.badge__dot {
+  width: var(--space-2);
+  height: var(--space-2);
+  border-radius: 50%;
+  background: var(--interactive);
+}
+
 /* --- form fields --- */
 .field {
   display: grid;
   gap: var(--space-2);
 }
+.field > label {
+  font-weight: var(--weight-medium);
+  color: var(--fg);
+}
 .field input,
-.field textarea {
+.field textarea,
+.field select {
   font: inherit;
+  width: 100%;
   color: var(--fg);
   background: var(--bg-raised);
-  border: var(--hairline) solid var(--fg-muted-ui);
+  border: var(--hairline) solid var(--surface-border);
   border-radius: var(--radius-s);
   padding: var(--space-3) var(--space-4);
-  min-height: 44px;
-  transition: border-color var(--dur-2) var(--ease-swift);
+  min-height: 48px;
+  transition: border-color var(--dur-2) var(--ease-swift),
+    box-shadow var(--dur-2) var(--ease-swift);
+}
+.field textarea {
+  resize: vertical;
+  line-height: var(--leading-body);
+}
+.field select {
+  appearance: none;
+  padding-inline-end: var(--space-8);
+  cursor: pointer;
+}
+/* the chevron is drawn, not imported: no data URI can read a token */
+.field__select {
+  position: relative;
+  display: grid;
+}
+.field__select::after {
+  content: "";
+  position: absolute;
+  inset-inline-end: var(--space-4);
+  inset-block-start: calc(50% - 0.45em);
+  width: 0.5em;
+  height: 0.5em;
+  border-inline-end: var(--hairline-strong) solid var(--fg-secondary);
+  border-block-end: var(--hairline-strong) solid var(--fg-secondary);
+  rotate: 45deg;
+  pointer-events: none;
 }
 .field input::placeholder,
 .field textarea::placeholder {
   color: var(--fg-muted-ui);
 }
 .field input:hover,
-.field textarea:hover {
-  border-color: var(--fg-secondary);
+.field textarea:hover,
+.field select:hover {
+  border-color: var(--surface-border-hover);
 }
 .field input:focus-visible,
-.field textarea:focus-visible {
-  outline-offset: 0;
+.field textarea:focus-visible,
+.field select:focus-visible {
+  outline: none;
   border-color: var(--interactive);
+  box-shadow: 0 0 0 var(--focus-width) var(--interactive);
 }
 .field--error input,
-.field--error textarea {
+.field--error textarea,
+.field--error select {
   border-color: var(--reserve);
 }
 .ground-light .field--error input,
-.ground-light .field--error textarea {
+.ground-light .field--error textarea,
+.ground-light .field--error select {
   border-width: var(--hairline-strong);
 }
+.consent {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+  cursor: pointer;
+}
+.consent input[type="checkbox"] {
+  accent-color: var(--interactive);
+  width: var(--space-5);
+  height: var(--space-5);
+  margin-top: var(--space-1);
+  flex: none;
+  cursor: pointer;
+}
 
-/* --- the seam: horizontal frontier, one local 30-degree crossing --- */
+/* --- the seam: an element crossing the frontier between two acts -------- */
 .seam {
   position: relative;
   height: 0;
@@ -283,31 +514,24 @@ body {
 .seam__card {
   position: relative;
   z-index: var(--z-weave);
-  max-width: var(--measure);
-  margin-inline: calc(var(--margin) + var(--space-8)) var(--margin);
+  max-width: var(--measure-wide);
+  margin-inline: auto;
+  width: calc(100% - var(--margin) * 2);
   translate: 0 -50%;
-  rotate: calc(var(--angle-weave) * -0.016); /* ~-0.5deg deliberate imperfection */
   background: var(--bg-raised);
   color: var(--fg);
-  border: var(--hairline) solid var(--hairline-color);
-  border-radius: var(--radius-s);
-  padding: var(--space-5) var(--space-6);
-  clip-path: polygon(
-    0 0,
-    calc(100% - var(--space-6)) 0,
-    100% calc(var(--space-6) * var(--tan-weave)),
-    100% 100%,
-    var(--space-6) 100%,
-    0 calc(100% - var(--space-6) * var(--tan-weave))
-  );
+  border: var(--hairline) solid var(--surface-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-3);
+  padding: clamp(var(--space-5), 4vw, var(--space-7));
 }
-/* The site's ONE personality gesture: the crossing element weaves through
+/* the site's one personality gesture: the crossing element weaves through
    the frontier when first seen. Everything else is functional micro-motion. */
 .seam__card[data-weave] {
   opacity: 0;
-  translate: 0 calc(-50% + var(--space-6));
-  transition: opacity var(--dur-4) var(--ease-weave),
-    translate var(--dur-4) var(--ease-weave);
+  translate: 0 calc(-50% + var(--space-5));
+  transition: opacity var(--dur-4) var(--ease-rise),
+    translate var(--dur-4) var(--ease-rise);
 }
 .seam__card.is-woven {
   opacity: 1;
@@ -320,8 +544,21 @@ body {
   }
 }
 
-@media (max-width: 40rem) {
-  .seam__card {
-    margin-inline: var(--margin);
+/* --- scroll entrances: one curve for the whole site ---------------------- */
+[data-reveal] {
+  opacity: 0;
+  translate: 0 var(--space-5);
+  transition: opacity var(--dur-5) var(--ease-rise),
+    translate var(--dur-5) var(--ease-rise);
+  transition-delay: calc(var(--reveal-index, 0) * 60ms);
+}
+[data-reveal].is-revealed {
+  opacity: 1;
+  translate: 0 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] {
+    opacity: 1;
+    translate: 0 0;
   }
 }
