@@ -1,32 +1,55 @@
 ---
 import logoMono from "../../branding/logo/logo-mono.svg?raw";
+import { hasWhatsapp, site, waMessages, whatsappUrl } from "../site";
 
 const year = new Date().getFullYear();
+const waHref = whatsappUrl(waMessages.pie);
 ---
 
 <footer class="ground-dark site-footer">
   <div class="site-footer__inner">
     <div class="site-footer__brand">
       <span class="site-footer__mark" aria-hidden="true" set:html={logoMono} />
-      <p class="site-footer__tagline">
-        Problemas complejos,<br />soluciones ejecutables.
+      <p class="site-footer__tagline serif">
+        Tu operación habla.<br />La IA actúa.
       </p>
+      <p class="caption site-footer__category">Automatización operativa con IA</p>
     </div>
-    <nav aria-label="Pie de página">
-      <ul class="site-footer__nav">
-        <li><a class="link" href="/metodo">Método</a></li>
-        <li><a class="link" href="/servicios">Servicios</a></li>
-        <li><a class="link" href="/contacto">Contacto</a></li>
-      </ul>
+
+    <nav class="site-footer__cols" aria-label="Pie de página">
+      <div class="site-footer__col">
+        <p class="label">Sitio</p>
+        <ul class="site-footer__list">
+          <li><a class="link" href="/#diagnostico">Diagnóstico de 5 días</a></li>
+          <li><a class="link" href="/servicios">Servicios</a></li>
+          <li><a class="link" href="/metodo">Método</a></li>
+          <li><a class="link" href="/contacto">Contacto</a></li>
+        </ul>
+      </div>
+      <div class="site-footer__col">
+        <p class="label">Directo</p>
+        <ul class="site-footer__list">
+          <li><a class="link" href={`mailto:${site.email}`}>{site.email}</a></li>
+          {
+            hasWhatsapp && waHref && (
+              <li>
+                <a class="link" href={waHref} target="_blank" rel="noopener">
+                  WhatsApp
+                </a>
+              </li>
+            )
+          }
+          <li><a class="link" href="/privacidad">Aviso de privacidad</a></li>
+        </ul>
+      </div>
     </nav>
+
     <div class="site-footer__meta">
       <p class="caption site-footer__etym">
         <span lang="grc">πρᾶγμα</span> — hecho realizado · <span lang="grc">σύν</span> — junto
         con
       </p>
-      <p class="caption">
-        © {year} Pragmasyn · <a class="link" href="/privacidad">Aviso de privacidad</a>
-      </p>
+      <p class="caption">© {year} Pragmasyn</p>
       <p class="caption">Pragmasyn es parte de Grupo Zendreros.</p>
     </div>
   </div>
@@ -43,7 +66,7 @@ const year = new Date().getFullYear();
     padding-inline: var(--margin);
     padding-block: var(--space-9);
     display: grid;
-    grid-template-columns: 2fr 1fr 2fr;
+    grid-template-columns: 3fr 4fr 3fr;
     gap: var(--space-8) var(--gutter);
     align-items: start;
   }
@@ -53,16 +76,23 @@ const year = new Date().getFullYear();
     width: auto;
     color: var(--fg-secondary);
   }
+  /* the slogan is the one place the serif still speaks at size */
   .site-footer__tagline {
     margin-top: var(--space-5);
-    font-family: var(--font-display);
-    font-size: var(--text-h4);
-    line-height: var(--leading-h4);
-    font-weight: var(--weight-display-quiet);
+    font-size: var(--text-h3);
+    line-height: var(--leading-h3);
   }
-  .site-footer__nav {
+  .site-footer__category {
+    margin-top: var(--space-3);
+  }
+  .site-footer__cols {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(11rem, 100%), 1fr));
+    gap: var(--space-6) var(--gutter);
+  }
+  .site-footer__list {
     list-style: none;
-    margin: 0;
+    margin: var(--space-4) 0 0;
     padding: 0;
     display: grid;
     gap: var(--space-3);
@@ -74,7 +104,7 @@ const year = new Date().getFullYear();
     justify-items: end;
     text-align: right;
   }
-  @media (max-width: 48rem) {
+  @media (max-width: 56rem) {
     .site-footer__inner {
       grid-template-columns: 1fr;
     }

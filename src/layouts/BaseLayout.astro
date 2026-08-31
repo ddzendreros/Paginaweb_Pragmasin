@@ -2,26 +2,36 @@
 import "../styles/base.css";
 import SiteFooter from "../components/SiteFooter.astro";
 import SiteHeader from "../components/SiteHeader.astro";
+import WhatsAppButton from "../components/WhatsAppButton.astro";
+import { site } from "../site";
 
 interface Props {
   title: string;
   description: string;
   /** Path for the canonical URL, e.g. "/metodo" */
   path: string;
+  /** Social cards lead with the promise, not with the SEO title */
+  ogTitle?: string;
+  ogDescription?: string;
 }
 
-const { title, description, path } = Astro.props;
+const { title, description, path, ogTitle, ogDescription } = Astro.props;
 const canonical = new URL(path, Astro.site);
 const ogImage = new URL("/og-image.png", Astro.site);
+const socialTitle = ogTitle ?? title;
+const socialDescription = ogDescription ?? description;
 
 const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "Organization",
   name: "Pragmasyn",
   description:
-    "Consultoría de tecnología y estrategia. Problemas complejos, soluciones ejecutables.",
+    "Automatización operativa con IA para empresas medianas en México. Recuperamos las horas que hoy se van en captura manual, conciliaciones y reportes.",
   url: Astro.site?.toString(),
   logo: new URL("/favicon.svg", Astro.site).toString(),
+  email: site.email,
+  areaServed: { "@type": "Country", name: "México" },
+  parentOrganization: { "@type": "Organization", name: "Grupo Zendreros" },
 };
 ---
 
@@ -43,24 +53,17 @@ const organizationSchema = {
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Pragmasyn" />
     <meta property="og:locale" content="es_MX" />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
+    <meta property="og:title" content={socialTitle} />
+    <meta property="og:description" content={socialDescription} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={ogImage} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={description} />
+    <meta name="twitter:title" content={socialTitle} />
+    <meta name="twitter:description" content={socialDescription} />
     <meta name="twitter:image" content={ogImage} />
 
-    <link
-      rel="preload"
-      href="/fonts/newsreader-latin-var.woff2"
-      as="font"
-      type="font/woff2"
-      crossorigin
-    />
     <link
       rel="preload"
       href="/fonts/instrument-sans-latin-var.woff2"
@@ -68,7 +71,24 @@ const organizationSchema = {
       type="font/woff2"
       crossorigin
     />
+    <link
+      rel="preload"
+      href="/fonts/newsreader-latin-var.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
     <link rel="stylesheet" href="/styles/tokens.css" />
+
+    <noscript>
+      <style>
+        /* Sin JS no hay entradas al hacer scroll: el contenido se ve, punto. */
+        [data-reveal] {
+          opacity: 1;
+          translate: none;
+        }
+      </style>
+    </noscript>
 
     <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
   </head>
@@ -79,5 +99,31 @@ const organizationSchema = {
       <slot />
     </main>
     <SiteFooter />
+    <WhatsAppButton />
+
+    <script>
+      // One entrance curve for the whole site. Siblings stagger by their
+      // position so a card grid arrives as a grid, not as one block.
+      const revealables = document.querySelectorAll<HTMLElement>("[data-reveal]");
+      for (const el of revealables) {
+        const siblings = el.parentElement
+          ? Array.from(el.parentElement.children).filter((c) => c.hasAttribute("data-reveal"))
+          : [];
+        const index = Math.max(0, Math.min(siblings.indexOf(el), 5));
+        el.style.setProperty("--reveal-index", String(index));
+      }
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (!entry.isIntersecting) continue;
+            entry.target.classList.add("is-revealed");
+            observer.unobserve(entry.target);
+          }
+        },
+        { threshold: 0.12, rootMargin: "0px 0px -6% 0px" },
+      );
+      revealables.forEach((el) => observer.observe(el));
+    </script>
   </body>
 </html>
