@@ -550,6 +550,11 @@ const method = [
     color: var(--fg);
     font-weight: var(--weight-medium);
   }
+  /* sin JS el contador no puede contar, así que no se muestra: display:flex
+     le gana al [hidden] del navegador si no se dice lo contrario */
+  .check__summary[hidden] {
+    display: none;
+  }
   .check__summary {
     margin-top: var(--space-4);
     padding: var(--space-4);
