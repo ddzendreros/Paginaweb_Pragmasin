@@ -1,8 +1,10 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import Calculator from "../components/Calculator.astro";
+import Demo from "../components/Demo.astro";
 
-// La lista está calibrada al segmento (BRIEF v2 §6.1): cada renglón tiene que
-// provocar un "sí, eso mismo". No se agregan inventados.
+// El auto-diagnóstico. Cada renglón calibrado al segmento (BRIEF v3 §5.3):
+// tiene que provocar un "sí, eso mismo". No se agregan inventados.
 const manualWork = [
   "Capturar facturas de proveedor que llegan en PDF o por correo",
   "Pasar pedidos de WhatsApp al sistema",
@@ -14,6 +16,38 @@ const manualWork = [
   "Sacar cifras del sistema para meterlas a otro Excel",
   "Registrar asistencia en papel o en hoja de cálculo",
   "Clasificar, nombrar y archivar documentos",
+];
+
+// Cuatro productos con precio visible. IVA se anuncia una sola vez al pie.
+const products = [
+  {
+    name: "Diagnóstico de Horas Recuperables",
+    launch: "$45,000",
+    price: "$75,000",
+    unit: "cinco días",
+    text: "Medimos dónde se van las horas, priorizamos qué automatizar y dejamos una automatización corriendo.",
+  },
+  {
+    name: "Facturas de proveedor que entran solas",
+    launch: null,
+    price: "desde $85,000",
+    unit: "implementación",
+    text: "PDF y correo → tu sistema, con validación contra la orden de compra.",
+  },
+  {
+    name: "Pedidos de WhatsApp al sistema",
+    launch: null,
+    price: "desde $95,000",
+    unit: "implementación",
+    text: "Mensaje desordenado → pedido estructurado, con contexto del cliente.",
+  },
+  {
+    name: "El reporte que se arma solo",
+    launch: null,
+    price: "desde $60,000",
+    unit: "implementación",
+    text: "Datos de varios lados → el reporte, sin que nadie lo arme.",
+  },
 ];
 
 const territory = [
@@ -28,29 +62,6 @@ const territory = [
   {
     name: "Lo que no se habla entre sí",
     text: "Tu ERP, tu Excel, tu banco, el SAT, el portal de tu cliente. Los conectamos sin migrar nada.",
-  },
-];
-
-const deliverables = [
-  {
-    num: "01",
-    name: "Dónde se van tus horas",
-    text: "Mapa de tu operación con el tiempo manual medido proceso por proceso, con tus datos, no con benchmarks.",
-  },
-  {
-    num: "02",
-    name: "Qué se puede automatizar ya",
-    text: "Lista priorizada por horas ahorradas contra esfuerzo de implementación. Con números, no con adjetivos.",
-  },
-  {
-    num: "03",
-    name: "Tu situación frente a la reforma",
-    text: "Cálculo de la brecha entre tu operación actual y la jornada que la ley te va a exigir.",
-  },
-  {
-    num: "04",
-    name: "Una automatización funcionando",
-    text: "No un prototipo ni una demo. Un proceso automatizado y corriendo antes de que terminen los cinco días.",
   },
 ];
 
@@ -84,45 +95,56 @@ const method = [
     deliverable: "El proceso funcionando y el ahorro medido.",
   },
 ];
+
+// FAQ del brief v3 §5.10. La pregunta "¿Se salen mis datos?" queda fuera
+// hasta que el fundador defina la respuesta con la arquitectura real.
+const faq = [
+  {
+    q: "Mi sistema ya trae inteligencia artificial. ¿Para qué los necesito?",
+    a: "La IA de tu sistema trabaja sobre lo que ya está capturado. El PDF que sigue en el correo, la foto que mandó el chofer y el mensaje de WhatsApp todavía no están capturados. Ese es exactamente el trabajo que hoy hace una persona, y es donde entramos.",
+  },
+  {
+    q: "¿Esto reemplaza a quien me implementó el sistema?",
+    a: "No. No tocamos tu sistema, no migramos nada y no competimos por ese trabajo. A quien te lo implementó le conviene: le llega ordenado lo que antes le llegaba en desorden.",
+  },
+  {
+    q: "¿Por qué no lo hago con Make o Zapier?",
+    a: "Esas herramientas mueven datos que ya están ordenados, entre sistemas que ya se hablan entre sí. No leen un PDF escaneado, no deciden si la factura coincide con la orden de compra y no saben qué hacer cuando algo no cuadra. Y alguien las tiene que construir y mantener.",
+  },
+  {
+    q: "¿Qué pasa si no encuentran horas suficientes?",
+    a: "Si al quinto día no encontramos al menos 80 horas al mes recuperables, te lo decimos y no cobramos. Preferimos eso a venderte un proyecto que no necesitas.",
+  },
+  {
+    q: "¿Cuánto tiempo de mi gente ocupa el diagnóstico?",
+    a: "Seis horas en total, repartidas en cinco días. Necesitamos hablar con quien hace el trabajo, no con quien lo describe. El resto lo hacemos nosotros.",
+  },
+];
 ---
 
 <BaseLayout
-  title="Pragmasyn — Automatización operativa con IA para PyMEs en México"
-  description="Recupera las horas que hoy se van en captura manual, conciliaciones y reportes. Diagnóstico de 5 días con una automatización funcionando. Sobre el sistema que ya tienes."
-  ogTitle="Tu operación habla. La IA actúa."
-  ogDescription="Automatizamos con IA lo que hoy se hace a mano: facturas en PDF, pedidos por WhatsApp, reportes en Excel. Diagnóstico de 5 días, precio fijo."
+  title="Pragmasyn — Lo que hoy se captura a mano puede entrar solo"
+  description="Facturas en PDF, pedidos por WhatsApp, el reporte del lunes. Medimos cuántas horas al mes te cuesta y hacemos que entren solas — sobre el sistema que ya tienes."
+  ogTitle="Alguien en tu empresa teclea lo que ya venía escrito."
+  ogDescription="Facturas en PDF, pedidos por WhatsApp, el reporte del lunes. Lo que se hace a mano puede entrar solo. Diagnóstico de 5 días, precio fijo."
   path="/"
 >
-  <!-- 1 · Hero -->
+  <!-- 1 · Hero — H1 sin data-reveal para no romper el LCP -->
   <section class="ground-dark act hero" aria-labelledby="hero-title">
     <div class="act__inner hero__inner">
       <p class="label eyebrow" data-reveal>Automatización operativa con IA</p>
-      <h1 id="hero-title" class="display hero__title" data-reveal>
-        Tu operación habla.<br />La IA actúa.
+      <h1 id="hero-title" class="display hero__title">
+        Alguien en tu empresa teclea lo que ya venía escrito.
       </h1>
       <p class="lead hero__lead" data-reveal>
-        Tu operación ya te está diciendo dónde se va el tiempo: en los WhatsApps
-        que alguien transcribe, en los PDFs que se capturan a mano, en el reporte
-        que toma tres horas armar cada lunes. Escucharla cuesta horas de trabajo
-        humano. Eso es lo que automatizamos.
+        Facturas en PDF, pedidos por WhatsApp, el reporte del lunes. Medimos
+        cuántas horas al mes te cuesta y hacemos que entren solas. Sobre el
+        sistema que ya tienes.
       </p>
       <div class="actions actions--center hero__actions" data-reveal>
-        <a class="btn btn--primary" href="/contacto">Diagnóstico de 5 días</a>
-        <a class="btn btn--secondary" href="#a-mano">Ver qué se puede automatizar</a>
+        <a class="btn btn--primary" href="#demo">Ver cómo funciona</a>
+        <a class="btn btn--secondary" href="/calculadora">Calcular mis horas</a>
       </div>
-      <figure class="hero__flow" data-reveal>
-        <ul class="hero__flow-in">
-          <li class="hero__chip">Factura en PDF</li>
-          <li class="hero__chip">Pedido por WhatsApp</li>
-          <li class="hero__chip">Nota de voz de piso</li>
-        </ul>
-        <span class="hero__flow-arrow" aria-hidden="true">→</span>
-        <figcaption class="hero__flow-out">
-          <span class="hero__flow-title">Capturado, validado y en tu sistema</span>
-          <span class="caption">Sin que nadie lo teclee</span>
-        </figcaption>
-      </figure>
-
       <p class="caption hero__etym" data-reveal>
         <span class="serif-italic" lang="grc">πρᾶγμα</span> — hecho realizado ·
         <span class="serif-italic" lang="grc">σύν</span> — junto con. El nombre es
@@ -131,7 +153,12 @@ const method = [
     </div>
   </section>
 
-  <!-- 2 · Auto-diagnóstico: el corazón del sitio -->
+  <!-- 2 · Demo — el corazón del sitio -->
+  <section class="ground-dark act act--well demo-wrap">
+    <Demo />
+  </section>
+
+  <!-- 3 · Auto-diagnóstico -->
   <section class="ground-light act check" id="a-mano" aria-labelledby="check-title">
     <div class="act__inner">
       <div class="act__head" data-reveal>
@@ -164,25 +191,115 @@ const method = [
             Marca lo que reconozcas de tu operación.
           </p>
         </div>
+
+        <div class="check__handoff" data-check-handoff hidden>
+          <a class="btn btn--primary btn--sm" href="/calculadora">
+            Ponle número a esto
+          </a>
+        </div>
       </div>
 
       <p class="body check__close" data-reveal>
-        Si marcaste tres o más, tienes entre 40 y 120 horas al mes en la mesa. No
-        es una estimación de venta: es lo que medimos en el diagnóstico, con tus
-        datos.
+        Si marcaste tres o más, tienes entre 40 y 120 horas al mes en la mesa.
+        No es una estimación de venta: es lo que medimos en el diagnóstico,
+        con tus datos.
       </p>
     </div>
   </section>
 
-  <!-- 3 · El territorio -->
-  <section class="ground-light act act--well territory" aria-labelledby="territory-title">
+  <!-- 4 · Calculadora en línea -->
+  <section class="ground-light act act--well calc-embed">
+    <div class="act__inner calc-embed__inner" data-reveal>
+      <Calculator variant="compact" id="calc-home" />
+    </div>
+  </section>
+
+  <!-- 5 · Qué compras exactamente -->
+  <section class="ground-dark act products" id="precios" aria-labelledby="products-title">
+    <div class="act__inner">
+      <div class="act__head" data-reveal>
+        <p class="label eyebrow">Precio visible</p>
+        <h2 id="products-title" class="h2">Qué compras exactamente.</h2>
+        <p class="lead">
+          Cosas comprables con precio publicado. No propuestas de sesenta
+          páginas.
+        </p>
+      </div>
+
+      <ul class="products__list">
+        {
+          products.map((p) => (
+            <li class="card card--feature product" data-reveal>
+              <div class="product__price-row">
+                {p.launch && (
+                  <p class="product__price-strike">
+                    <span class="small">estándar</span>
+                    <span class="numeral product__strike">{p.price}</span>
+                  </p>
+                )}
+                <p class="product__price">
+                  {p.launch ? (
+                    <>
+                      <span class="small product__price-label">lanzamiento</span>
+                      <span class="numeral product__price-num">{p.launch}</span>
+                    </>
+                  ) : (
+                    <span class="numeral product__price-num">{p.price}</span>
+                  )}
+                </p>
+                <p class="caption product__unit">{p.unit}</p>
+              </div>
+              <div class="product__body">
+                <h3 class="h4 product__name">{p.name}</h3>
+                <p class="small product__text">{p.text}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+
+      <p class="caption products__iva" data-reveal>Todos los precios + IVA.</p>
+
+      <div class="products__notes">
+        <aside class="card products__credit" data-reveal>
+          <p class="label">Se acredita</p>
+          <p class="body">
+            El diagnóstico se acredita al 100% contra cualquiera de los otros
+            tres si contratas dentro de los 30 días siguientes.
+          </p>
+        </aside>
+
+        <aside class="card products__launch" data-reveal>
+          <p class="label">Por qué $45,000 y no $75,000</p>
+          <p class="body">
+            Estamos documentando nuestros primeros tres casos. El precio de
+            lanzamiento es a cambio de poder publicar el resultado —con el
+            nombre de tu empresa o sin él, tú decides. Cuando los tres estén
+            cerrados, el precio es $75,000.
+          </p>
+        </aside>
+
+        <aside class="card card--feature products__guarantee" data-reveal>
+          <p class="label">Garantía</p>
+          <p class="body">
+            Si al quinto día no encontramos al menos 80 horas al mes
+            recuperables, no cobramos el diagnóstico.
+          </p>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 · Territorio + "Lo que no tocamos" -->
+  <section class="ground-light act territory" aria-labelledby="territory-title">
     <div class="act__inner">
       <div class="act__head" data-reveal>
         <p class="label eyebrow">Dónde entramos</p>
         <h2 id="territory-title" class="h2">No tocamos lo que ya funciona.</h2>
         <p class="lead">
           Tu ERP ordena lo que ya está capturado: cotizaciones, órdenes,
-          inventario, contabilidad. Eso ya está resuelto y no venimos a moverlo.
+          inventario, contabilidad. Eso ya está resuelto y no venimos a
+          moverlo.
         </p>
         <p class="lead">
           El problema vive afuera. En lo que llega en desorden y alguien tiene
@@ -200,48 +317,20 @@ const method = [
           ))
         }
       </ul>
+
+      <aside class="card card--feature territory__not" data-reveal>
+        <p class="label territory__not-label">Y sobre todo</p>
+        <h3 class="h3 territory__not-title">Lo que no tocamos.</h3>
+        <p class="body">
+          Trabajamos sobre el sistema que ya tienes, sea cual sea. No lo
+          cambiamos, no lo migramos y no competimos con quien te lo implementó.
+          Lo que ya invertiste se aprovecha, no se tira.
+        </p>
+      </aside>
     </div>
   </section>
 
-  <!-- 4 · La oferta (destino del QR de la tarjeta) -->
-  <section class="ground-dark act offer" id="diagnostico" aria-labelledby="offer-title">
-    <div class="act__inner">
-      <div class="act__head" data-reveal>
-        <p class="label eyebrow">Punto de entrada</p>
-        <h2 id="offer-title" class="h2">Diagnóstico de Horas Recuperables</h2>
-        <p class="lead">Cinco días. Precio fijo. Sin propuesta de sesenta páginas.</p>
-        <p class="badge">
-          <span class="badge__dot" aria-hidden="true"></span>
-          Termina con una automatización corriendo
-        </p>
-      </div>
-
-      <ol class="cards offer__list">
-        {
-          deliverables.map((d) => (
-            <li class="card offer__item" data-reveal>
-              <span class="numeral offer__num" aria-hidden="true">
-                {d.num}
-              </span>
-              <h3 class="h4 offer__name">{d.name}</h3>
-              <p class="small offer__text">{d.text}</p>
-            </li>
-          ))
-        }
-      </ol>
-
-      <div class="offer__foot" data-reveal>
-        <p class="body offer__honesty">
-          Si al quinto día no encontramos horas que valga la pena recuperar, te lo
-          decimos y ahí termina. Preferimos eso a venderte un proyecto que no
-          necesitas.
-        </p>
-        <a class="btn btn--primary" href="/contacto">Agendar el diagnóstico</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- 5 · Urgencia: la reforma -->
+  <!-- 7 · Reforma -->
   <section class="ground-dark act act--well reform" aria-labelledby="reform-title">
     <div class="act__inner">
       <div class="act__head" data-reveal>
@@ -270,31 +359,31 @@ const method = [
       <div class="card card--feature reform__note" data-reveal>
         <p class="body">
           Y desde el 1 de enero de 2027, el registro electrónico de jornada es
-          obligatorio. Cuando ese registro exista, vas a tener por primera vez el
-          dato exacto de cuántas horas consume cada proceso. La pregunta es si
-          llegas a esa fecha con un plan o con un problema.
+          obligatorio. Cuando ese registro exista, vas a tener por primera vez
+          el dato exacto de cuántas horas consume cada proceso. La pregunta es
+          si llegas a esa fecha con un plan o con un problema.
         </p>
         <p class="body reform__close">
           La ventana para ajustar procesos es este año. Después ya no es
           planeación, es reacción.
         </p>
         <p class="caption reform__disclaimer">
-          Contexto de negocio, no asesoría legal. La interpretación jurídica la da
-          tu abogado laboral.
+          Contexto de negocio, no asesoría legal. La interpretación jurídica
+          la da tu abogado laboral.
         </p>
       </div>
     </div>
   </section>
 
-  <!-- 6 · Cómo trabajamos -->
+  <!-- 8 · Método -->
   <section class="ground-light act method" aria-labelledby="method-title">
     <div class="act__inner">
       <div class="act__head" data-reveal>
         <p class="label eyebrow">Cómo trabajamos</p>
         <h2 id="method-title" class="h2">El método es el producto.</h2>
         <p class="lead">
-          No vendemos horas ni presentaciones. Vendemos el camino corto entre un
-          proceso manual y un proceso que corre solo.
+          No vendemos horas ni presentaciones. Vendemos el camino corto entre
+          un proceso manual y un proceso que corre solo.
         </p>
       </div>
 
@@ -317,21 +406,65 @@ const method = [
       </ol>
 
       <p class="body method__more" data-reveal>
-        <strong>Sin pasos secretos:</strong> el método completo está publicado. Qué
-        hacemos, qué entregamos y qué necesitamos de ti en cada etapa.
+        <strong>Sin pasos secretos:</strong> el método completo está publicado.
+        Qué hacemos, qué entregamos y qué necesitamos de ti en cada etapa.
         <a class="link link--arrow method__link" href="/metodo">El método completo</a>
       </p>
     </div>
   </section>
 
-  <!-- 7 · Cierre -->
+  <!-- 9 · Identidad -->
+  <section class="ground-light act act--well identity" aria-labelledby="identity-title">
+    <div class="act__inner">
+      <div class="act__head identity__head" data-reveal>
+        <p class="label eyebrow">Quiénes somos</p>
+        <h2 id="identity-title" class="h3 identity__title">
+          Pragmasyn es una empresa mexicana de automatización operativa.
+        </h2>
+        <p class="body identity__text">
+          Aplicamos inteligencia artificial a los procesos que hoy se hacen a
+          mano en empresas de 50 a 500 personas. Somos parte de Grupo
+          Zendreros.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 · Preguntas -->
+  <section class="ground-light act faq" aria-labelledby="faq-title">
+    <div class="act__inner">
+      <div class="act__head" data-reveal>
+        <p class="label eyebrow">Preguntas que sí se hacen</p>
+        <h2 id="faq-title" class="h2">Antes de que las preguntes.</h2>
+      </div>
+
+      <ul class="faq__list">
+        {
+          faq.map((item) => (
+            <li class="faq__item" data-reveal>
+              <details class="faq__details">
+                <summary class="faq__q">
+                  <span>{item.q}</span>
+                  <span class="faq__toggle" aria-hidden="true"></span>
+                </summary>
+                <p class="body faq__a">{item.a}</p>
+              </details>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- 11 · Cierre -->
   <section class="ground-dark act closing" aria-labelledby="closing-title">
     <div class="act__inner">
       <div class="act__head" data-reveal>
         <h2 id="closing-title" class="display-2">¿Qué sigues haciendo a mano?</h2>
         <p class="lead closing__text">
-          Escríbenos qué proceso te está costando más horas. Te respondemos con
-          una lectura honesta — incluso si la respuesta es que no nos necesitas.
+          Escríbenos qué proceso te está costando más horas. Te respondemos
+          con una lectura honesta — incluso si la respuesta es que no nos
+          necesitas.
         </p>
         <a class="btn btn--primary closing__cta" href="/contacto">Agendar una conversación</a>
       </div>
@@ -341,11 +474,13 @@ const method = [
 
 <script>
   // El auto-diagnóstico cuenta en vivo. La lista funciona sin JS: son
-  // checkboxes de verdad; el resumen solo aparece si hay JS para llenarlo.
+  // checkboxes de verdad; el resumen y el handoff solo aparecen si hay JS
+  // para llenarlos.
   const list = document.querySelector<HTMLElement>("[data-check-list]");
   const summary = document.querySelector<HTMLElement>("[data-check-summary]");
   const count = document.querySelector<HTMLElement>("[data-check-count]");
   const verdict = document.querySelector<HTMLElement>("[data-check-verdict]");
+  const handoff = document.querySelector<HTMLElement>("[data-check-handoff]");
 
   if (list && summary && count && verdict) {
     summary.hidden = false;
@@ -362,6 +497,7 @@ const method = [
       } else {
         verdict.textContent = "Tienes horas suficientes en la mesa para que el diagnóstico se pague solo.";
       }
+      if (handoff) handoff.hidden = marked < 3;
     };
 
     list.addEventListener("change", update);
@@ -374,10 +510,8 @@ const method = [
   .hero {
     position: relative;
     overflow: hidden;
-    padding-block: clamp(var(--space-9), 12vw, var(--space-11)) clamp(var(--space-8), 9vw, var(--space-10));
+    padding-block: clamp(var(--space-9), 12vw, var(--space-11)) clamp(var(--space-7), 7vw, var(--space-9));
   }
-  /* claridad que entra por arriba: profundidad sin meter una imagen ni un
-     segundo gradiente de marca (el de marca sale dos veces en todo el sitio) */
   .hero::before {
     content: "";
     position: absolute;
@@ -392,15 +526,13 @@ const method = [
   }
   .hero__inner {
     position: relative;
-  }
-  .hero__inner {
     display: grid;
     justify-items: center;
     text-align: center;
     gap: var(--space-5);
   }
   .hero__title {
-    max-width: 16ch;
+    max-width: 18ch;
   }
   .hero__lead {
     max-width: var(--measure-wide);
@@ -408,75 +540,17 @@ const method = [
   .hero__actions {
     margin-top: var(--space-2);
   }
-  /* la escena: entra en desorden, sale capturado. Es el sitio en una imagen,
-     dibujada con tipografía y hairlines — nada de capturas de pantalla falsas */
-  .hero__flow {
-    margin: var(--space-7) 0 0;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
-    gap: var(--space-4);
-    padding: var(--space-4) var(--space-5);
-    background: var(--surface-card);
-    border: var(--hairline) solid var(--surface-border);
-    border-radius: var(--radius-xl);
-  }
-  .hero__flow-in {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: var(--space-2);
-  }
-  .hero__chip {
-    font-size: var(--text-caption);
-    letter-spacing: var(--tracking-caption);
-    color: var(--fg-secondary);
-    border: var(--hairline) dashed var(--fg-muted-ui);
-    border-radius: var(--radius-pill);
-    padding: var(--space-2) var(--space-3);
-  }
-  .hero__flow-arrow {
-    color: var(--interactive);
-    font-size: var(--text-h4);
-  }
-  .hero__flow-out {
-    display: grid;
-    gap: var(--space-1);
-    text-align: start;
-    border-inline-start: var(--hairline-strong) solid var(--interactive);
-    padding-inline-start: var(--space-4);
-  }
-  .hero__flow-title {
-    font-size: var(--text-small);
-    font-weight: var(--weight-medium);
-  }
-  @media (max-width: 48rem) {
-    .hero__flow {
-      flex-direction: column;
-    }
-    .hero__flow-arrow {
-      rotate: 90deg;
-    }
-    .hero__flow-out {
-      border-inline-start: 0;
-      border-block-start: var(--hairline-strong) solid var(--interactive);
-      padding-inline-start: 0;
-      padding-block-start: var(--space-3);
-      text-align: center;
-      justify-items: center;
-    }
-  }
-
   .hero__etym {
     margin-top: var(--space-6);
     max-width: var(--measure);
   }
 
-  /* --- 2 · Auto-diagnóstico --- */
+  /* --- 2 · Demo wrapper: la sección respira, el componente compone dentro --- */
+  .demo-wrap {
+    padding-block: 0;
+  }
+
+  /* --- 3 · Auto-diagnóstico --- */
   .check__card {
     margin-top: var(--space-8);
     padding: var(--space-4);
@@ -519,7 +593,6 @@ const method = [
     transition: background-color var(--dur-2) var(--ease-swift),
       border-color var(--dur-2) var(--ease-swift);
   }
-  /* la palomita se dibuja, no se importa: dos lados de una caja rotada */
   .check__box::after {
     content: "";
     width: 0.3em;
@@ -550,8 +623,6 @@ const method = [
     color: var(--fg);
     font-weight: var(--weight-medium);
   }
-  /* sin JS el contador no puede contar, así que no se muestra: display:flex
-     le gana al [hidden] del navegador si no se dice lo contrario */
   .check__summary[hidden] {
     display: none;
   }
@@ -582,6 +653,24 @@ const method = [
   .check__verdict {
     text-align: right;
   }
+  .check__handoff {
+    margin-top: var(--space-4);
+    padding-top: var(--space-4);
+    border-top: var(--hairline) solid var(--hairline-color);
+    display: flex;
+    justify-content: center;
+    animation: fadeUp var(--dur-4) var(--ease-rise);
+  }
+  .check__handoff[hidden] {
+    display: none;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; translate: 0 var(--space-3); }
+    to { opacity: 1; translate: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .check__handoff { animation: none; }
+  }
   .check__close {
     margin: var(--space-6) auto 0;
     text-align: center;
@@ -593,7 +682,124 @@ const method = [
     }
   }
 
-  /* --- 3 · Territorio --- */
+  /* --- 4 · Calculadora embebida --- */
+  .calc-embed__inner {
+    max-width: 64rem;
+  }
+
+  /* --- 5 · Precios --- */
+  .products__list {
+    list-style: none;
+    padding: 0;
+    margin: var(--space-8) 0 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(18rem, 100%), 1fr));
+    gap: var(--gutter);
+  }
+  .product {
+    display: grid;
+    gap: var(--space-5);
+    align-content: start;
+    position: relative;
+  }
+  .product__price-row {
+    display: grid;
+    gap: var(--space-2);
+    padding-bottom: var(--space-4);
+    border-bottom: var(--hairline) solid var(--hairline-color);
+  }
+  .product__price-strike {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    color: var(--fg-muted-ui);
+    font-size: var(--text-caption);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-caps);
+  }
+  .product__strike {
+    text-decoration: line-through;
+    font-size: var(--text-small);
+    color: var(--fg-muted-ui);
+  }
+  .product__price {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+  }
+  .product__price-label {
+    color: var(--interactive);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-caps);
+    font-size: var(--text-caption);
+    font-weight: var(--weight-medium);
+  }
+  .product__price-num {
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-weight: var(--weight-display);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--fg);
+  }
+  .product__unit {
+    color: var(--fg-muted-ui);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-caps);
+  }
+  .product__body {
+    display: grid;
+    gap: var(--space-3);
+  }
+  .product__text {
+    color: var(--fg-secondary);
+  }
+
+  .products__iva {
+    margin: var(--space-5) 0 0;
+    text-align: center;
+    color: var(--fg-muted-ui);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+  }
+
+  .products__notes {
+    margin-top: var(--space-8);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(18rem, 100%), 1fr));
+    gap: var(--gutter);
+  }
+  .products__credit,
+  .products__launch {
+    display: grid;
+    gap: var(--space-3);
+  }
+  .products__credit .body,
+  .products__launch .body {
+    max-width: none;
+  }
+  .products__guarantee {
+    background: linear-gradient(
+      135deg,
+      rgb(var(--rgb-surface) / 0.06) 0%,
+      rgb(var(--rgb-surface) / 0.02) 100%
+    );
+    border-color: var(--interactive);
+    display: grid;
+    gap: var(--space-3);
+  }
+  .products__guarantee .label {
+    color: var(--interactive);
+  }
+  .products__guarantee .body {
+    color: var(--fg);
+    font-size: var(--text-lead);
+    line-height: var(--leading-lead);
+    max-width: none;
+  }
+
+  /* --- 6 · Territorio + no tocamos --- */
   .territory__list {
     list-style: none;
     margin: var(--space-8) 0 0;
@@ -602,48 +808,27 @@ const method = [
   .territory__text {
     margin-top: var(--space-3);
   }
-
-  /* --- 4 · Oferta --- */
-  /* cuatro entregables: cuatro columnas o dos, nunca un 3+1 huérfano */
-  .offer__list {
-    list-style: none;
-    margin: var(--space-8) 0 0;
-    padding: 0;
-    grid-template-columns: repeat(2, 1fr);
-  }
-  @media (min-width: 64rem) {
-    .offer__list {
-      grid-template-columns: repeat(4, 1fr);
-    }
-  }
-  @media (max-width: 34rem) {
-    .offer__list {
-      grid-template-columns: 1fr;
-    }
-  }
-  .offer__num {
-    color: var(--interactive);
-    font-size: var(--text-h4);
-    font-weight: var(--weight-strong);
-  }
-  .offer__name {
-    margin-top: var(--space-3);
-  }
-  .offer__text {
-    margin-top: var(--space-2);
-  }
-  .offer__foot {
-    margin-top: var(--space-8);
+  .territory__not {
+    margin-top: var(--space-7);
     display: grid;
-    justify-items: center;
-    gap: var(--space-5);
-    text-align: center;
-  }
-  .offer__honesty {
+    gap: var(--space-3);
     max-width: var(--measure-wide);
+    margin-inline: auto;
+    background: var(--bg-raised);
+    border-left: var(--hairline-strong) solid var(--interactive);
+  }
+  .territory__not-label {
+    color: var(--interactive);
+  }
+  .territory__not-title {
+    margin: 0;
+  }
+  .territory__not .body {
+    max-width: none;
+    color: var(--fg);
   }
 
-  /* --- 5 · Reforma: la escala es el argumento --- */
+  /* --- 7 · Reforma --- */
   .reform__scale {
     list-style: none;
     margin: var(--space-8) 0 0;
@@ -651,7 +836,6 @@ const method = [
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     gap: var(--gutter);
-    counter-reset: none;
   }
   .reform__step {
     display: grid;
@@ -659,9 +843,7 @@ const method = [
     gap: var(--space-1);
     padding-top: var(--space-5);
     border-top: var(--hairline-strong) solid var(--hairline-color);
-    position: relative;
   }
-  /* el primer año es el de hoy: se marca, los demás son el descenso */
   .reform__step:first-child {
     border-top-color: var(--interactive);
   }
@@ -694,7 +876,7 @@ const method = [
     }
   }
 
-  /* --- 6 · Método --- */
+  /* --- 8 · Método --- */
   .method__list {
     list-style: none;
     margin: var(--space-8) 0 0;
@@ -735,7 +917,85 @@ const method = [
     margin-top: var(--space-3);
   }
 
-  /* --- 7 · Cierre --- */
+  /* --- 9 · Identidad --- */
+  .identity__head {
+    text-align: start;
+    justify-items: start;
+    max-width: var(--measure-wide);
+    margin-inline: 0;
+  }
+  .identity__title {
+    margin: 0;
+  }
+  .identity__text {
+    margin-top: var(--space-3);
+    color: var(--fg-secondary);
+  }
+
+  /* --- 10 · FAQ --- */
+  .faq__list {
+    list-style: none;
+    margin: var(--space-8) auto 0;
+    padding: 0;
+    max-width: var(--measure-wide);
+  }
+  .faq__item {
+    border-top: var(--hairline) solid var(--hairline-color);
+  }
+  .faq__item:last-child {
+    border-bottom: var(--hairline) solid var(--hairline-color);
+  }
+  .faq__details {
+    padding: var(--space-5) 0;
+  }
+  .faq__q {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-5);
+    cursor: pointer;
+    font-size: var(--text-h4);
+    font-weight: var(--weight-medium);
+    color: var(--fg);
+    line-height: var(--leading-h4);
+  }
+  .faq__q::-webkit-details-marker {
+    display: none;
+  }
+  .faq__q:focus-visible {
+    outline-offset: var(--space-2);
+  }
+  .faq__toggle {
+    flex: none;
+    width: var(--space-5);
+    height: var(--space-5);
+    position: relative;
+    color: var(--interactive);
+  }
+  .faq__toggle::before,
+  .faq__toggle::after {
+    content: "";
+    position: absolute;
+    inset: 50% 0;
+    height: var(--hairline-strong);
+    background: currentColor;
+    border-radius: var(--radius-pill);
+    transition: rotate var(--dur-2) var(--ease-swift);
+  }
+  .faq__toggle::after {
+    rotate: 90deg;
+  }
+  .faq__details[open] .faq__toggle::after {
+    rotate: 0deg;
+  }
+  .faq__a {
+    margin-top: var(--space-4);
+    max-width: none;
+    color: var(--fg-secondary);
+  }
+
+  /* --- 11 · Cierre --- */
   .closing {
     padding-block: clamp(var(--space-9), 10vw, var(--space-11));
   }

@@ -81,7 +81,7 @@ const notWeDo = [
         <p class="label eyebrow">El método</p>
         <h1 id="method-title" class="display">Medir. Priorizar. Construir.</h1>
         <p class="lead">
-          Una consultora recién fundada no puede enseñarte logotipos de clientes.
+          Una empresa recién fundada no puede enseñarte logotipos de clientes.
           Puede enseñarte algo mejor: exactamente cómo va a trabajar tu
           operación. Este es el método completo, sin adornos ni pasos secretos.
         </p>
@@ -109,6 +109,13 @@ const notWeDo = [
                   </div>
                 ))}
               </dl>
+              {s.num === "03" && (
+                <p class="small stage__demo">
+                  <a class="link link--arrow" href="/#demo">
+                    Ve cómo se ve funcionando
+                  </a>
+                </p>
+              )}
             </li>
           ))
         }
@@ -192,6 +199,16 @@ const notWeDo = [
   }
   .stage__answer {
     margin: 0;
+  }
+  .stage__demo {
+    margin-top: var(--space-6);
+    padding-top: var(--space-5);
+    border-top: var(--hairline) solid var(--hairline-color);
+  }
+  @media (min-width: 64rem) {
+    .stage__demo {
+      grid-column: 2 / -1;
+    }
   }
 
   .not-we-do__list {

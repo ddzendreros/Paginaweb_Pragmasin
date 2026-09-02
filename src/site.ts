@@ -14,7 +14,7 @@ interface SiteData {
 
 export const site: SiteData = {
   email: "contacto@pragmasyn.com",
-  whatsappNumber: "",
+  whatsappNumber: "525560628915",
 };
 
 /** Mensajes prellenados: distintos según de dónde salió la persona. */

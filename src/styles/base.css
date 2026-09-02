@@ -35,6 +35,13 @@ svg {
   max-width: 100%;
 }
 
+/* The [hidden] attribute has to win over any component's own display value —
+   otherwise a component that sets `display: grid` on its root cannot be
+   hidden with the attribute. This is the single rule that guarantees it. */
+[hidden] {
+  display: none !important;
+}
+
 /* --- skip link: first tab stop, visible only on focus --- */
 .skip-link {
   position: absolute;
