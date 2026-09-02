@@ -13,7 +13,7 @@ interface SiteData {
 }
 
 export const site: SiteData = {
-  email: "info@pragmasyn.com",
+  email: "contacto@pragmasyn.com",
   whatsappNumber: "",
 };
 
