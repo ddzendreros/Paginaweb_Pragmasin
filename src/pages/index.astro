@@ -18,16 +18,15 @@ const manualWork = [
   "Clasificar, nombrar y archivar documentos",
 ];
 
-// El único precio publicado es el del diagnóstico. Las implementaciones se
-// cotizan contra el proceso real medido en el diagnóstico: publicar un
-// "desde $X" abstracto asusta sin informar. Cada una lleva a /contacto con
-// el mensaje ya escrito, marcado con la llave `a=` que la página lee.
+// Ninguna cifra publicada en la home: el diagnóstico se cotiza al agendar
+// (con precio fijo por proceso, no por hora) y las implementaciones se
+// cotizan contra los datos que salen del diagnóstico. Cada una lleva a
+// /contacto con el mensaje ya escrito, marcado con la llave `a=` que la
+// página lee.
 const diagnosis = {
   name: "Diagnóstico de Horas Recuperables",
-  launch: "$45,000",
-  price: "$75,000",
-  unit: "cinco días · precio fijo",
-  text: "Medimos dónde se van las horas, priorizamos qué automatizar y dejamos una automatización corriendo.",
+  tag: "Cinco días · precio fijo",
+  text: "Medimos dónde se van las horas, priorizamos qué automatizar y dejamos una automatización corriendo. El precio se define al agendar, contra la operación que vamos a medir.",
 };
 
 const automations = [
@@ -222,28 +221,20 @@ const faq = [
           proceso.
         </h2>
         <p class="lead">
-          El diagnóstico tiene precio publicado y precio fijo. Las
-          implementaciones se cotizan contra los datos reales que salen del
-          diagnóstico — no contra un rango genérico que no dice nada.
+          Los precios se definen sobre datos reales de tu operación, no
+          sobre un rango genérico. Agendamos, medimos, y el número queda
+          por escrito antes de firmar.
         </p>
       </div>
 
       <article class="card card--feature entry" data-reveal>
-        <div class="entry__price">
-          <p class="entry__price-strike">
-            <span class="small">estándar</span>
-            <span class="numeral entry__strike">{diagnosis.price}</span>
-          </p>
-          <p class="entry__price-launch">
-            <span class="small entry__price-label">lanzamiento</span>
-            <span class="numeral entry__price-num">{diagnosis.launch}</span>
-          </p>
-          <p class="caption entry__unit">{diagnosis.unit}</p>
-        </div>
         <div class="entry__body">
+          <p class="entry__tag">
+            <span class="entry__tag-dot" aria-hidden="true"></span>
+            {diagnosis.tag}
+          </p>
           <h3 class="h3 entry__name">{diagnosis.name}</h3>
           <p class="body entry__text">{diagnosis.text}</p>
-          <p class="caption entry__iva">+ IVA</p>
           <a class="btn btn--primary entry__cta" href="/contacto?a=diagnostico">
             Agendar el diagnóstico
           </a>
@@ -251,16 +242,6 @@ const faq = [
       </article>
 
       <div class="products__notes" data-reveal>
-        <aside class="card products__launch">
-          <p class="label">Por qué $45,000 y no $75,000</p>
-          <p class="body">
-            Estamos documentando nuestros primeros tres casos. El precio de
-            lanzamiento es a cambio de poder publicar el resultado —con el
-            nombre de tu empresa o sin él, tú decides. Cuando los tres estén
-            cerrados, el precio es $75,000.
-          </p>
-        </aside>
-
         <aside class="card card--feature products__guarantee">
           <p class="label">Garantía</p>
           <p class="body">
@@ -272,8 +253,9 @@ const faq = [
         <aside class="card products__credit">
           <p class="label">Se acredita</p>
           <p class="body">
-            El diagnóstico se acredita al 100% contra cualquier
-            implementación si contratas dentro de los 30 días siguientes.
+            Lo que pagues por el diagnóstico se acredita al 100% contra
+            cualquier implementación que contrates dentro de los 30 días
+            siguientes.
           </p>
         </aside>
       </div>
@@ -706,86 +688,44 @@ const faq = [
   }
 
   /* --- 5 · Punto de entrada + automatizaciones ---
-     Un solo precio publicado (el diagnóstico) en una ficha grande y
-     centrada. Debajo, las tres implementaciones sin precio, con la promesa
-     de cotización al proceso: la conversación de precio ocurre después
-     de medir, no antes de conocerse. */
+     Nada de dinero publicado. La ficha del diagnóstico se lee como una
+     promesa de proceso, no como una etiqueta de precio: el número queda
+     por escrito una vez que la conversación mide la operación real. */
   .entry {
     margin-top: var(--space-8);
-    max-width: 56rem;
+    max-width: 44rem;
     margin-inline: auto;
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
-    gap: var(--space-6) clamp(var(--space-6), 5vw, var(--space-8));
-    align-items: center;
     background: linear-gradient(
       145deg,
       rgb(var(--rgb-surface) / 0.055) 0%,
       rgb(var(--rgb-surface) / 0.015) 100%
     );
   }
-  @media (max-width: 44rem) {
-    .entry {
-      grid-template-columns: 1fr;
-    }
-  }
-  .entry__price {
-    display: grid;
-    gap: var(--space-2);
-    padding-inline-end: clamp(var(--space-5), 4vw, var(--space-7));
-    border-inline-end: var(--hairline) solid var(--hairline-color);
-  }
-  @media (max-width: 44rem) {
-    .entry__price {
-      padding-inline-end: 0;
-      padding-block-end: var(--space-5);
-      border-inline-end: 0;
-      border-block-end: var(--hairline) solid var(--hairline-color);
-    }
-  }
-  .entry__price-strike {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    color: var(--fg-muted-ui);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-caps);
-  }
-  .entry__strike {
-    text-decoration: line-through;
-    font-size: var(--text-small);
-  }
-  .entry__price-launch {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: var(--space-3);
-    flex-wrap: wrap;
-  }
-  .entry__price-label {
-    color: var(--interactive);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-caps);
-    font-size: var(--text-caption);
-    font-weight: var(--weight-medium);
-  }
-  .entry__price-num {
-    font-size: clamp(2.5rem, 6vw, 3.75rem);
-    font-weight: var(--weight-display);
-    line-height: 1;
-    letter-spacing: -0.03em;
-    color: var(--fg);
-  }
-  .entry__unit {
-    margin-top: var(--space-2);
-    color: var(--fg-muted-ui);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-caps);
-  }
   .entry__body {
     display: grid;
-    gap: var(--space-3);
+    gap: var(--space-4);
     align-content: start;
+  }
+  .entry__tag {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    align-self: start;
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-pill);
+    background: rgb(var(--rgb-surface) / 0.06);
+    border: var(--hairline) solid var(--surface-border);
+    color: var(--fg-secondary);
+    font-size: var(--text-small);
+    font-weight: var(--weight-medium);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-caps);
+  }
+  .entry__tag-dot {
+    width: var(--space-2);
+    height: var(--space-2);
+    border-radius: 50%;
+    background: var(--interactive);
   }
   .entry__name {
     margin: 0;
@@ -793,11 +733,6 @@ const faq = [
   .entry__text {
     color: var(--fg-secondary);
     max-width: none;
-  }
-  .entry__iva {
-    color: var(--fg-muted-ui);
-    letter-spacing: var(--tracking-caps);
-    text-transform: uppercase;
   }
   .entry__cta {
     margin-top: var(--space-3);
