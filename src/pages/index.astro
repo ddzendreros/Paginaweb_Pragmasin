@@ -18,15 +18,15 @@ const manualWork = [
   "Clasificar, nombrar y archivar documentos",
 ];
 
-// Ninguna cifra publicada en la home: el diagnóstico se cotiza al agendar
-// (con precio fijo por proceso, no por hora) y las implementaciones se
-// cotizan contra los datos que salen del diagnóstico. Cada una lleva a
+// Ninguna cifra publicada en la home: el diagnóstico se cotiza al
+// agendar, contra la operación real; las implementaciones se cotizan
+// contra los datos que salen del diagnóstico. Cada tarjeta lleva a
 // /contacto con el mensaje ya escrito, marcado con la llave `a=` que la
 // página lee.
 const diagnosis = {
   name: "Diagnóstico de Horas Recuperables",
-  tag: "Cinco días · precio fijo",
-  text: "Medimos dónde se van las horas, priorizamos qué automatizar y dejamos una automatización corriendo. El precio se define al agendar, contra la operación que vamos a medir.",
+  tag: "El primer paso",
+  text: "Entramos a tu operación con datos, no con propuestas. Medimos dónde se van las horas, priorizamos qué automatizar y arrancamos la primera pieza contigo. El precio se define al agendar, contra la operación que vamos a medir.",
 };
 
 const automations = [
@@ -110,11 +110,11 @@ const faq = [
   },
   {
     q: "¿Qué pasa si no encuentran horas suficientes?",
-    a: "Si al quinto día no encontramos al menos 80 horas al mes recuperables, te lo decimos y no cobramos. Preferimos eso a venderte un proyecto que no necesitas.",
+    a: "Si al medir no encontramos horas recuperables que valgan la pena, te lo decimos y no cobramos. Preferimos eso a venderte un proyecto que no necesitas.",
   },
   {
     q: "¿Cuánto tiempo de mi gente ocupa el diagnóstico?",
-    a: "Seis horas en total, repartidas en cinco días. Necesitamos hablar con quien hace el trabajo, no con quien lo describe. El resto lo hacemos nosotros.",
+    a: "Un par de conversaciones cortas con quien hace el trabajo, no con quien lo describe. El resto lo hacemos nosotros.",
   },
 ];
 ---
@@ -123,7 +123,7 @@ const faq = [
   title="Pragmasyn — Lo que hoy se captura a mano puede entrar solo"
   description="Facturas en PDF, pedidos por WhatsApp, el reporte del lunes. Medimos cuántas horas al mes te cuesta y hacemos que entren solas — sobre el sistema que ya tienes."
   ogTitle="Alguien en tu empresa teclea lo que ya venía escrito."
-  ogDescription="Facturas en PDF, pedidos por WhatsApp, el reporte del lunes. Lo que se hace a mano puede entrar solo. Diagnóstico de 5 días, precio fijo."
+  ogDescription="Facturas en PDF, pedidos por WhatsApp, el reporte del lunes. Lo que se hace a mano puede entrar solo. Empezamos por el diagnóstico."
   path="/"
 >
   <!-- 1 · Hero — H1 sin data-reveal para no romper el LCP -->
@@ -245,17 +245,16 @@ const faq = [
         <aside class="card card--feature products__guarantee">
           <p class="label">Garantía</p>
           <p class="body">
-            Si al quinto día no encontramos al menos 80 horas al mes
-            recuperables, no cobramos el diagnóstico.
+            Si al medir no encontramos horas recuperables que valgan la
+            pena, no cobramos el diagnóstico.
           </p>
         </aside>
 
         <aside class="card products__credit">
           <p class="label">Se acredita</p>
           <p class="body">
-            Lo que pagues por el diagnóstico se acredita al 100% contra
-            cualquier implementación que contrates dentro de los 30 días
-            siguientes.
+            Lo que pagues por el diagnóstico se acredita contra la
+            implementación que decidas contratar después.
           </p>
         </aside>
       </div>
