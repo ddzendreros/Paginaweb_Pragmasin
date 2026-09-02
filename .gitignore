@@ -9,3 +9,11 @@ docs/DATOS.md
 docs/MAPA.md
 docs/PROPUESTAS-COPY.md
 .claude/
+
+# Entorno local y variables de entorno
+.env
+.env*.local
+.env.production
+.env.development
+
+

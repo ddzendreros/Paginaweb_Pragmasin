@@ -148,6 +148,7 @@ const sizes = ["menos de 50", "50–150", "150–500", "más de 500"];
   // El endpoint es requisito de lanzamiento (TODO-CONTENIDO.md); sin él el
   // formulario degrada al mensaje de error que apunta al contacto directo.
   const endpoint = import.meta.env.PUBLIC_FORM_ENDPOINT as string | undefined;
+  const web3Key = import.meta.env.PUBLIC_WEB3FORMS_KEY as string | undefined;
   const form = document.querySelector<HTMLFormElement>(".contact-form");
   const waNumber = form?.dataset.waNumber ?? "";
 
@@ -187,6 +188,8 @@ const sizes = ["menos de 50", "50–150", "150–500", "más de 500"];
     const button = form.querySelector<HTMLButtonElement>("button[type=submit]");
     if (!status || !button) return;
 
+    status.textContent = "";
+
     // Si el envío no sale, la conversación no se pierde: se ofrece el mismo
     // mensaje por WhatsApp, ya escrito.
     const fail = (): void => {
@@ -214,10 +217,15 @@ const sizes = ["menos de 50", "50–150", "150–500", "más de 500"];
 
     button.classList.add("btn--loading");
     button.setAttribute("aria-busy", "true");
+    const payload: Record<string, string> = { name, company, email, size, message };
+    if (web3Key) {
+      payload.access_key = web3Key;
+      payload.subject = `Nuevo contacto Pragmasyn: ${name} (${company})`;
+    }
     fetch(endpoint, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, company, email, size, message }),
+      headers: { "Content-Type": "application/json", "Accept": "application/json" },
+      body: JSON.stringify(payload),
     })
       .then((res) => {
         if (!res.ok) throw new Error(String(res.status));
