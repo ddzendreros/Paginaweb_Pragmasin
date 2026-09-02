@@ -18,34 +18,32 @@ const manualWork = [
   "Clasificar, nombrar y archivar documentos",
 ];
 
-// Cuatro productos con precio visible. IVA se anuncia una sola vez al pie.
-const products = [
+// El único precio publicado es el del diagnóstico. Las implementaciones se
+// cotizan contra el proceso real medido en el diagnóstico: publicar un
+// "desde $X" abstracto asusta sin informar. Cada una lleva a /contacto con
+// el mensaje ya escrito, marcado con la llave `a=` que la página lee.
+const diagnosis = {
+  name: "Diagnóstico de Horas Recuperables",
+  launch: "$45,000",
+  price: "$75,000",
+  unit: "cinco días · precio fijo",
+  text: "Medimos dónde se van las horas, priorizamos qué automatizar y dejamos una automatización corriendo.",
+};
+
+const automations = [
   {
-    name: "Diagnóstico de Horas Recuperables",
-    launch: "$45,000",
-    price: "$75,000",
-    unit: "cinco días",
-    text: "Medimos dónde se van las horas, priorizamos qué automatizar y dejamos una automatización corriendo.",
-  },
-  {
+    key: "facturas",
     name: "Facturas de proveedor que entran solas",
-    launch: null,
-    price: "desde $85,000",
-    unit: "implementación",
     text: "PDF y correo → tu sistema, con validación contra la orden de compra.",
   },
   {
+    key: "whatsapp",
     name: "Pedidos de WhatsApp al sistema",
-    launch: null,
-    price: "desde $95,000",
-    unit: "implementación",
     text: "Mensaje desordenado → pedido estructurado, con contexto del cliente.",
   },
   {
+    key: "reportes",
     name: "El reporte que se arma solo",
-    launch: null,
-    price: "desde $60,000",
-    unit: "implementación",
     text: "Datos de varios lados → el reporte, sin que nadie lo arme.",
   },
 ];
@@ -214,62 +212,46 @@ const faq = [
     </div>
   </section>
 
-  <!-- 5 · Qué compras exactamente -->
+  <!-- 5 · Punto de entrada + automatizaciones cotizadas al proceso -->
   <section class="ground-dark act products" id="precios" aria-labelledby="products-title">
     <div class="act__inner">
       <div class="act__head" data-reveal>
-        <p class="label eyebrow">Precio visible</p>
-        <h2 id="products-title" class="h2">Qué compras exactamente.</h2>
+        <p class="label eyebrow">Punto de entrada</p>
+        <h2 id="products-title" class="h2">
+          Empieza por el diagnóstico. Cada automatización se cotiza con tu
+          proceso.
+        </h2>
         <p class="lead">
-          Cosas comprables con precio publicado. No propuestas de sesenta
-          páginas.
+          El diagnóstico tiene precio publicado y precio fijo. Las
+          implementaciones se cotizan contra los datos reales que salen del
+          diagnóstico — no contra un rango genérico que no dice nada.
         </p>
       </div>
 
-      <ul class="products__list">
-        {
-          products.map((p) => (
-            <li class="card card--feature product" data-reveal>
-              <div class="product__price-row">
-                {p.launch && (
-                  <p class="product__price-strike">
-                    <span class="small">estándar</span>
-                    <span class="numeral product__strike">{p.price}</span>
-                  </p>
-                )}
-                <p class="product__price">
-                  {p.launch ? (
-                    <>
-                      <span class="small product__price-label">lanzamiento</span>
-                      <span class="numeral product__price-num">{p.launch}</span>
-                    </>
-                  ) : (
-                    <span class="numeral product__price-num">{p.price}</span>
-                  )}
-                </p>
-                <p class="caption product__unit">{p.unit}</p>
-              </div>
-              <div class="product__body">
-                <h3 class="h4 product__name">{p.name}</h3>
-                <p class="small product__text">{p.text}</p>
-              </div>
-            </li>
-          ))
-        }
-      </ul>
-
-      <p class="caption products__iva" data-reveal>Todos los precios + IVA.</p>
-
-      <div class="products__notes">
-        <aside class="card products__credit" data-reveal>
-          <p class="label">Se acredita</p>
-          <p class="body">
-            El diagnóstico se acredita al 100% contra cualquiera de los otros
-            tres si contratas dentro de los 30 días siguientes.
+      <article class="card card--feature entry" data-reveal>
+        <div class="entry__price">
+          <p class="entry__price-strike">
+            <span class="small">estándar</span>
+            <span class="numeral entry__strike">{diagnosis.price}</span>
           </p>
-        </aside>
+          <p class="entry__price-launch">
+            <span class="small entry__price-label">lanzamiento</span>
+            <span class="numeral entry__price-num">{diagnosis.launch}</span>
+          </p>
+          <p class="caption entry__unit">{diagnosis.unit}</p>
+        </div>
+        <div class="entry__body">
+          <h3 class="h3 entry__name">{diagnosis.name}</h3>
+          <p class="body entry__text">{diagnosis.text}</p>
+          <p class="caption entry__iva">+ IVA</p>
+          <a class="btn btn--primary entry__cta" href="/contacto?a=diagnostico">
+            Agendar el diagnóstico
+          </a>
+        </div>
+      </article>
 
-        <aside class="card products__launch" data-reveal>
+      <div class="products__notes" data-reveal>
+        <aside class="card products__launch">
           <p class="label">Por qué $45,000 y no $75,000</p>
           <p class="body">
             Estamos documentando nuestros primeros tres casos. El precio de
@@ -279,13 +261,49 @@ const faq = [
           </p>
         </aside>
 
-        <aside class="card card--feature products__guarantee" data-reveal>
+        <aside class="card card--feature products__guarantee">
           <p class="label">Garantía</p>
           <p class="body">
             Si al quinto día no encontramos al menos 80 horas al mes
             recuperables, no cobramos el diagnóstico.
           </p>
         </aside>
+
+        <aside class="card products__credit">
+          <p class="label">Se acredita</p>
+          <p class="body">
+            El diagnóstico se acredita al 100% contra cualquier
+            implementación si contratas dentro de los 30 días siguientes.
+          </p>
+        </aside>
+      </div>
+
+      <div class="automations">
+        <div class="automations__head" data-reveal>
+          <p class="label eyebrow">Después del diagnóstico</p>
+          <h3 class="h3 automations__title">
+            Tres tipos de automatización que ya sabemos hacer.
+          </h3>
+          <p class="small automations__lead">
+            Cada una se cotiza contra tu proceso real: cuántos documentos,
+            cuánta variación, qué tanto criterio se necesita. En el diagnóstico
+            queda el alcance y el precio por escrito.
+          </p>
+        </div>
+
+        <ul class="automations__list">
+          {
+            automations.map((a) => (
+              <li class="card automation" data-reveal>
+                <h4 class="h4 automation__name">{a.name}</h4>
+                <p class="small automation__text">{a.text}</p>
+                <a class="link link--arrow automation__cta" href={`/contacto?a=${a.key}`}>
+                  Cotizar este proceso
+                </a>
+              </li>
+            ))
+          }
+        </ul>
       </div>
     </div>
   </section>
@@ -687,85 +705,107 @@ const faq = [
     max-width: 64rem;
   }
 
-  /* --- 5 · Precios --- */
-  .products__list {
-    list-style: none;
-    padding: 0;
-    margin: var(--space-8) 0 0;
+  /* --- 5 · Punto de entrada + automatizaciones ---
+     Un solo precio publicado (el diagnóstico) en una ficha grande y
+     centrada. Debajo, las tres implementaciones sin precio, con la promesa
+     de cotización al proceso: la conversación de precio ocurre después
+     de medir, no antes de conocerse. */
+  .entry {
+    margin-top: var(--space-8);
+    max-width: 56rem;
+    margin-inline: auto;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(18rem, 100%), 1fr));
-    gap: var(--gutter);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+    gap: var(--space-6) clamp(var(--space-6), 5vw, var(--space-8));
+    align-items: center;
+    background: linear-gradient(
+      145deg,
+      rgb(var(--rgb-surface) / 0.055) 0%,
+      rgb(var(--rgb-surface) / 0.015) 100%
+    );
   }
-  .product {
-    display: grid;
-    gap: var(--space-5);
-    align-content: start;
-    position: relative;
+  @media (max-width: 44rem) {
+    .entry {
+      grid-template-columns: 1fr;
+    }
   }
-  .product__price-row {
+  .entry__price {
     display: grid;
     gap: var(--space-2);
-    padding-bottom: var(--space-4);
-    border-bottom: var(--hairline) solid var(--hairline-color);
+    padding-inline-end: clamp(var(--space-5), 4vw, var(--space-7));
+    border-inline-end: var(--hairline) solid var(--hairline-color);
   }
-  .product__price-strike {
+  @media (max-width: 44rem) {
+    .entry__price {
+      padding-inline-end: 0;
+      padding-block-end: var(--space-5);
+      border-inline-end: 0;
+      border-block-end: var(--hairline) solid var(--hairline-color);
+    }
+  }
+  .entry__price-strike {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
     color: var(--fg-muted-ui);
-    font-size: var(--text-caption);
     text-transform: uppercase;
     letter-spacing: var(--tracking-caps);
   }
-  .product__strike {
+  .entry__strike {
     text-decoration: line-through;
     font-size: var(--text-small);
-    color: var(--fg-muted-ui);
   }
-  .product__price {
+  .entry__price-launch {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
     gap: var(--space-3);
     flex-wrap: wrap;
   }
-  .product__price-label {
+  .entry__price-label {
     color: var(--interactive);
     text-transform: uppercase;
     letter-spacing: var(--tracking-caps);
     font-size: var(--text-caption);
     font-weight: var(--weight-medium);
   }
-  .product__price-num {
-    font-size: clamp(1.75rem, 4vw, 2.5rem);
+  .entry__price-num {
+    font-size: clamp(2.5rem, 6vw, 3.75rem);
     font-weight: var(--weight-display);
     line-height: 1;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.03em;
     color: var(--fg);
   }
-  .product__unit {
+  .entry__unit {
+    margin-top: var(--space-2);
     color: var(--fg-muted-ui);
     text-transform: uppercase;
     letter-spacing: var(--tracking-caps);
   }
-  .product__body {
+  .entry__body {
     display: grid;
     gap: var(--space-3);
+    align-content: start;
   }
-  .product__text {
+  .entry__name {
+    margin: 0;
+  }
+  .entry__text {
     color: var(--fg-secondary);
+    max-width: none;
   }
-
-  .products__iva {
-    margin: var(--space-5) 0 0;
-    text-align: center;
+  .entry__iva {
     color: var(--fg-muted-ui);
     letter-spacing: var(--tracking-caps);
     text-transform: uppercase;
+  }
+  .entry__cta {
+    margin-top: var(--space-3);
+    justify-self: start;
   }
 
   .products__notes {
-    margin-top: var(--space-8);
+    margin-top: var(--space-7);
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(18rem, 100%), 1fr));
     gap: var(--gutter);
@@ -797,6 +837,51 @@ const faq = [
     font-size: var(--text-lead);
     line-height: var(--leading-lead);
     max-width: none;
+  }
+
+  /* --- Automatizaciones (sin precio, con handoff propio) --- */
+  .automations {
+    margin-top: clamp(var(--space-9), 8vw, var(--space-10));
+    padding-top: var(--space-7);
+    border-top: var(--hairline) solid var(--hairline-color);
+  }
+  .automations__head {
+    display: grid;
+    gap: var(--space-3);
+    max-width: var(--measure-wide);
+    margin-bottom: var(--space-7);
+  }
+  .automations__title {
+    margin: 0;
+  }
+  .automations__lead {
+    color: var(--fg-secondary);
+    max-width: var(--measure-wide);
+  }
+  .automations__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(18rem, 100%), 1fr));
+    gap: var(--gutter);
+  }
+  .automation {
+    display: grid;
+    gap: var(--space-3);
+    align-content: start;
+  }
+  .automation__name {
+    margin: 0;
+  }
+  .automation__text {
+    color: var(--fg-secondary);
+    margin: 0;
+  }
+  .automation__cta {
+    margin-top: var(--space-3);
+    padding-top: var(--space-4);
+    border-top: var(--hairline) solid var(--hairline-color);
   }
 
   /* --- 6 · Territorio + no tocamos --- */

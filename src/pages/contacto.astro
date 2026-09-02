@@ -156,23 +156,43 @@ const sizes = ["menos de 50", "50–150", "150–500", "más de 500"];
   const form = document.querySelector<HTMLFormElement>(".contact-form");
   const waNumber = form?.dataset.waNumber ?? "";
 
-  // Handoff desde /calculadora: `?h=` horas al mes, `?d=` dinero al año.
-  // Se preserva la voz de la calculadora y se avisa arriba que el mensaje
-  // trae contenido.
+  // Handoff desde la home: dos fuentes distintas prellenan el mismo
+  // mensaje. `?h=&d=` viene de la calculadora; `?a=` de las tarjetas de
+  // "Después del diagnóstico" y del CTA del diagnóstico. Solo se toca el
+  // mensaje si el usuario no ha empezado a escribir.
   const params = new URLSearchParams(window.location.search);
+  const message = form?.querySelector<HTMLTextAreaElement>("#cf-message");
+  const handoff = document.querySelector<HTMLElement>("[data-calc-handoff]");
+  const setMessage = (text: string): void => {
+    if (!message) return;
+    if (message.value.trim().length > 0) return;
+    message.value = text;
+    if (handoff) handoff.hidden = false;
+  };
+
   const h = parseInt(params.get("h") ?? "", 10);
   const d = parseInt(params.get("d") ?? "", 10);
   if (Number.isFinite(h) && h > 0 && Number.isFinite(d) && d > 0) {
     const mx = new Intl.NumberFormat("es-MX");
-    const message = form?.querySelector<HTMLTextAreaElement>("#cf-message");
-    if (message && message.value.trim().length === 0) {
-      message.value =
-        "Calculé " + mx.format(h) + " horas al mes y $" + mx.format(d) +
-        " al año. Quiero ver el desglose.";
-    }
-    const handoff = document.querySelector<HTMLElement>("[data-calc-handoff]");
-    if (handoff) handoff.hidden = false;
+    setMessage(
+      "Calculé " + mx.format(h) + " horas al mes y $" + mx.format(d) +
+        " al año. Quiero ver el desglose.",
+    );
   }
+
+  const automationPrefills: Record<string, string> = {
+    diagnostico:
+      "Me interesa agendar el diagnóstico de 5 días. Cuéntenme cómo empezamos.",
+    facturas:
+      "Me interesa automatizar la captura de facturas de proveedor. Hoy llegan por correo y en PDF, y alguien las teclea a mano.",
+    whatsapp:
+      "Me interesa automatizar los pedidos que llegan por WhatsApp. Hoy alguien los transcribe al sistema.",
+    reportes:
+      "Me interesa automatizar el reporte que hoy se arma a mano. Los datos vienen de varios lados.",
+  };
+  const a = params.get("a") ?? "";
+  const preset = automationPrefills[a];
+  if (preset) setMessage(preset);
 
   // El botón queda deshabilitado hasta que se acepte el aviso de privacidad.
   const consent = form?.querySelector<HTMLInputElement>("#cf-consent");
