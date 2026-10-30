@@ -1,6 +1,7 @@
 ---
 import Configurator from "../components/Configurator.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { waMessages, whatsappUrl } from "../site";
 
 const contrast: [string, string][] = [
   [
@@ -62,6 +63,71 @@ const tiles: Tile[] = [
     wide: false,
   },
 ];
+const accompaniment: [string, string, string][] = [
+  ["01", "Hablas con quien lo construye", "Un canal directo, sin intermediarios ni tickets."],
+  [
+    "02",
+    "Ves el avance mientras se hace",
+    "Pruebas el software desde temprano y lo corregimos contigo.",
+  ],
+  [
+    "03",
+    "Tu equipo aprende a usarlo",
+    "Capacitamos a quienes lo van a usar todos los días.",
+  ],
+  [
+    "04",
+    "Seguimos después de entregar",
+    "Si algo falla o tu operación cambia, aquí estamos.",
+  ],
+];
+
+const ownership: [string, string][] = [
+  ["Pago", "Único"],
+  ["Dueño del software", "Tu empresa"],
+  ["Renta por usuario", "No hay"],
+  ["Funciones que no usas", "Ninguna"],
+];
+
+// Cases need the client's permission (D7). None are approved, so none ship:
+// with the list empty the section does not exist in the HTML.
+interface Case {
+  sector: string;
+  before: string;
+  built: string;
+  after: string;
+}
+const cases: Case[] = [];
+
+const faq: [string, string][] = [
+  [
+    "¿Cuánto cuesta?",
+    "Depende de lo que haya que construir. Primero entendemos qué necesitas. Después te decimos cuánto cuesta y qué incluye, por escrito, antes de que firmes nada.",
+  ],
+  [
+    "¿Cuánto tarda?",
+    "No prometemos fechas antes de entender el problema. Cuando lo entendemos, te damos un plazo y te enseñamos avances desde el principio.",
+  ],
+  [
+    "¿Necesito saber de tecnología?",
+    "No. Tú conoces tu negocio. Nosotros nos encargamos de lo técnico y te lo explicamos sin rodeos.",
+  ],
+  [
+    "¿Y si ya uso un SaaS o un sistema?",
+    "Lo revisamos contigo. Si te conviene conservarlo, lo conectamos. Si te conviene dejarlo, construimos el reemplazo y te ayudamos a mover tu información.",
+  ],
+  ["¿De quién es el software?", "Tuyo. Pagas una vez y es de tu empresa."],
+  [
+    "¿Van a contar que trabajamos juntos?",
+    "No. No publicamos nombres ni logotipos de clientes.",
+  ],
+  [
+    "¿Es para una empresa chica?",
+    "Sí. Trabajamos con PyMEs de cualquier tamaño y giro.",
+  ],
+];
+
+const waHref = whatsappUrl(waMessages.flotante);
 ---
 
 <BaseLayout
@@ -219,6 +285,144 @@ const tiles: Tile[] = [
       <p class="build__more" data-reveal>
         <a class="link link--arrow" href="/contacto">¿No ves lo tuyo? Mejor. Cuéntanos.</a>
       </p>
+    </div>
+  </section>
+
+  <section class="act company" aria-labelledby="acomp-title">
+    <div class="act__inner grid-12">
+      <div class="company__card" data-reveal>
+        <p class="label label--rule">Acompañamiento</p>
+        <h2 id="acomp-title" class="h2">
+          No desaparecemos <em>después de entregar.</em>
+        </h2>
+        <p class="lead">Lo importante no es el software. Es que tu día a día se sienta mejor.</p>
+      </div>
+      <ol class="company__steps">
+        {
+          accompaniment.map(([num, title, text]) => (
+            <li class="step" data-reveal>
+              <span class="caption numeral step__num">{num}</span>
+              <h3 class="h3 step__title">{title}</h3>
+              <p class="step__text">{text}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="chapter ground-dark act" aria-labelledby="tuyo-title">
+    <div class="act__inner grid-12">
+      <div class="own__head" data-reveal>
+        <p class="label label--rule">Propiedad</p>
+        <h2 id="tuyo-title" class="display-2">
+          Se paga una vez. <em>Y es tuyo.</em>
+        </h2>
+        <p class="lead">
+          Sin renta mensual por usuario. Sin contratos que te amarren. Lo que construimos para tu
+          empresa es de tu empresa.
+        </p>
+      </div>
+      <dl class="own__rail" data-reveal>
+        {
+          ownership.map(([concept, value]) => (
+            <div class="own__row">
+              <dt class="label">{concept}</dt>
+              <dd>{value}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </section>
+
+  {
+    cases.length > 0 && (
+      <section class="act cases" aria-labelledby="casos-title">
+        <div class="act__inner">
+          <div class="head" data-reveal>
+            <p class="label label--rule">Casos</p>
+            <h2 id="casos-title" class="h2 head__title">
+              Tu operación no aparece <em>en nuestro sitio.</em>
+            </h2>
+            <p class="lead">
+              Por eso aquí no hay logotipos. Contamos lo que hicimos sin decir para quién.
+            </p>
+          </div>
+          <ul class="cases__list">
+            {cases.map((c) => (
+              <li class="cases__item">
+                <dl>
+                  <div>
+                    <dt class="label">Giro y tamaño aproximado</dt>
+                    <dd>{c.sector}</dd>
+                  </div>
+                  <div>
+                    <dt class="label">Qué pasaba</dt>
+                    <dd>{c.before}</dd>
+                  </div>
+                  <div>
+                    <dt class="label">Qué construimos</dt>
+                    <dd>{c.built}</dd>
+                  </div>
+                  <div>
+                    <dt class="label">Qué cambió</dt>
+                    <dd>{c.after}</dd>
+                  </div>
+                </dl>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    )
+  }
+
+  <section class="act faq" aria-labelledby="faq-title">
+    <div class="act__inner grid-12">
+      <div class="faq__head" data-reveal>
+        <p class="label label--rule">Preguntas</p>
+        <h2 id="faq-title" class="h2">
+          Lo que conviene saber <em>antes de empezar.</em>
+        </h2>
+      </div>
+      <div class="faq__list" data-reveal>
+        {
+          faq.map(([question, answer]) => (
+            <details class="qa">
+              <summary class="qa__q">
+                <span class="h3">{question}</span>
+                <span class="qa__icon" aria-hidden="true" />
+              </summary>
+              <p class="qa__a">{answer}</p>
+            </details>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="chapter ground-dark act closing-act" aria-labelledby="cierre-title">
+    <div class="act__inner">
+      <div class="closing" data-reveal>
+        <h2 id="cierre-title" class="display-2">
+          ¿Qué te gustaría <em>dejar de hacer?</em>
+        </h2>
+        <p class="lead">
+          Cuéntanoslo como te salga. Te contesta una persona y te decimos con honestidad si te
+          podemos ayudar.
+        </p>
+        <div class="actions closing__actions">
+          <a class="btn btn--primary" href="/contacto">Cuéntanos tu idea</a>
+          {
+            waHref && (
+              <a class="btn btn--secondary" href={waHref} target="_blank" rel="noopener">
+                Escribir por WhatsApp
+              </a>
+            )
+          }
+        </div>
+      </div>
     </div>
   </section>
 </BaseLayout>
@@ -556,5 +760,190 @@ const tiles: Tile[] = [
   .art-phone__row--short {
     width: 60%;
     background: var(--interactive);
+  }
+
+  /* --- 4. Acompañamiento -------------------------------------------------- */
+  .company__card {
+    --col: 1 / span 5;
+    --fg: var(--warm-ink);
+    --fg-secondary: var(--warm-ink);
+    --hairline-color: var(--warm-ink);
+    position: sticky;
+    inset-block-start: var(--space-9);
+    align-self: start;
+    display: grid;
+    gap: var(--space-4);
+    padding: var(--space-7) var(--space-6);
+    background: var(--warm-100);
+    color: var(--warm-ink);
+    border-radius: var(--radius-xl);
+  }
+  .company__steps {
+    --col: 7 / span 6;
+  }
+  .step {
+    display: grid;
+    grid-template-columns: var(--space-7) 1fr;
+    column-gap: var(--space-3);
+    row-gap: var(--space-2);
+    padding-block: var(--space-6);
+    border-block-start: var(--hairline) solid var(--hairline-color);
+  }
+  .step:last-child {
+    border-block-end: var(--hairline) solid var(--hairline-color);
+  }
+  .step__num {
+    grid-row: 1;
+    padding-block-start: var(--space-1);
+  }
+  .step__title,
+  .step__text {
+    grid-column: 2;
+  }
+  .step__text {
+    max-width: var(--measure);
+    color: var(--fg-secondary);
+    text-wrap: pretty;
+  }
+  @media (width <= 56rem) {
+    .company__card {
+      position: static;
+      margin-block-end: var(--space-7);
+    }
+  }
+
+  /* --- 5. Es tuyo -------------------------------------------------------- */
+  .own__head {
+    --col: 1 / span 7;
+    display: grid;
+    gap: var(--space-5);
+    align-content: start;
+  }
+  .own__rail {
+    --col: 8 / span 5;
+    align-self: end;
+  }
+  .own__row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding-block: var(--space-5);
+    border-block-start: var(--hairline) solid var(--hairline-color);
+  }
+  .own__row:last-child {
+    border-block-end: var(--hairline) solid var(--hairline-color);
+  }
+  .own__row dd {
+    font-family: var(--font-display);
+    font-size: var(--text-h3);
+    line-height: var(--leading-h3);
+    letter-spacing: var(--tracking-h3);
+    text-align: end;
+  }
+  @media (width <= 56rem) {
+    .own__head {
+      margin-block-end: var(--space-7);
+    }
+  }
+
+  /* --- 6. Casos (solo con contenido autorizado) -------------------------- */
+  .cases__list {
+    display: grid;
+    gap: var(--space-6);
+  }
+  .cases__item {
+    padding-block-start: var(--space-5);
+    border-block-start: var(--hairline) solid var(--hairline-color);
+  }
+  .cases__item dl {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--gutter);
+  }
+  .cases__item dd {
+    margin-block-start: var(--space-2);
+  }
+  @media (width <= 56rem) {
+    .cases__item dl {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* --- 7. FAQ ------------------------------------------------------------ */
+  .faq__head {
+    --col: 1 / span 4;
+    display: grid;
+    gap: var(--space-4);
+    align-content: start;
+  }
+  .faq__list {
+    --col: 5 / span 8;
+    border-block-end: var(--hairline) solid var(--hairline-color);
+  }
+  @media (width <= 56rem) {
+    .faq__head {
+      margin-block-end: var(--space-7);
+    }
+  }
+  .qa {
+    border-block-start: var(--hairline) solid var(--hairline-color);
+  }
+  .qa__q {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-5);
+    min-height: 44px;
+    padding-block: var(--space-5);
+    cursor: pointer;
+    list-style: none;
+    transition: color var(--dur-1) var(--ease-out);
+  }
+  .qa__q::-webkit-details-marker {
+    display: none;
+  }
+  .qa__q:hover {
+    color: var(--interactive);
+  }
+  .qa__q:focus-visible {
+    border-radius: var(--radius-xs);
+  }
+  /* the plus is drawn, not typed: the vertical stroke turns with `rotate` */
+  .qa__icon {
+    position: relative;
+    flex: none;
+    width: var(--space-4);
+    height: var(--space-4);
+    transition: rotate var(--dur-3) var(--ease-out);
+  }
+  .qa__icon::before,
+  .qa__icon::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    inset-block-start: 50%;
+    border-block-start: var(--hairline-strong) solid currentColor;
+    translate: 0 -50%;
+  }
+  .qa__icon::after {
+    rotate: 90deg;
+  }
+  .qa[open] .qa__icon {
+    rotate: 45deg;
+  }
+  .qa__a {
+    max-width: var(--measure);
+    padding-block-end: var(--space-6);
+    color: var(--fg-secondary);
+    text-wrap: pretty;
+  }
+
+  /* --- 8. Cierre --------------------------------------------------------- */
+  .closing-act {
+    margin-block-end: var(--chapter-inset);
+  }
+  .closing__actions {
+    justify-content: center;
   }
 </style>
