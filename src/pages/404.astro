@@ -18,8 +18,8 @@ const destinations = [
     <div class="act__inner">
       <div class="opening__top grid-12">
         <div class="opening__main">
-          <p class="label label--rule">Error 404</p>
-          <h1 id="nf-title" class="display-2">Esta página <em>no existe.</em></h1>
+          <p class="label">Error 404</p>
+          <h1 id="nf-title" class="display">Esta página no existe.</h1>
         </div>
         <div class="opening__aside">
           <p class="lead">
@@ -37,7 +37,7 @@ const destinations = [
         {
           destinations.map((d) => (
             <li>
-              <a class="link link--arrow" href={d.href}>
+              <a class="link link--plain" href={d.href}>
                 {d.label}
               </a>
             </li>
@@ -55,11 +55,10 @@ const destinations = [
   .not-found__links {
     --col: 9 / span 4;
   }
-  .not-found__links .link--arrow {
+  .not-found__links .link {
     display: flex;
   }
   .not-found__links li {
-    padding-block: var(--space-2);
     border-block-start: var(--hairline) solid var(--hairline-color);
   }
   .not-found__links li:last-child {

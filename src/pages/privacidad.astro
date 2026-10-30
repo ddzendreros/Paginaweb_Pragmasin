@@ -45,8 +45,8 @@ const sections = [
     <div class="act__inner">
       <div class="opening__top grid-12">
         <div class="opening__main">
-          <p class="label label--rule">Legal</p>
-          <h1 id="privacy-title" class="display-2">Aviso de privacidad</h1>
+          <p class="label">Legal</p>
+          <h1 id="privacy-title" class="display">Aviso de privacidad</h1>
         </div>
         <div class="opening__aside">
           <p class="lead">Corto, porque recabamos poco.</p>
@@ -57,19 +57,17 @@ const sections = [
 
   <section class="act notice">
     <div class="act__inner">
-      <div class="notice__column">
-        {
-          sections.map((s) => (
-            <section class="notice__section">
-              <h2 class="h3">{s.title}</h2>
-              <p class="body">{s.text}</p>
-            </section>
-          ))
-        }
-        <p class="caption notice__updated">
-          Última actualización: 31 de agosto de 2026
-        </p>
-      </div>
+      {
+        sections.map((s) => (
+          <section class="notice__section grid-12">
+            <h2 class="label notice__title">{s.title}</h2>
+            <p class="body notice__text">{s.text}</p>
+          </section>
+        ))
+      }
+      <p class="caption notice__updated">
+        Última actualización: 31 de agosto de 2026
+      </p>
     </div>
   </section>
 </BaseLayout>
@@ -78,16 +76,20 @@ const sections = [
   .notice {
     padding-block-start: 0;
   }
-  .notice__column {
-    max-width: var(--measure);
-  }
   .notice__section {
-    display: grid;
-    gap: var(--space-2);
-    padding-block: var(--space-5);
+    padding-block: var(--space-4);
     border-block-start: var(--hairline) solid var(--hairline-color);
+    row-gap: var(--space-1);
+  }
+  .notice__title {
+    --col: 1 / span 3;
+    color: var(--fg);
+  }
+  .notice__text {
+    --col: 4 / span 7;
   }
   .notice__updated {
-    margin-block-start: var(--space-7);
+    padding-block-start: var(--space-4);
+    border-block-start: var(--hairline) solid var(--hairline-color);
   }
 </style>
