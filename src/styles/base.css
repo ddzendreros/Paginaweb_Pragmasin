@@ -459,9 +459,11 @@ ol {
   opacity: 1;
   translate: 0 0;
 }
-@media (prefers-reduced-motion: reduce) {
+/* paper has no scroll, so nothing on it can wait for an entrance */
+@media print, (prefers-reduced-motion: reduce) {
   [data-reveal] {
     opacity: 1;
     translate: 0 0;
+    transition: none;
   }
 }
