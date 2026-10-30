@@ -16,70 +16,54 @@ const contrast: [string, string][] = [
   ["Si dejas de pagar, pierdes el acceso.", "El software es tuyo."],
 ];
 
-type Art = "bars" | "checks" | "nodes" | "browser" | "chart" | "phone";
-interface Tile {
-  art: Art;
-  title: string;
-  text: string;
-  wide: boolean;
-}
-
-// Zigzag 2+1, 1+2, 2+1: the wide tiles are 1, 4 and 5.
-const tiles: Tile[] = [
-  {
-    art: "bars",
-    title: "Reemplazar un SaaS que te sale caro",
-    text: "Nos dices qué usas de verdad y construimos eso. Sin las funciones que pagas y nunca abres.",
-    wide: true,
-  },
-  {
-    art: "checks",
-    title: "Automatizar lo que se repite",
-    text: "Lo que alguien hace igual cada semana lo puede hacer el sistema.",
-    wide: false,
-  },
-  {
-    art: "nodes",
-    title: "Conectar lo que no se habla",
-    text: "Tu Excel, tu banco, WhatsApp y tus sistemas, con el mismo dato.",
-    wide: false,
-  },
-  {
-    art: "browser",
-    title: "Darles a tus clientes su propio portal",
-    text: "Pedidos, citas y estados de cuenta, sin que tengan que llamarte.",
-    wide: true,
-  },
-  {
-    art: "chart",
-    title: "Ver tu negocio en una pantalla",
-    text: "Las cifras que te importan, al día, sin armar reportes.",
-    wide: true,
-  },
-  {
-    art: "phone",
-    title: "Una app para tu equipo",
-    text: "Para el piso, la ruta o la sucursal. Hecha para como trabajan.",
-    wide: false,
-  },
+const builds: [string, string][] = [
+  [
+    "Reemplazar un SaaS que te sale caro",
+    "Nos dices qué usas de verdad y construimos eso. Sin las funciones que pagas y nunca abres.",
+  ],
+  [
+    "Automatizar lo que se repite",
+    "Lo que alguien hace igual cada semana lo puede hacer el sistema.",
+  ],
+  [
+    "Conectar lo que no se habla",
+    "Tu Excel, tu banco, WhatsApp y tus sistemas, con el mismo dato.",
+  ],
+  [
+    "Darles a tus clientes su propio portal",
+    "Pedidos, citas y estados de cuenta, sin que tengan que llamarte.",
+  ],
+  ["Ver tu negocio en una pantalla", "Las cifras que te importan, al día, sin armar reportes."],
+  ["Una app para tu equipo", "Para el piso, la ruta o la sucursal. Hecha para como trabajan."],
 ];
-const accompaniment: [string, string, string][] = [
-  ["01", "Hablas con quien lo construye", "Un canal directo, sin intermediarios ni tickets."],
-  [
-    "02",
-    "Ves el avance mientras se hace",
-    "Pruebas el software desde temprano y lo corregimos contigo.",
-  ],
-  [
-    "03",
-    "Tu equipo aprende a usarlo",
-    "Capacitamos a quienes lo van a usar todos los días.",
-  ],
-  [
-    "04",
-    "Seguimos después de entregar",
-    "Si algo falla o tu operación cambia, aquí estamos.",
-  ],
+
+// `from` and `to` place each bar on the project's timeline, in percent. Bars
+// that reach 100 run off the edge of the page: that support has no end date.
+const accompaniment = [
+  {
+    title: "Hablas con quien lo construye",
+    text: "Un canal directo, sin intermediarios ni tickets.",
+    from: 0,
+    to: 100,
+  },
+  {
+    title: "Ves el avance mientras se hace",
+    text: "Pruebas el software desde temprano y lo corregimos contigo.",
+    from: 22,
+    to: 62,
+  },
+  {
+    title: "Tu equipo aprende a usarlo",
+    text: "Capacitamos a quienes lo van a usar todos los días.",
+    from: 46,
+    to: 78,
+  },
+  {
+    title: "Seguimos después de entregar",
+    text: "Si algo falla o tu operación cambia, aquí estamos.",
+    from: 62,
+    to: 100,
+  },
 ];
 
 const ownership: [string, string][] = [
@@ -142,7 +126,7 @@ const waHref = whatsappUrl(waMessages.flotante);
       <div class="opening__top grid-12">
         <div class="opening__main">
           <h1 id="hero-title" class="display hero__title">
-            Deja de <em>adaptarte</em><br class="hero__br" /> a tu software.
+            Deja de adaptarte<br class="hero__br" /> a tu software.
           </h1>
         </div>
         <div class="opening__aside">
@@ -159,260 +143,190 @@ const waHref = whatsappUrl(waMessages.flotante);
       <Configurator />
     </div>
   </section>
-  <section class="chapter ground-dark act" aria-labelledby="contraste-title">
-    <div class="act__inner">
-      <div class="grid-12">
-        <div class="head contrast__head" data-reveal>
-          <p class="label label--rule">El problema</p>
-          <h2 id="contraste-title" class="h2 head__title">
-            Un SaaS te pide que cambies. <em>Nosotros no.</em>
-          </h2>
-        </div>
+
+  <section class="ground-cobalt act" aria-labelledby="contraste-title">
+    <div class="act__inner grid-12">
+      <p class="sec__name">El problema</p>
+      <div class="sec__body">
+        <h2 id="contraste-title" class="h2 head">Un SaaS te pide que cambies. Nosotros no.</h2>
+        <table class="contrast">
+          <thead>
+            <tr>
+              <th scope="col">Con software genérico</th>
+              <th scope="col">Con software a tu medida</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              contrast.map(([generic, custom]) => (
+                <tr>
+                  <td data-label="Con software genérico">{generic}</td>
+                  <td data-label="Con software a tu medida">{custom}</td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
       </div>
-      <table class="contrast" data-reveal>
-        <thead>
-          <tr>
-            <th scope="col" class="label">Con software genérico</th>
-            <th scope="col" class="label">Con software a tu medida</th>
-          </tr>
-        </thead>
-        <tbody>
-          {
-            contrast.map(([generic, custom]) => (
-              <tr>
-                <td data-label="Con software genérico">{generic}</td>
-                <td data-label="Con software a tu medida">{custom}</td>
-              </tr>
-            ))
-          }
-        </tbody>
-      </table>
     </div>
   </section>
 
-  <section class="act build" id="construir" aria-labelledby="construir-title">
-    <div class="act__inner">
-      <div class="grid-12">
-        <div class="head build__head" data-reveal>
-          <p class="label label--rule">Qué construimos</p>
-          <h2 id="construir-title" class="h2 head__title">
-            Si hoy te estorba, se puede <em>construir.</em>
-          </h2>
+  <section class="act" id="construir" aria-labelledby="construir-title">
+    <div class="act__inner grid-12">
+      <p class="sec__name">Qué construimos</p>
+      <div class="sec__body">
+        <div class="head">
+          <h2 id="construir-title" class="h2">Si hoy te estorba, se puede construir.</h2>
           <p class="lead">
-            No tenemos catálogo. Estos son puntos de partida; lo tuyo puede no parecerse a
-            ninguno.
+            No tenemos catálogo. Estos son puntos de partida; lo tuyo puede no parecerse a ninguno.
           </p>
         </div>
+        <ul>
+          {
+            builds.map(([title, text]) => (
+              <li class="spec__row">
+                <h3 class="h3">{title}</h3>
+                <p class="spec__text">{text}</p>
+              </li>
+            ))
+          }
+        </ul>
+        <p class="build__more">
+          <a class="link link--plain" href="/contacto">¿No ves lo tuyo? Mejor. Cuéntanos.</a>
+        </p>
       </div>
-      <ul class="bento" data-bento>
-        {
-          tiles.map((t) => (
-            <li class:list={["tile", { "tile--wide": t.wide }]} data-reveal>
-              <div class="tile__art" aria-hidden="true">
-                {t.art === "bars" && (
-                  <div class="art-bars">
-                    <i class="art-bars__bar art-bars__bar--off" />
-                    <i class="art-bars__bar art-bars__bar--off art-bars__bar--short" />
-                    <i class="art-bars__bar art-bars__bar--off" />
-                    <i class="art-bars__bar art-bars__bar--on" />
-                    <i class="art-bars__bar art-bars__bar--on art-bars__bar--short" />
-                  </div>
-                )}
-                {t.art === "checks" && (
-                  <div class="art-checks">
-                    <span class="art-checks__row">
-                      <i class="art-checks__dot" />
-                      <i class="art-checks__line" />
-                    </span>
-                    <span class="art-checks__row">
-                      <i class="art-checks__dot" />
-                      <i class="art-checks__line art-checks__line--short" />
-                    </span>
-                    <span class="art-checks__row">
-                      <i class="art-checks__dot" />
-                      <i class="art-checks__line" />
-                    </span>
-                  </div>
-                )}
-                {t.art === "nodes" && (
-                  <svg class="art-nodes" viewBox="0 0 160 96" fill="none">
-                    <path class="art-nodes__link" d="M16 16 C 80 16, 80 48, 144 48" />
-                    <path class="art-nodes__link" d="M16 48 L 144 48" />
-                    <path class="art-nodes__link" d="M16 80 C 80 80, 80 48, 144 48" />
-                    <circle class="art-nodes__node" cx="16" cy="16" r="6" />
-                    <circle class="art-nodes__node" cx="16" cy="48" r="6" />
-                    <circle class="art-nodes__node" cx="16" cy="80" r="6" />
-                    <circle class="art-nodes__hub" cx="144" cy="48" r="9" />
-                  </svg>
-                )}
-                {t.art === "browser" && (
-                  <div class="art-browser">
-                    <span class="art-browser__bar">
-                      <i class="art-browser__dot" />
-                      <i class="art-browser__dot" />
-                      <i class="art-browser__dot" />
-                    </span>
-                    <span class="art-browser__body">
-                      <i class="art-browser__line" />
-                      <i class="art-browser__line art-browser__line--short" />
-                      <i class="art-browser__line" />
-                      <i class="art-browser__btn" />
-                    </span>
-                  </div>
-                )}
-                {t.art === "chart" && (
-                  <svg class="art-chart" viewBox="0 0 160 96" fill="none">
-                    <rect class="art-chart__bar" x="24" y="52" width="32" height="44" rx="4" />
-                    <rect class="art-chart__bar" x="72" y="32" width="32" height="64" rx="4" />
-                    <path class="art-chart__line" d="M8 44 L 40 38 L 88 24 L 152 8" />
-                    <circle class="art-chart__tip" cx="152" cy="8" r="5" />
-                  </svg>
-                )}
-                {t.art === "phone" && (
-                  <div class="art-phone">
-                    <i class="art-phone__row" />
-                    <i class="art-phone__row art-phone__row--short" />
-                    <i class="art-phone__row" />
-                  </div>
-                )}
-              </div>
-              <h3 class="h3 tile__title">{t.title}</h3>
-              <p class="small tile__text">{t.text}</p>
-            </li>
-          ))
-        }
-      </ul>
-      <p class="build__more" data-reveal>
-        <a class="link link--arrow" href="/contacto">¿No ves lo tuyo? Mejor. Cuéntanos.</a>
-      </p>
     </div>
   </section>
 
   <section class="act company" aria-labelledby="acomp-title">
     <div class="act__inner grid-12">
-      <div class="company__card" data-reveal>
-        <p class="label label--rule">Acompañamiento</p>
-        <h2 id="acomp-title" class="h2">
-          No desaparecemos <em>después de entregar.</em>
-        </h2>
+      <p class="sec__name">Acompañamiento</p>
+      <div class="sec__body head">
+        <h2 id="acomp-title" class="h2">No desaparecemos después de entregar.</h2>
         <p class="lead">Lo importante no es el software. Es que tu día a día se sienta mejor.</p>
       </div>
-      <ol class="company__steps">
-        {
-          accompaniment.map(([num, title, text]) => (
-            <li class="step" data-reveal>
-              <span class="caption numeral step__num">{num}</span>
-              <h3 class="h3 step__title">{title}</h3>
-              <p class="step__text">{text}</p>
-            </li>
-          ))
-        }
-      </ol>
+      <div class="track-wrap">
+        <ol>
+          {
+            accompaniment.map((a, i) => (
+              <li class="track__row">
+                <div class="track__text">
+                  <h3 class="h3">{a.title}</h3>
+                  <p class="small">{a.text}</p>
+                </div>
+                <div class="track__lane" aria-hidden="true">
+                  {i === 0 && <span class="track__mark">Entrega</span>}
+                  <span
+                    class:list={["track__bar", { "track__bar--open": a.to === 100 }]}
+                    style={`--from: ${a.from}; --to: ${a.to};`}
+                  />
+                </div>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
     </div>
   </section>
 
-  <section class="chapter ground-dark act" aria-labelledby="tuyo-title">
+  <section class="ground-dark act" aria-labelledby="tuyo-title">
     <div class="act__inner grid-12">
-      <div class="own__head" data-reveal>
-        <p class="label label--rule">Propiedad</p>
-        <h2 id="tuyo-title" class="display-2">
-          Se paga una vez. <em>Y es tuyo.</em>
-        </h2>
-        <p class="lead">
-          Sin renta mensual por usuario. Sin contratos que te amarren. Lo que construimos para tu
-          empresa es de tu empresa.
-        </p>
+      <p class="sec__name">Propiedad</p>
+      <div class="sec__body">
+        <div class="head">
+          <h2 id="tuyo-title" class="display">Se paga una vez.<br /> Y es tuyo.</h2>
+          <p class="lead">
+            Sin renta mensual por usuario. Sin contratos que te amarren. Lo que construimos para tu
+            empresa es de tu empresa.
+          </p>
+        </div>
+        <dl class="own">
+          {
+            ownership.map(([concept, value]) => (
+              <div class="own__cell">
+                <dt class="small">{concept}</dt>
+                <dd class="h3">{value}</dd>
+              </div>
+            ))
+          }
+        </dl>
       </div>
-      <dl class="own__rail" data-reveal>
-        {
-          ownership.map(([concept, value]) => (
-            <div class="own__row">
-              <dt class="label">{concept}</dt>
-              <dd>{value}</dd>
-            </div>
-          ))
-        }
-      </dl>
     </div>
   </section>
 
   {
     cases.length > 0 && (
       <section class="act cases" aria-labelledby="casos-title">
-        <div class="act__inner">
-          <div class="head" data-reveal>
-            <p class="label label--rule">Casos</p>
-            <h2 id="casos-title" class="h2 head__title">
-              Tu operación no aparece <em>en nuestro sitio.</em>
-            </h2>
-            <p class="lead">
-              Por eso aquí no hay logotipos. Contamos lo que hicimos sin decir para quién.
-            </p>
+        <div class="act__inner grid-12">
+          <p class="sec__name">Casos</p>
+          <div class="sec__body">
+            <div class="head">
+              <h2 id="casos-title" class="h2">Tu operación no aparece en nuestro sitio.</h2>
+              <p class="lead">
+                Por eso aquí no hay logotipos. Contamos lo que hicimos sin decir para quién.
+              </p>
+            </div>
+            <ul class="cases__list">
+              {cases.map((c) => (
+                <li class="cases__item">
+                  <dl>
+                    <div>
+                      <dt class="label">Giro y tamaño aproximado</dt>
+                      <dd>{c.sector}</dd>
+                    </div>
+                    <div>
+                      <dt class="label">Qué pasaba</dt>
+                      <dd>{c.before}</dd>
+                    </div>
+                    <div>
+                      <dt class="label">Qué construimos</dt>
+                      <dd>{c.built}</dd>
+                    </div>
+                    <div>
+                      <dt class="label">Qué cambió</dt>
+                      <dd>{c.after}</dd>
+                    </div>
+                  </dl>
+                </li>
+              ))}
+            </ul>
           </div>
-          <ul class="cases__list">
-            {cases.map((c) => (
-              <li class="cases__item">
-                <dl>
-                  <div>
-                    <dt class="label">Giro y tamaño aproximado</dt>
-                    <dd>{c.sector}</dd>
-                  </div>
-                  <div>
-                    <dt class="label">Qué pasaba</dt>
-                    <dd>{c.before}</dd>
-                  </div>
-                  <div>
-                    <dt class="label">Qué construimos</dt>
-                    <dd>{c.built}</dd>
-                  </div>
-                  <div>
-                    <dt class="label">Qué cambió</dt>
-                    <dd>{c.after}</dd>
-                  </div>
-                </dl>
-              </li>
-            ))}
-          </ul>
         </div>
       </section>
     )
   }
 
-  <section class="act faq" aria-labelledby="faq-title">
+  <section class="act" aria-labelledby="faq-title">
     <div class="act__inner grid-12">
-      <div class="faq__head" data-reveal>
-        <p class="label label--rule">Preguntas</p>
-        <h2 id="faq-title" class="h2">
-          Lo que conviene saber <em>antes de empezar.</em>
-        </h2>
-      </div>
-      <div class="faq__list" data-reveal>
-        {
-          faq.map(([question, answer]) => (
-            <details class="qa">
-              <summary class="qa__q">
-                <span class="h3">{question}</span>
-                <span class="qa__icon" aria-hidden="true" />
-              </summary>
-              <p class="qa__a">{answer}</p>
-            </details>
-          ))
-        }
+      <p class="sec__name">Preguntas</p>
+      <div class="sec__body">
+        <h2 id="faq-title" class="h2 head">Lo que conviene saber antes de empezar.</h2>
+        <div class="faq">
+          {
+            faq.map(([question, answer]) => (
+              <details class="qa">
+                <summary class="qa__q">
+                  <span class="h3">{question}</span>
+                  <span class="qa__icon" aria-hidden="true" />
+                </summary>
+                <p class="qa__a">{answer}</p>
+              </details>
+            ))
+          }
+        </div>
       </div>
     </div>
   </section>
 
-  <section class="chapter ground-dark act closing-act" aria-labelledby="cierre-title">
-    <div class="act__inner">
-      <div class="closing" data-reveal>
-        <h2 id="cierre-title" class="display-2">
-          ¿Qué te gustaría <em>dejar de hacer?</em>
-        </h2>
+  <section class="ground-cobalt act" aria-labelledby="cierre-title">
+    <div class="act__inner grid-12 closing">
+      <h2 id="cierre-title" class="display closing__title">¿Qué te gustaría dejar de hacer?</h2>
+      <div class="closing__aside">
         <p class="lead">
           Cuéntanoslo como te salga. Te contesta una persona y te decimos con honestidad si te
           podemos ayudar.
         </p>
-        <div class="actions closing__actions">
+        <div class="actions">
           <a class="btn btn--primary" href="/contacto">Cuéntanos tu idea</a>
           {
             waHref && (
@@ -427,49 +341,33 @@ const waHref = whatsappUrl(waMessages.flotante);
   </section>
 </BaseLayout>
 
-<script>
-  // The spotlight on the tiles follows the pointer. One delegated listener,
-  // and only where there is a pointer to follow.
-  const bento = document.querySelector<HTMLElement>("[data-bento]");
-  if (bento && window.matchMedia("(hover: hover)").matches) {
-    bento.addEventListener("pointermove", (event) => {
-      const tile = (event.target as HTMLElement).closest<HTMLElement>(".tile");
-      if (!tile) return;
-      const box = tile.getBoundingClientRect();
-      tile.style.setProperty("--x", `${event.clientX - box.left}px`);
-      tile.style.setProperty("--y", `${event.clientY - box.top}px`);
-    });
-  }
-</script>
-
 <style>
   /* the break stays at every width so the title never strands a lone "a" */
   .hero__br {
     display: block;
   }
-  @media (width >= 64rem) {
-    .hero__title {
-      text-wrap: wrap;
-    }
+  .hero {
+    padding-block-end: var(--space-7);
+    overflow-x: clip;
   }
 
-  /* --- 2. Contraste ----------------------------------------------------- */
-  .contrast__head {
-    --col: 1 / span 9;
-  }
+  /* --- El problema -------------------------------------------------------- */
   .contrast {
     width: 100%;
     border-collapse: collapse;
     text-align: start;
   }
   .contrast th {
-    padding-block: var(--space-3);
+    padding-block-end: var(--space-3);
     text-align: start;
+    font-size: var(--text-small);
+    font-weight: var(--weight-medium);
+    color: var(--fg-secondary);
     border-block-end: var(--hairline) solid var(--hairline-color);
   }
   .contrast td {
     width: 50%;
-    padding: var(--space-5) var(--space-5) var(--space-5) 0;
+    padding: var(--space-4) var(--space-6) var(--space-4) 0;
     vertical-align: top;
     border-block-end: var(--hairline) solid var(--hairline-color);
     font-size: var(--text-lead);
@@ -499,7 +397,7 @@ const waHref = whatsappUrl(waMessages.flotante);
       width: 100%;
     }
     .contrast tr {
-      padding-block: var(--space-5);
+      padding-block: var(--space-4);
       border-block-end: var(--hairline) solid var(--hairline-color);
     }
     .contrast td {
@@ -507,392 +405,144 @@ const waHref = whatsappUrl(waMessages.flotante);
       border: 0;
     }
     .contrast td + td {
-      margin-block-start: var(--space-4);
+      margin-block-start: var(--space-3);
     }
     .contrast td::before {
       content: attr(data-label);
       display: block;
-      margin-block-end: var(--space-1);
       font-size: var(--text-caption);
-      letter-spacing: var(--tracking-caps);
-      text-transform: uppercase;
-      font-weight: var(--weight-medium);
-      font-stretch: var(--width-condensed);
-      color: var(--fg-muted);
+      font-weight: var(--weight-text);
+      color: var(--fg-secondary);
     }
   }
 
-  /* --- 3. Qué construimos ------------------------------------------------ */
-  .build__head {
-    --col: 1 / span 8;
-  }
-  .bento {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: var(--gutter);
-  }
-  .tile {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    gap: var(--space-2);
-    min-height: 18.75rem;
-    padding: var(--space-6);
-    background: var(--bg-raised);
-    border-radius: var(--radius-xl);
-    overflow: hidden;
-  }
-  .tile--wide {
-    grid-column: span 2;
-  }
-  .tile::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    padding: var(--hairline);
-    background: radial-gradient(
-      18rem circle at var(--x, 50%) var(--y, 50%),
-      var(--interactive),
-      transparent 70%
-    );
-    -webkit-mask:
-      linear-gradient(black 0 0) content-box,
-      linear-gradient(black 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    opacity: 0;
-    transition: opacity var(--dur-2) var(--ease-out);
-    pointer-events: none;
-  }
-  @media (hover: hover) {
-    .tile:hover::after {
-      opacity: 1;
-    }
-  }
-  @media (max-width: 56rem) {
-    .bento {
-      grid-template-columns: repeat(2, 1fr);
-    }
-    .tile--wide {
-      grid-column: span 1;
-    }
-  }
-  @media (max-width: 40rem) {
-    .bento {
-      grid-template-columns: 1fr;
-    }
-    .tile {
-      min-height: auto;
-    }
-    .tile__art {
-      margin-block-end: var(--space-5);
-    }
-  }
-  .tile__art {
-    margin-block-end: auto;
-    height: var(--space-9);
-    display: flex;
-    align-items: flex-start;
-  }
-  /* wide tiles read as a diagonal: art top right, text bottom left */
-  .tile--wide .tile__art {
-    justify-content: flex-end;
-    height: var(--space-10);
-  }
-  .tile--wide .art-bars,
-  .tile--wide .art-browser,
-  .tile--wide .art-chart {
-    width: 14rem;
-  }
-  @media (max-width: 56rem) {
-    .tile--wide .tile__art {
-      justify-content: flex-start;
-      height: var(--space-9);
-    }
-    .tile--wide .art-bars,
-    .tile--wide .art-browser,
-    .tile--wide .art-chart {
-      width: 9rem;
-    }
-    .tile--wide .art-chart {
-      width: 10rem;
-    }
-  }
-  .tile__title {
-    max-width: 22ch;
-  }
-  .tile__text {
-    max-width: 30ch;
-  }
+  /* --- Qué construimos ---------------------------------------------------- */
   .build__more {
-    margin-block-start: var(--space-6);
+    margin-block-start: var(--space-4);
   }
 
-  /* Viñetas: HTML y CSS con colores de tokens, sin texto */
-  .art-bars {
+  /* --- Acompañamiento: un cronograma, no una lista ------------------------ */
+  .company {
+    --handoff: 62%;
+    background: var(--bg-chrome);
+    overflow-x: clip;
+  }
+  .company .sec__body {
+    margin-block-end: var(--space-5);
+  }
+  .track-wrap {
+    padding-block-start: var(--space-5);
+  }
+  .track__row {
     display: grid;
-    gap: var(--space-2);
-    width: 9rem;
-  }
-  .art-bars__bar {
-    position: relative;
-    display: block;
-    height: var(--space-2);
-    border-radius: var(--radius-pill);
-  }
-  .art-bars__bar--short {
-    width: 62%;
-  }
-  .art-bars__bar--off {
-    background: var(--hairline-color);
-  }
-  .art-bars__bar--off::after {
-    content: "";
-    position: absolute;
-    inset-inline: calc(var(--space-1) * -1);
-    inset-block-start: 50%;
-    border-block-start: var(--hairline) solid var(--fg-muted);
-  }
-  .art-bars__bar--on {
-    background: var(--interactive);
-  }
-
-  .art-checks {
-    display: grid;
-    gap: var(--space-3);
-  }
-  .art-checks__row {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-  }
-  .art-checks__dot {
-    position: relative;
-    display: block;
-    width: var(--space-5);
-    height: var(--space-5);
-    border-radius: 50%;
-    background: var(--interactive);
-  }
-  .art-checks__dot::after {
-    content: "";
-    position: absolute;
-    inset-inline-start: 50%;
-    inset-block-start: 46%;
-    width: 0.3rem;
-    height: 0.55rem;
-    translate: -50% -50%;
-    rotate: 45deg;
-    border-inline-end: var(--hairline-strong) solid var(--action-fg);
-    border-block-end: var(--hairline-strong) solid var(--action-fg);
-  }
-  .art-checks__line {
-    display: block;
-    width: 5.5rem;
-    height: var(--space-2);
-    border-radius: var(--radius-pill);
-    background: var(--hairline-color);
-  }
-  .art-checks__line--short {
-    width: 3.5rem;
-  }
-
-  .art-nodes,
-  .art-chart {
-    width: 10rem;
-    height: auto;
-    overflow: visible;
-  }
-  .art-nodes__link {
-    stroke: var(--control-border);
-    stroke-width: 1;
-  }
-  .art-nodes__node {
-    fill: var(--bg-raised);
-    stroke: var(--fg-secondary);
-    stroke-width: 1.5;
-  }
-  .art-nodes__hub {
-    fill: var(--interactive);
-  }
-  .art-chart__bar {
-    fill: var(--hairline-color);
-  }
-  .art-chart__line {
-    stroke: var(--interactive);
-    stroke-width: 2;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-  }
-  .art-chart__tip {
-    fill: var(--interactive);
-  }
-
-  .art-browser {
-    width: 9rem;
-    border: var(--hairline) solid var(--control-border);
-    border-radius: var(--radius-s);
-    overflow: hidden;
-  }
-  .art-browser__bar {
-    display: flex;
-    gap: var(--space-1);
-    padding: var(--space-2);
-    border-block-end: var(--hairline) solid var(--hairline-color);
-  }
-  .art-browser__dot {
-    display: block;
-    width: var(--space-1);
-    height: var(--space-1);
-    border-radius: 50%;
-    background: var(--control-border);
-  }
-  .art-browser__body {
-    display: grid;
-    gap: var(--space-2);
-    padding: var(--space-3);
-  }
-  .art-browser__line {
-    display: block;
-    height: var(--space-1);
-    border-radius: var(--radius-pill);
-    background: var(--hairline-color);
-  }
-  .art-browser__line--short {
-    width: 60%;
-  }
-  .art-browser__btn {
-    display: block;
-    width: var(--space-6);
-    height: var(--space-3);
-    border-radius: var(--radius-xs);
-    background: var(--interactive);
-  }
-
-  .art-phone {
-    display: grid;
-    align-content: start;
-    gap: var(--space-2);
-    width: 4.5rem;
-    height: var(--space-9);
-    padding: var(--space-4) var(--space-3);
-    border: var(--hairline) solid var(--control-border);
-    border-radius: var(--radius-l);
-  }
-  .art-phone__row {
-    display: block;
-    height: var(--space-2);
-    border-radius: var(--radius-pill);
-    background: var(--hairline-color);
-  }
-  .art-phone__row--short {
-    width: 60%;
-    background: var(--interactive);
-  }
-
-  /* --- 4. Acompañamiento -------------------------------------------------- */
-  .company__card {
-    --col: 1 / span 5;
-    --fg: var(--warm-ink);
-    --fg-secondary: var(--warm-ink);
-    --hairline-color: var(--warm-ink);
-    position: sticky;
-    inset-block-start: var(--space-9);
-    align-self: start;
-    display: grid;
-    gap: var(--space-4);
-    padding: var(--space-7) var(--space-6);
-    background: var(--warm-100);
-    color: var(--warm-ink);
-    border-radius: var(--radius-xl);
-  }
-  .company__steps {
-    --col: 7 / span 6;
-  }
-  .step {
-    display: grid;
-    grid-template-columns: var(--space-7) 1fr;
-    column-gap: var(--space-3);
-    row-gap: var(--space-2);
-    padding-block: var(--space-6);
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    column-gap: var(--gutter);
     border-block-start: var(--hairline) solid var(--hairline-color);
   }
-  .step:last-child {
+  .track__row:last-child {
     border-block-end: var(--hairline) solid var(--hairline-color);
   }
-  .step__num {
-    grid-row: 1;
-    padding-block-start: var(--space-1);
+  .track__text {
+    display: grid;
+    gap: var(--space-1);
+    padding-block: var(--space-5);
   }
-  .step__title,
-  .step__text {
-    grid-column: 2;
-  }
-  .step__text {
-    max-width: var(--measure);
-    color: var(--fg-secondary);
+  .track__text .small {
+    max-width: 44ch;
     text-wrap: pretty;
   }
-  .company__card .h2 {
-    font-size: calc(var(--text-h2) * 0.8);
+  /* the lane runs to the edge of the window so an open bar has no end */
+  .track__lane {
+    position: relative;
+    margin-inline-end: calc(-1 * max(var(--margin), (100vw - var(--content-max)) / 2 + var(--margin)));
   }
-  @media (56rem < width <= 80rem) {
-    .company__card {
-      --col: 1 / span 6;
-    }
-    .company__steps {
-      --col: 7 / span 6;
-    }
+  .track__lane::before {
+    content: "";
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: var(--handoff);
+    border-inline-start: var(--hairline) solid var(--control-border);
+  }
+  .track__bar {
+    position: absolute;
+    inset-block-start: calc(var(--space-5) + 0.3rem);
+    inset-inline-start: calc(var(--from) * 1%);
+    width: calc((var(--to) - var(--from)) * 1%);
+    height: 1rem;
+    background: var(--interactive);
+    border-radius: var(--radius-s);
+  }
+  .track__bar--open {
+    border-start-end-radius: 0;
+    border-end-end-radius: 0;
+  }
+  .track__mark {
+    position: absolute;
+    inset-block-end: calc(100% + var(--space-1));
+    inset-inline-start: var(--handoff);
+    font-size: var(--text-caption);
+    font-weight: var(--weight-medium);
+    color: var(--fg-secondary);
+    translate: -50% 0;
   }
   @media (width <= 56rem) {
-    .company__card {
-      position: static;
-      margin-block-end: var(--space-7);
+    .track__row {
+      grid-template-columns: minmax(0, 1fr);
+      padding-block-end: var(--space-4);
+    }
+    .track__text {
+      padding-block-end: var(--space-3);
+    }
+    .track__lane {
+      height: 1rem;
+    }
+    .track__bar {
+      inset-block-start: 0;
+    }
+    /* on a phone the text sits above the bar, so the label goes under it */
+    .track__mark {
+      inset-block-end: auto;
+      inset-block-start: calc(100% + var(--space-1));
+    }
+    .track__row:first-child {
+      padding-block-end: var(--space-6);
     }
   }
 
-  /* --- 5. Es tuyo -------------------------------------------------------- */
-  .own__head {
-    --col: 1 / span 7;
+  /* --- Propiedad ----------------------------------------------------------- */
+  .own {
     display: grid;
-    gap: var(--space-5);
-    align-content: start;
-  }
-  /* the promise lands on its own line */
-  .own__head em {
-    display: block;
-  }
-  .own__rail {
-    --col: 8 / span 5;
-    align-self: end;
-  }
-  .own__row {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: var(--space-4);
-    padding-block: var(--space-5);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     border-block-start: var(--hairline) solid var(--hairline-color);
   }
-  .own__row:last-child {
-    border-block-end: var(--hairline) solid var(--hairline-color);
+  .own__cell {
+    display: grid;
+    gap: var(--space-2);
+    padding: var(--space-4) var(--space-4) 0 0;
   }
-  .own__row dd {
-    font-family: var(--font-display);
-    font-size: var(--text-h3);
-    line-height: var(--leading-h3);
-    letter-spacing: var(--tracking-h3);
-    text-align: end;
+  .own__cell + .own__cell {
+    padding-inline-start: var(--space-4);
+    border-inline-start: var(--hairline) solid var(--hairline-color);
   }
   @media (width <= 56rem) {
-    .own__head {
-      margin-block-end: var(--space-7);
+    .own {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .own__cell,
+    .own__cell + .own__cell {
+      padding: var(--space-4) var(--space-3) var(--space-4) 0;
+      border-inline-start: 0;
+    }
+    .own__cell:nth-child(even) {
+      padding-inline-start: var(--space-3);
+      border-inline-start: var(--hairline) solid var(--hairline-color);
+    }
+    .own__cell:nth-child(n + 3) {
+      border-block-start: var(--hairline) solid var(--hairline-color);
     }
   }
 
-  /* --- 6. Casos (solo con contenido autorizado) -------------------------- */
+  /* --- Casos (solo con contenido autorizado) ------------------------------ */
   .cases__list {
     display: grid;
     gap: var(--space-6);
@@ -915,21 +565,9 @@ const waHref = whatsappUrl(waMessages.flotante);
     }
   }
 
-  /* --- 7. FAQ ------------------------------------------------------------ */
-  .faq__head {
-    --col: 1 / span 4;
-    display: grid;
-    gap: var(--space-4);
-    align-content: start;
-  }
-  .faq__list {
-    --col: 5 / span 8;
+  /* --- Preguntas ------------------------------------------------------------ */
+  .faq {
     border-block-end: var(--hairline) solid var(--hairline-color);
-  }
-  @media (width <= 56rem) {
-    .faq__head {
-      margin-block-end: var(--space-7);
-    }
   }
   .qa {
     border-block-start: var(--hairline) solid var(--hairline-color);
@@ -940,10 +578,9 @@ const waHref = whatsappUrl(waMessages.flotante);
     justify-content: space-between;
     gap: var(--space-5);
     min-height: 44px;
-    padding-block: var(--space-5);
+    padding-block: var(--space-4);
     cursor: pointer;
     list-style: none;
-    transition: color var(--dur-1) var(--ease-out);
   }
   .qa__q::-webkit-details-marker {
     display: none;
@@ -951,19 +588,13 @@ const waHref = whatsappUrl(waMessages.flotante);
   .qa__q:hover {
     color: var(--interactive);
   }
-  .qa__q:active {
-    color: var(--interactive-strong);
-  }
-  .qa__q:focus-visible {
-    border-radius: var(--radius-xs);
-  }
-  /* the plus is drawn, not typed: the vertical stroke turns with `rotate` */
+  /* the plus is drawn, not typed */
   .qa__icon {
     position: relative;
     flex: none;
     width: var(--space-4);
     height: var(--space-4);
-    transition: rotate var(--dur-3) var(--ease-out);
+    transition: rotate var(--dur-2) var(--ease-out);
   }
   .qa__icon::before,
   .qa__icon::after {
@@ -982,16 +613,8 @@ const waHref = whatsappUrl(waMessages.flotante);
   }
   .qa__a {
     max-width: var(--measure);
-    padding-block-end: var(--space-6);
+    padding-block-end: var(--space-5);
     color: var(--fg-secondary);
     text-wrap: pretty;
-  }
-
-  /* --- 8. Cierre --------------------------------------------------------- */
-  .closing-act {
-    margin-block-end: var(--chapter-inset);
-  }
-  .closing__actions {
-    justify-content: center;
   }
 </style>
