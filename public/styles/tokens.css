@@ -181,7 +181,7 @@
   --control-border: var(--paper-300);
   --surface-card: var(--paper-0);
   --surface-border: var(--paper-200);
-  --surface-glass: rgb(var(--rgb-paper) / 0.78);
+  --surface-glass: rgb(var(--rgb-paper) / 0.88); /* 4.5+ for links over night */
   --interactive: var(--cobalt);
   --interactive-strong: var(--cobalt-strong);
   --action-bg: var(--cobalt);
