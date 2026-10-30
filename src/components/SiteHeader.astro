@@ -37,7 +37,13 @@ const current = Astro.url.pathname.replace(/\/$/, "");
     </nav>
 
     <div class="site-header__actions">
-      <a class="btn btn--primary btn--sm site-header__cta" href="/contacto">Cuéntanos tu idea</a>
+      {
+        current !== "/contacto" && (
+          <a class="btn btn--primary btn--sm site-header__cta" href="/contacto">
+            Cuéntanos tu idea
+          </a>
+        )
+      }
       <button
         class="site-header__toggle"
         type="button"
@@ -72,7 +78,13 @@ const current = Astro.url.pathname.replace(/\/$/, "");
       }
     </ul>
   </nav>
-  <a class="btn btn--primary sheet__cta" href="/contacto">Cuéntanos tu idea</a>
+  {
+    current !== "/contacto" && (
+      <a class="btn btn--primary sheet__cta" href="/contacto">
+        Cuéntanos tu idea
+      </a>
+    )
+  }
 </dialog>
 
 <script>

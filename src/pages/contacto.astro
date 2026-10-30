@@ -64,7 +64,7 @@ const emptyMessage = "Sin esto no podemos ayudarte: cuéntanos aunque sea en una
         }
 
         <div class="direct" data-reveal>
-          <p class="label">Directo</p>
+          <h2 class="label" id="direct-title">Directo</h2>
           <p class="small">
             ¿Prefieres el correo?
             <a class="link" href={`mailto:${site.email}`}>{site.email}</a>
@@ -101,7 +101,7 @@ const emptyMessage = "Sin esto no podemos ayudarte: cuéntanos aunque sea en una
               placeholder="¿Cómo te llamamos?"
               required
             />
-            <p class="caption field__msg" hidden>{emptyMessage}</p>
+            <p class="caption field__msg" id="cf-name-msg" hidden>{emptyMessage}</p>
           </div>
           <div class="field" data-field="company">
             <label class="small" for="cf-company">Empresa</label>
@@ -113,7 +113,7 @@ const emptyMessage = "Sin esto no podemos ayudarte: cuéntanos aunque sea en una
               placeholder="Nombre de tu empresa"
               required
             />
-            <p class="caption field__msg" hidden>{emptyMessage}</p>
+            <p class="caption field__msg" id="cf-company-msg" hidden>{emptyMessage}</p>
           </div>
           <div class="field" data-field="email">
             <label class="small" for="cf-email">Correo</label>
@@ -125,7 +125,7 @@ const emptyMessage = "Sin esto no podemos ayudarte: cuéntanos aunque sea en una
               placeholder="nombre@empresa.mx"
               required
             />
-            <p class="caption field__msg" hidden>
+            <p class="caption field__msg" id="cf-email-msg" hidden>
               Ese correo no parece completo. Revísalo y volvemos a intentar.
             </p>
           </div>
@@ -147,7 +147,7 @@ const emptyMessage = "Sin esto no podemos ayudarte: cuéntanos aunque sea en una
               required
               placeholder="Dos o tres líneas bastan. Ej.: ‘Pagamos un sistema caro y solo usamos una parte.’"
             ></textarea>
-            <p class="caption field__msg" hidden>{emptyMessage}</p>
+            <p class="caption field__msg" id="cf-message-msg" hidden>{emptyMessage}</p>
           </div>
           <div class="field" data-field="consent">
             <label class="small consent">
@@ -195,6 +195,11 @@ const emptyMessage = "Sin esto no podemos ayudarte: cuéntanos aunque sea en una
     wrap?.classList.toggle("field--error", on);
     if (msg) msg.hidden = !on;
     input?.setAttribute("aria-invalid", String(on));
+    // the message only describes the field while it is showing
+    if (msg?.id) {
+      if (on) input?.setAttribute("aria-describedby", msg.id);
+      else input?.removeAttribute("aria-describedby");
+    }
     if (on && wrap) {
       // restart the wiggle on every failed attempt
       wrap.classList.remove("is-wiggling");
@@ -229,7 +234,11 @@ const emptyMessage = "Sin esto no podemos ayudarte: cuéntanos aunque sea en una
     setFieldError("company", company.length === 0);
     setFieldError("email", !emailOk);
     setFieldError("message", message.length === 0);
-    if (name.length === 0 || company.length === 0 || !emailOk || message.length === 0) return;
+    if (name.length === 0 || company.length === 0 || !emailOk || message.length === 0) {
+      // the first error takes focus so it is announced and brought into view
+      form.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus();
+      return;
+    }
 
     const status = form.querySelector<HTMLElement>(".contact-form__status");
     const button = form.querySelector<HTMLButtonElement>("button[type=submit]");
@@ -344,8 +353,10 @@ const emptyMessage = "Sin esto no podemos ayudarte: cuéntanos aunque sea en una
   .wa-card:active {
     scale: 0.99;
   }
+  /* the ring sits inside the card, where it lands on night, not on paper */
   .wa-card:focus-visible {
     border-radius: var(--radius-xl);
+    outline-offset: calc(-2 * var(--focus-width));
   }
   .wa-card__text {
     max-width: var(--measure);

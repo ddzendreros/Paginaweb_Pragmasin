@@ -8,9 +8,9 @@ Sustituye por completo al sistema «Contraluz» / superficies (v2). La rampa ín
 
 ## 1. Física: grounds
 
-Cada bloque declara su suelo con `.ground-light` (papel) o `.ground-dark` (noche) y ese suelo define los tokens **contextuales**: `--bg`, `--bg-raised`, `--bg-sunken`, `--fg`, `--fg-secondary`, `--fg-muted`, `--hairline-color`, `--control-border`, `--interactive`, `--action-bg`, `--action-fg`, `--error-color`, `--focus-ring`. **Los componentes solo leen contextuales**; cambiar de suelo nunca toca un componente. Las primitivas (`--paper-*`, `--night-*`, `--cobalt*`) solo aparecen en `tokens.css`.
+Cada bloque declara su suelo con `.ground-light` (papel) o `.ground-dark` (noche) y ese suelo define los tokens **contextuales**: `--bg`, `--bg-raised`, `--bg-sunken`, `--fg`, `--fg-secondary`, `--fg-muted`, `--hairline-color`, `--control-border`, `--interactive`, `--action-bg`, `--action-fg`, `--error-color`, `--focus-ring`. **Los componentes solo leen contextuales**; cambiar de suelo nunca toca un componente. Las primitivas (`--paper-*`, `--night-*`, `--cobalt*`) solo aparecen en `tokens.css`, con dos excepciones: `scrollbar-color` en `base.css` (el `html` no tiene ground) y `--warm-100` / `--warm-ink` en la tarjeta cálida del home, que no pertenece a ningún ground.
 
-La página es papel (`<body class="ground-light">`). Los capítulos oscuros son paneles `.chapter.ground-dark` separados del borde por `--chapter-inset`, nunca bandas a sangre.
+La página es papel (`<body class="ground-light">`). Los capítulos oscuros son paneles `.chapter.ground-dark` separados del borde por `--chapter-inset`, nunca bandas a sangre. Existe una variante sobre papel, `.chapter.ground-light` con `background: var(--bg-sunken)` (las reglas de `/servicios`), que no cuenta como capítulo oscuro.
 
 ## 2. Color
 
@@ -56,7 +56,7 @@ Los contrastes medidos están junto a cada valor en `tokens.css`. El cobalto es 
 
 Estado y jerarquía, nunca decoración. Solo `transform`, `translate`, `rotate`, `scale` y `opacity`, con propiedades nombradas (jamás `transition: all`). Duraciones: `--dur-1` 120 · `--dur-2` 180 · `--dur-3` 280 · `--dur-4` 420 · `--dur-reveal` 320 ms. Curvas: `--ease-out`, `--ease-in-out`, `--ease-back`.
 
-Entradas por scroll: `[data-reveal]` con `threshold: 0.15`, índice de escalonado máximo 3 y retraso de 40 ms por índice. Nunca en la primera sección de una página. Con `prefers-reduced-motion` las duraciones colapsan y nada se desplaza.
+Entradas por scroll: `[data-reveal]` con `threshold: 0.15`, índice de escalonado máximo 3 y retraso de 40 ms por índice. Nunca en la primera sección de una página. Con `prefers-reduced-motion` las duraciones colapsan y nada se desplaza. Los cambios de estado de color (`background-color`, `border-color`, `color`, `text-decoration-thickness`) también transicionan, siempre con propiedades nombradas; nada que se desplace usa otra propiedad que las listadas.
 
 ## 7. Reglas duras
 
