@@ -239,15 +239,13 @@ const tiles: Tile[] = [
 </script>
 
 <style>
+  /* the break stays at every width so the title never strands a lone "a" */
   .hero__br {
-    display: none;
+    display: block;
   }
   @media (width >= 64rem) {
     .hero__title {
       text-wrap: wrap;
-    }
-    .hero__br {
-      display: block;
     }
   }
 

@@ -258,7 +258,10 @@ const businesses: Business[] = [
     font-size: var(--text-small);
     font-weight: var(--weight-medium);
     color: var(--fg-secondary);
-    transition: color var(--dur-2) var(--ease-out);
+    transition: color var(--dur-2) var(--ease-out), scale var(--dur-1) var(--ease-out);
+  }
+  .cfg__option:active span {
+    scale: 0.96;
   }
   .cfg__option:hover input:not(:checked) + span {
     color: var(--fg);
@@ -727,6 +730,11 @@ const businesses: Business[] = [
     }
     .cfg__option span {
       padding-inline: 0.625rem;
+    }
+  }
+  @media (width <= 24rem) {
+    .cfg__option span {
+      padding-inline: var(--space-2);
     }
   }
 </style>

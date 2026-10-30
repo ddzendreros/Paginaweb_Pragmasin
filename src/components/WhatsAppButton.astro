@@ -61,8 +61,10 @@ const onContact = Astro.url.pathname.replace(/\/$/, "") === "/contacto";
   .wa-fab:active {
     scale: 0.96;
   }
+  /* the ring sits inside the circle, where it lands on night, not on paper */
   .wa-fab:focus-visible {
     border-radius: 50%;
+    outline-offset: calc(-2 * var(--focus-width));
   }
   .wa-fab__glyph {
     width: var(--space-5);

@@ -242,6 +242,9 @@ ol {
   color: var(--interactive-strong);
   text-decoration-thickness: var(--hairline-strong);
 }
+.link:active {
+  color: var(--interactive-strong);
+}
 /* the arrow belongs to the interface, not to the copy: that way it moves */
 .link--arrow {
   text-decoration: none;

@@ -160,6 +160,9 @@ const current = Astro.url.pathname.replace(/\/$/, "");
     color: var(--fg);
     background: var(--bg-sunken);
   }
+  .site-header__link:active {
+    background: var(--hairline-color);
+  }
   .site-header__link:focus-visible {
     border-radius: var(--radius-pill);
   }
@@ -252,6 +255,10 @@ const current = Astro.url.pathname.replace(/\/$/, "");
       translate: 0 100%;
     }
   }
+  /* a modal dialog does not stop the page behind it from scrolling */
+  :global(html:has(.sheet[open])) {
+    overflow: hidden;
+  }
   .sheet::backdrop {
     background: rgb(var(--rgb-ink) / 0.4);
   }
@@ -314,6 +321,9 @@ const current = Astro.url.pathname.replace(/\/$/, "");
   .sheet__link:hover,
   .sheet__link[aria-current="page"] {
     color: var(--interactive);
+  }
+  .sheet__link:active {
+    color: var(--interactive-strong);
   }
   .sheet__link:focus-visible {
     border-radius: var(--radius-xs);
