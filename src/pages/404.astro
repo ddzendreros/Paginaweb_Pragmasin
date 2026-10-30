@@ -3,54 +3,63 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
 const destinations = [
   { href: "/", label: "Inicio" },
-  { href: "/#precios", label: "El diagnóstico" },
-  { href: "/servicios", label: "Servicios" },
-  { href: "/metodo", label: "El método" },
+  { href: "/servicios", label: "Qué construimos" },
+  { href: "/metodo", label: "Cómo trabajamos" },
   { href: "/contacto", label: "Contacto" },
 ];
 ---
 
 <BaseLayout
   title="Página no encontrada — Pragmasyn"
-  description="Esta página no existe. Lo que sí existe: el diagnóstico, los servicios, el método y el contacto de Pragmasyn."
+  description="Esta página no existe. Lo que sí existe: qué construimos, cómo trabajamos y el contacto de Pragmasyn."
   path="/404"
 >
-  <section class="ground-dark act not-found" aria-labelledby="nf-title">
+  <section class="opening" aria-labelledby="nf-title">
     <div class="act__inner">
-      <div class="act__head">
-        <p class="label eyebrow">Error 404</p>
-        <h1 id="nf-title" class="display">Esta página no existe.</h1>
-        <p class="lead">
-          El enlace está roto o apunta a algo que nunca existió — pasa hasta en
-          los mejores sistemas. Lo que sí existe:
-        </p>
-        <ul class="not-found__links">
-          {
-            destinations.map((d) => (
-              <li>
-                <a class="link link--arrow" href={d.href}>
-                  {d.label}
-                </a>
-              </li>
-            ))
-          }
-        </ul>
+      <div class="opening__top grid-12">
+        <div class="opening__main">
+          <p class="label label--rule">Error 404</p>
+          <h1 id="nf-title" class="display-2">Esta página <em>no existe.</em></h1>
+        </div>
+        <div class="opening__aside">
+          <p class="lead">
+            El enlace está roto o apunta a algo que nunca existió. Pasa hasta en los mejores
+            sistemas. Lo que sí existe:
+          </p>
+        </div>
       </div>
+    </div>
+  </section>
+
+  <section class="act not-found">
+    <div class="act__inner">
+      <ul class="not-found__links">
+        {
+          destinations.map((d) => (
+            <li>
+              <a class="link link--arrow" href={d.href}>
+                {d.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
     </div>
   </section>
 </BaseLayout>
 
 <style>
   .not-found {
-    padding-block: clamp(var(--space-9), 10vw, var(--space-11));
+    padding-block-start: 0;
   }
   .not-found__links {
-    list-style: none;
-    margin: var(--space-4) 0 0;
-    padding: 0;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: var(--space-3) var(--space-6);
+    max-width: var(--measure);
+  }
+  .not-found__links li {
+    padding-block: var(--space-2);
+    border-block-start: var(--hairline) solid var(--hairline-color);
+  }
+  .not-found__links li:last-child {
+    border-block-end: var(--hairline) solid var(--hairline-color);
   }
 </style>

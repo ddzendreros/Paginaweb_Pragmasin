@@ -41,54 +41,53 @@ const sections = [
   description="Aviso de privacidad de Pragmasyn. Corto, porque recabamos poco: nombre, correo y tu mensaje. Nada más."
   path="/privacidad"
 >
-  <section class="ground-dark act opening" aria-labelledby="privacy-title">
+  <section class="opening" aria-labelledby="privacy-title">
     <div class="act__inner">
-      <p class="label">Legal</p>
-      <h1 id="privacy-title" class="h1 opening__title">Aviso de privacidad</h1>
-      <p class="body opening__lead">Corto, porque recabamos poco.</p>
+      <div class="opening__top grid-12">
+        <div class="opening__main">
+          <p class="label label--rule">Legal</p>
+          <h1 id="privacy-title" class="display-2">Aviso de privacidad</h1>
+        </div>
+        <div class="opening__aside">
+          <p class="lead">Corto, porque recabamos poco.</p>
+        </div>
+      </div>
     </div>
   </section>
 
-  <section class="ground-light act notice">
+  <section class="act notice">
     <div class="act__inner">
-      {
-        sections.map((s) => (
-          <section class="notice__section">
-            <h2 class="h4">{s.title}</h2>
-            <p class="body">{s.text}</p>
-          </section>
-        ))
-      }
-      <p class="caption notice__updated">
-        Última actualización: 31 de agosto de 2026
-      </p>
+      <div class="notice__column">
+        {
+          sections.map((s) => (
+            <section class="notice__section">
+              <h2 class="h3">{s.title}</h2>
+              <p class="body">{s.text}</p>
+            </section>
+          ))
+        }
+        <p class="caption notice__updated">
+          Última actualización: 31 de agosto de 2026
+        </p>
+      </div>
     </div>
   </section>
 </BaseLayout>
 
 <style>
-  .opening {
-    padding-block: var(--space-10) var(--space-9);
+  .notice {
+    padding-block-start: 0;
   }
-  .opening__title {
-    margin-top: var(--space-5);
-  }
-  .opening__lead {
-    margin-top: var(--space-4);
+  .notice__column {
+    max-width: var(--measure);
   }
   .notice__section {
-    max-width: var(--measure);
+    display: grid;
+    gap: var(--space-2);
     padding-block: var(--space-5);
-    border-top: var(--hairline) solid var(--hairline-color);
-  }
-  .notice__section:first-child {
-    border-top: 0;
-    padding-top: 0;
-  }
-  .notice__section p {
-    margin-top: var(--space-2);
+    border-block-start: var(--hairline) solid var(--hairline-color);
   }
   .notice__updated {
-    margin-top: var(--space-7);
+    margin-block-start: var(--space-7);
   }
 </style>
