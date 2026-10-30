@@ -6,68 +6,131 @@ const waHref = whatsappUrl(waMessages.contacto);
 
 const nextSteps = [
   "Leemos tu mensaje. Lo contesta quien trabajaría tu caso, no un vendedor.",
-  "Llamada de 30 minutos: preguntas directas sobre tu operación, cero presentación de ventas.",
-  "Si hay horas que recuperar, propuesta en una página. Si no las hay, te lo decimos en la llamada.",
+  "Hablamos 30 minutos sobre tu negocio. Cero presentación de ventas.",
+  "Si te podemos ayudar, te mandamos una propuesta en una página. Si no, te lo decimos en la llamada.",
 ];
 
-const sizes = ["menos de 50", "50–150", "150–500", "más de 500"];
+const sizes = ["1–10", "11–50", "51–200", "más de 200"];
+const emptyMessage = "Sin esto no podemos ayudarte: cuéntanos aunque sea en una línea.";
 ---
 
 <BaseLayout
   title="Contacto — Pragmasyn"
-  description="Cuéntanos qué proceso te está costando más horas. Te respondemos con una lectura honesta, incluso si la respuesta es que no nos necesitas."
-  ogTitle="¿Qué sigues haciendo a mano?"
-  ogDescription="Escríbenos el proceso que más horas te cuesta. Respondemos en menos de 24 horas hábiles."
+  description="Cuéntanos qué te gustaría resolver. Te contesta una persona y te decimos con honestidad si te podemos ayudar."
+  ogTitle="¿Qué te gustaría dejar de hacer?"
+  ogDescription="Cuéntanos tu idea. Te contesta una persona."
   path="/contacto"
 >
-  <section class="ground-dark act opening" aria-labelledby="contact-title">
+  <section class="opening" aria-labelledby="contact-title">
     <div class="act__inner">
-      <div class="act__head" data-reveal>
-        <p class="label eyebrow">Contacto</p>
-        <h1 id="contact-title" class="display">¿Qué sigues haciendo a mano?</h1>
-        <p class="lead">
-          Cuéntanos el proceso que más horas te está costando. Te respondemos con
-          una lectura honesta — incluso si la respuesta es que no nos necesitas.
-        </p>
+      <div class="opening__top grid-12">
+        <div class="opening__main">
+          <p class="label label--rule">Contacto</p>
+          <h1 id="contact-title" class="display">
+            ¿Qué te gustaría <em>dejar de hacer?</em>
+          </h1>
+        </div>
+        <div class="opening__aside">
+          <p class="lead">
+            Cuéntanoslo con tus palabras. Te contesta una persona y te decimos con honestidad si
+            te podemos ayudar, incluso si la respuesta es que no nos necesitas.
+          </p>
+        </div>
       </div>
     </div>
   </section>
 
-  <section class="ground-light act form-act" aria-labelledby="form-title">
-    <div class="act__inner form-act__grid">
-      <div class="card card--feature form-act__form" data-reveal>
-        <h2 id="form-title" class="h3">Cuéntanos</h2>
-        <p class="small form-act__handoff" data-calc-handoff hidden>
-          <strong>Traemos tu cálculo.</strong> Puedes editarlo o borrarlo antes
-          de enviar.
-        </p>
+  <section class="act contact-act" aria-labelledby="form-title">
+    <div class="act__inner contact grid-12">
+      <aside class="contact__side">
+        {
+          hasWhatsapp && waHref && (
+            <a
+              class="wa-card ground-dark"
+              href={waHref}
+              target="_blank"
+              rel="noopener"
+              data-reveal
+            >
+              <p class="label">Lo más rápido</p>
+              <p class="h3 wa-card__title">Escríbenos por WhatsApp</p>
+              <p class="wa-card__text">
+                Mándanos tu idea como se la contarías a alguien de confianza. Contesta una persona,
+                en horario hábil.
+              </p>
+              <span class="link link--arrow wa-card__cta">Abrir WhatsApp</span>
+            </a>
+          )
+        }
+
+        <div class="direct" data-reveal>
+          <p class="label">Directo</p>
+          <p class="small">
+            ¿Prefieres el correo?
+            <a class="link" href={`mailto:${site.email}`}>{site.email}</a>
+          </p>
+        </div>
+
+        <div class="next" data-reveal>
+          <h2 class="label" id="next-title">Qué sigue</h2>
+          <ol class="next__list" aria-labelledby="next-title">
+            {
+              nextSteps.map((step, i) => (
+                <li class="next__item">
+                  <span class="caption numeral" aria-hidden="true">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <p class="small">{step}</p>
+                </li>
+              ))
+            }
+          </ol>
+        </div>
+      </aside>
+
+      <div class="contact__form" data-reveal>
+        <h2 id="form-title" class="h3">O déjanos tu mensaje</h2>
         <form class="contact-form" novalidate data-wa-number={site.whatsappNumber}>
           <div class="field" data-field="name">
             <label class="small" for="cf-name">Nombre</label>
-            <input id="cf-name" name="name" type="text" autocomplete="name"
-              placeholder="¿Cómo te llamamos?" required />
-            <p class="caption field__msg" hidden>
-              Sin esto no podemos ayudarte: cuéntanos aunque sea en una línea.
-            </p>
+            <input
+              id="cf-name"
+              name="name"
+              type="text"
+              autocomplete="name"
+              placeholder="¿Cómo te llamamos?"
+              required
+            />
+            <p class="caption field__msg" hidden>{emptyMessage}</p>
           </div>
           <div class="field" data-field="company">
             <label class="small" for="cf-company">Empresa</label>
-            <input id="cf-company" name="company" type="text"
-              autocomplete="organization" placeholder="Nombre de tu empresa" required />
-            <p class="caption field__msg" hidden>
-              Sin esto no podemos ayudarte: cuéntanos aunque sea en una línea.
-            </p>
+            <input
+              id="cf-company"
+              name="company"
+              type="text"
+              autocomplete="organization"
+              placeholder="Nombre de tu empresa"
+              required
+            />
+            <p class="caption field__msg" hidden>{emptyMessage}</p>
           </div>
           <div class="field" data-field="email">
-            <label class="small" for="cf-email">Correo de trabajo</label>
-            <input id="cf-email" name="email" type="email" autocomplete="email"
-              placeholder="nombre@empresa.mx" required />
+            <label class="small" for="cf-email">Correo</label>
+            <input
+              id="cf-email"
+              name="email"
+              type="email"
+              autocomplete="email"
+              placeholder="nombre@empresa.mx"
+              required
+            />
             <p class="caption field__msg" hidden>
               Ese correo no parece completo. Revísalo y volvemos a intentar.
             </p>
           </div>
           <div class="field" data-field="size">
-            <label class="small" for="cf-size">Número de empleados</label>
+            <label class="small" for="cf-size">Tamaño de tu equipo (opcional)</label>
             <span class="field__select">
               <select id="cf-size" name="size">
                 <option value="">Selecciona</option>
@@ -76,15 +139,15 @@ const sizes = ["menos de 50", "50–150", "150–500", "más de 500"];
             </span>
           </div>
           <div class="field" data-field="message">
-            <label class="small" for="cf-message">
-              ¿Qué proceso te está costando más horas?
-            </label>
-            <textarea id="cf-message" name="message" rows="5" required
-              placeholder="Dos o tres líneas bastan. Ej.: ‘Dos personas capturan facturas de proveedor en PDF todos los días.’"
+            <label class="small" for="cf-message">¿Qué quieres resolver?</label>
+            <textarea
+              id="cf-message"
+              name="message"
+              rows="5"
+              required
+              placeholder="Dos o tres líneas bastan. Ej.: ‘Pagamos un sistema caro y solo usamos una parte.’"
             ></textarea>
-            <p class="caption field__msg" hidden>
-              Sin esto no podemos ayudarte: cuéntanos aunque sea en una línea.
-            </p>
+            <p class="caption field__msg" hidden>{emptyMessage}</p>
           </div>
           <div class="field" data-field="consent">
             <label class="small consent">
@@ -97,54 +160,15 @@ const sizes = ["menos de 50", "50–150", "150–500", "más de 500"];
           </div>
           <button class="btn btn--primary" type="submit" disabled>Enviar mensaje</button>
           <p class="caption contact-form__micro">
-            Respondemos en menos de 24 horas hábiles. Sin secuencia de correos
-            automáticos.
+            Respondemos en menos de 24 horas hábiles. Sin secuencia de correos automáticos.
           </p>
           <p class="small contact-form__status" role="status" aria-live="polite"></p>
         </form>
       </div>
-
-      <aside class="form-act__aside">
-        {
-          hasWhatsapp && waHref && (
-            <a class="card card--link wa-card" href={waHref} target="_blank" rel="noopener" data-reveal>
-              <p class="label eyebrow">Más rápido</p>
-              <p class="h4 wa-card__title">Escríbenos por WhatsApp</p>
-              <p class="small wa-card__text">
-                Mándanos el proceso que te está costando horas. Contesta una
-                persona, en horario hábil.
-              </p>
-              <span class="link link--arrow wa-card__cta">Abrir WhatsApp</span>
-            </a>
-          )
-        }
-
-        <div class="card direct" data-reveal>
-          <p class="label">Directo</p>
-          <p class="small direct__text">
-            ¿Prefieres el correo?
-            <a class="link" href={`mailto:${site.email}`}>{site.email}</a>
-          </p>
-        </div>
-
-        <div class="next-steps-block" data-reveal>
-          <h2 class="h4" id="next-title">Qué sigue</h2>
-          <ol class="next-steps" aria-labelledby="next-title">
-            {
-              nextSteps.map((step, i) => (
-                <li class="next-steps__item">
-                  <span class="caption next-steps__num" aria-hidden="true">
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                  <p class="small">{step}</p>
-                </li>
-              ))
-            }
-          </ol>
-        </div>
-      </aside>
     </div>
   </section>
+
+  <div class="toast ground-dark" role="status" aria-live="polite" data-toast></div>
 </BaseLayout>
 
 <script>
@@ -154,45 +178,8 @@ const sizes = ["menos de 50", "50–150", "150–500", "más de 500"];
   const endpoint = import.meta.env.PUBLIC_FORM_ENDPOINT as string | undefined;
   const web3Key = import.meta.env.PUBLIC_WEB3FORMS_KEY as string | undefined;
   const form = document.querySelector<HTMLFormElement>(".contact-form");
-  const waNumber = form?.dataset.waNumber ?? "";
-
-  // Handoff desde la home: dos fuentes distintas prellenan el mismo
-  // mensaje. `?h=&d=` viene de la calculadora; `?a=` de las tarjetas de
-  // "Después del diagnóstico" y del CTA del diagnóstico. Solo se toca el
-  // mensaje si el usuario no ha empezado a escribir.
-  const params = new URLSearchParams(window.location.search);
-  const message = form?.querySelector<HTMLTextAreaElement>("#cf-message");
-  const handoff = document.querySelector<HTMLElement>("[data-calc-handoff]");
-  const setMessage = (text: string): void => {
-    if (!message) return;
-    if (message.value.trim().length > 0) return;
-    message.value = text;
-    if (handoff) handoff.hidden = false;
-  };
-
-  const h = parseInt(params.get("h") ?? "", 10);
-  const d = parseInt(params.get("d") ?? "", 10);
-  if (Number.isFinite(h) && h > 0 && Number.isFinite(d) && d > 0) {
-    const mx = new Intl.NumberFormat("es-MX");
-    setMessage(
-      "Calculé " + mx.format(h) + " horas al mes y $" + mx.format(d) +
-        " al año. Quiero ver el desglose.",
-    );
-  }
-
-  const automationPrefills: Record<string, string> = {
-    diagnostico:
-      "Me interesa agendar el diagnóstico. Cuéntenme cómo empezamos.",
-    facturas:
-      "Me interesa automatizar la captura de facturas de proveedor. Hoy llegan por correo y en PDF, y alguien las teclea a mano.",
-    whatsapp:
-      "Me interesa automatizar los pedidos que llegan por WhatsApp. Hoy alguien los transcribe al sistema.",
-    reportes:
-      "Me interesa automatizar el reporte que hoy se arma a mano. Los datos vienen de varios lados.",
-  };
-  const a = params.get("a") ?? "";
-  const preset = automationPrefills[a];
-  if (preset) setMessage(preset);
+  const toast = document.querySelector<HTMLElement>("[data-toast]");
+  const waNumber = form?.dataset["waNumber"] ?? "";
 
   // El botón queda deshabilitado hasta que se acepte el aviso de privacidad.
   const consent = form?.querySelector<HTMLInputElement>("#cf-consent");
@@ -208,6 +195,24 @@ const sizes = ["menos de 50", "50–150", "150–500", "más de 500"];
     wrap?.classList.toggle("field--error", on);
     if (msg) msg.hidden = !on;
     input?.setAttribute("aria-invalid", String(on));
+    if (on && wrap) {
+      // restart the wiggle on every failed attempt
+      wrap.classList.remove("is-wiggling");
+      void wrap.offsetWidth;
+      wrap.classList.add("is-wiggling");
+    }
+  }
+
+  let toastTimer: number | undefined;
+  function showToast(text: string): void {
+    if (!toast) return;
+    window.clearTimeout(toastTimer);
+    toast.textContent = text;
+    toast.classList.add("is-visible");
+    toastTimer = window.setTimeout(() => {
+      toast.classList.remove("is-visible");
+      toast.textContent = "";
+    }, 4000);
   }
 
   form?.addEventListener("submit", (event) => {
@@ -242,7 +247,7 @@ const sizes = ["menos de 50", "50–150", "150–500", "más de 500"];
           "El mensaje no salió — es cosa nuestra, no tuya. Intenta de nuevo o escríbenos directo.";
         return;
       }
-      const draft = `Hola Pragmasyn. Soy ${name} de ${company}. El proceso que más horas me cuesta: ${message}`;
+      const draft = `Hola Pragmasyn. Soy ${name} de ${company}. Lo que quiero resolver: ${message}`;
       const link = document.createElement("a");
       link.className = "link";
       link.href = `https://wa.me/${waNumber}?text=${encodeURIComponent(draft)}`;
@@ -261,19 +266,19 @@ const sizes = ["menos de 50", "50–150", "150–500", "más de 500"];
     button.setAttribute("aria-busy", "true");
     const payload: Record<string, string> = { name, company, email, size, message };
     if (web3Key) {
-      payload.access_key = web3Key;
-      payload.subject = `Nuevo contacto Pragmasyn: ${name} (${company})`;
+      payload["access_key"] = web3Key;
+      payload["subject"] = `Nuevo contacto Pragmasyn: ${name} (${company})`;
     }
     fetch(endpoint, {
       method: "POST",
-      headers: { "Content-Type": "application/json", "Accept": "application/json" },
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
       body: JSON.stringify(payload),
     })
       .then((res) => {
         if (!res.ok) throw new Error(String(res.status));
         form.reset();
         button.disabled = true; // el reset destilda el consentimiento
-        status.textContent = "Recibido. Te contesta una persona, no un autoresponder.";
+        showToast("Recibido. Te contesta una persona, no un autoresponder.");
       })
       .catch(fail)
       .finally(() => {
@@ -284,80 +289,144 @@ const sizes = ["menos de 50", "50–150", "150–500", "más de 500"];
 </script>
 
 <style>
-  .opening {
-    padding-block: clamp(var(--space-8), 10vw, var(--space-10));
-  }
-  .form-act__grid {
-    display: grid;
-    grid-template-columns: 3fr 2fr;
-    gap: var(--gutter);
+  .contact {
     align-items: start;
   }
-  @media (max-width: 56rem) {
-    .form-act__grid {
-      grid-template-columns: 1fr;
+  .contact__side {
+    --col: 1 / span 5;
+    position: sticky;
+    inset-block-start: var(--space-9);
+    display: grid;
+    gap: var(--space-7);
+  }
+  .contact__form {
+    --col: 7 / span 6;
+    padding: clamp(var(--space-5), 4vw, var(--space-7));
+    background: var(--bg-raised);
+    border-radius: var(--radius-xl);
+  }
+  /* On a phone the order is: WhatsApp, form, Directo, Qué sigue. */
+  @media (width <= 56rem) {
+    .contact {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-7);
+    }
+    .contact__side {
+      display: contents;
+    }
+    .wa-card {
+      order: 1;
+    }
+    .contact__form {
+      order: 2;
+    }
+    .direct {
+      order: 3;
+    }
+    .next {
+      order: 4;
     }
   }
-  .form-act__handoff {
-    margin-top: var(--space-4);
-    padding: var(--space-4);
-    background: var(--surface-card);
-    border: var(--hairline) solid var(--surface-border);
-    border-left: var(--hairline-strong) solid var(--interactive);
-    border-radius: 0 var(--radius-s) var(--radius-s) 0;
-    color: var(--fg-secondary);
-  }
-  .form-act__handoff strong {
+
+  .wa-card {
+    display: grid;
+    gap: var(--space-3);
+    padding: var(--space-6);
+    border-radius: var(--radius-xl);
     color: var(--fg);
-    font-weight: var(--weight-medium);
+    text-decoration: none;
+    transition: background-color var(--dur-2) var(--ease-out), scale var(--dur-1) var(--ease-out);
+  }
+  .wa-card:hover {
+    background-color: var(--bg-raised);
+  }
+  .wa-card:active {
+    scale: 0.99;
+  }
+  .wa-card:focus-visible {
+    border-radius: var(--radius-xl);
+  }
+  .wa-card__text {
+    max-width: var(--measure);
+    color: var(--fg-secondary);
+    text-wrap: pretty;
+  }
+  .wa-card__cta {
+    justify-self: start;
+  }
+
+  .direct {
+    display: grid;
+    gap: var(--space-2);
+  }
+  .next {
+    display: grid;
+    gap: var(--space-2);
+  }
+  .next__item {
+    display: grid;
+    grid-template-columns: var(--space-7) 1fr;
+    gap: var(--space-3);
+    padding-block: var(--space-4);
+    border-block-start: var(--hairline) solid var(--hairline-color);
   }
 
   .contact-form {
-    margin-top: var(--space-6);
+    margin-block-start: var(--space-6);
     display: grid;
     gap: var(--space-5);
   }
   .contact-form__micro {
-    margin-top: calc(var(--space-2) * -1);
+    margin-block-start: calc(var(--space-2) * -1);
   }
   .contact-form__status:empty {
     display: none;
   }
 
-  .form-act__aside {
-    display: grid;
-    gap: var(--gutter);
+  /* A field that fails shakes once, 4px each way. */
+  @media (prefers-reduced-motion: no-preference) {
+    .field.is-wiggling {
+      animation: wiggle 240ms var(--ease-in-out);
+    }
   }
-  .wa-card__title {
-    margin-top: var(--space-2);
-  }
-  .wa-card__text {
-    margin-top: var(--space-3);
-  }
-  .wa-card__cta {
-    margin-top: var(--space-4);
-    display: inline-flex;
-  }
-  .direct__text {
-    margin-top: var(--space-3);
+  @keyframes wiggle {
+    20%,
+    60% {
+      translate: calc(-1 * var(--space-1)) 0;
+    }
+    40%,
+    80% {
+      translate: var(--space-1) 0;
+    }
   }
 
-  .next-steps-block {
-    padding-inline: var(--space-2);
+  /* Success is a toast at the bottom centre; it leaves on its own. */
+  .toast {
+    position: fixed;
+    inset-inline: var(--margin);
+    inset-block-end: var(--space-5);
+    z-index: var(--z-overlay);
+    width: fit-content;
+    max-width: calc(100% - 2 * var(--margin));
+    margin-inline: auto;
+    padding: var(--space-3) var(--space-5);
+    border-radius: var(--radius-pill);
+    box-shadow: var(--shadow-float);
+    font-size: var(--text-small);
+    text-align: center;
+    opacity: 0;
+    translate: 0 var(--space-3);
+    pointer-events: none;
+    transition:
+      opacity var(--dur-3) var(--ease-out),
+      translate var(--dur-3) var(--ease-out);
   }
-  .next-steps {
-    list-style: none;
-    margin: var(--space-4) 0 0;
-    padding: 0;
+  .toast:empty {
+    box-shadow: none;
   }
-  .next-steps__item {
-    display: grid;
-    grid-template-columns: var(--space-7) 1fr;
-    gap: var(--space-3);
-    padding-block: var(--space-4);
-    border-top: var(--hairline) solid var(--hairline-color);
-  }
-  .next-steps__num {
-    font-stretch: var(--width-condensed);
+  .toast.is-visible {
+    opacity: 1;
+    translate: 0 0;
   }
 </style>
