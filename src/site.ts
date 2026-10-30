@@ -19,9 +19,8 @@ export const site: SiteData = {
 
 /** Mensajes prellenados: distintos según de dónde salió la persona. */
 export const waMessages = {
-  flotante: "Hola Pragmasyn. Quiero saber qué puedo automatizar en mi operación.",
-  contacto: "Hola Pragmasyn. Quiero contarles qué proceso me está costando más horas.",
-  diagnostico: "Hola Pragmasyn. Quiero agendar el diagnóstico.",
+  flotante: "Hola Pragmasyn. Tengo una idea y quiero saber si me pueden ayudar.",
+  contacto: "Hola Pragmasyn. Quiero contarles qué me gustaría resolver en mi negocio.",
   pie: "Hola Pragmasyn. Tengo una pregunta.",
 } as const;
 
