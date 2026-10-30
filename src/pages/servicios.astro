@@ -4,7 +4,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 const lines = [
   {
     num: "01",
-    name: "Software a la medida",
+    name: 'Software <span>a la medida</span>',
     text: "Sistemas, portales, paneles y apps diseñados alrededor de cómo trabaja tu empresa.",
     signals: [
       "ya probaste varios sistemas y ninguno te queda;",
@@ -82,7 +82,7 @@ const rules: [string, string][] = [
           lines.map((l) => (
             <li class="line grid-12" data-reveal>
               <span class="caption numeral line__num">{l.num}</span>
-              <h2 class="h2 line__name">{l.name}</h2>
+              <h2 class="h2 line__name" set:html={l.name} />
               <div class="line__body">
                 <p class="lead">{l.text}</p>
                 <p class="label line__label">Es para ti si…</p>
@@ -150,6 +150,10 @@ const rules: [string, string][] = [
   }
   .line__name {
     --col: 2 / span 5;
+  }
+  /* a stranded "a" at the end of a line reads as a typo */
+  .line__name :global(span) {
+    white-space: nowrap;
   }
   .line__body {
     --col: 7 / span 6;
