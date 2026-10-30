@@ -25,9 +25,9 @@ const emptyMessage = "Sin esto no podemos ayudarte: cuéntanos aunque sea en una
     <div class="act__inner">
       <div class="opening__top grid-12">
         <div class="opening__main">
-          <p class="label label--rule">Contacto</p>
+          <p class="label">Contacto</p>
           <h1 id="contact-title" class="display">
-            ¿Qué te gustaría <em>dejar de hacer?</em>
+            ¿Qué te gustaría dejar de hacer?
           </h1>
         </div>
         <div class="opening__aside">
@@ -46,11 +46,10 @@ const emptyMessage = "Sin esto no podemos ayudarte: cuéntanos aunque sea en una
         {
           hasWhatsapp && waHref && (
             <a
-              class="wa-card ground-dark"
+              class="wa-card ground-cobalt"
               href={waHref}
               target="_blank"
               rel="noopener"
-              data-reveal
             >
               <p class="label">Lo más rápido</p>
               <p class="h3 wa-card__title">Escríbenos por WhatsApp</p>
@@ -58,12 +57,12 @@ const emptyMessage = "Sin esto no podemos ayudarte: cuéntanos aunque sea en una
                 Mándanos tu idea como se la contarías a alguien de confianza. Contesta una persona,
                 en horario hábil.
               </p>
-              <span class="link link--arrow wa-card__cta">Abrir WhatsApp</span>
+              <span class="link link--plain wa-card__cta">Abrir WhatsApp</span>
             </a>
           )
         }
 
-        <div class="direct" data-reveal>
+        <div class="direct">
           <h2 class="label" id="direct-title">Directo</h2>
           <p class="small">
             ¿Prefieres el correo?
@@ -71,7 +70,7 @@ const emptyMessage = "Sin esto no podemos ayudarte: cuéntanos aunque sea en una
           </p>
         </div>
 
-        <div class="next" data-reveal>
+        <div class="next">
           <h2 class="label" id="next-title">Qué sigue</h2>
           <ol class="next__list" aria-labelledby="next-title">
             {
@@ -88,7 +87,7 @@ const emptyMessage = "Sin esto no podemos ayudarte: cuéntanos aunque sea en una
         </div>
       </aside>
 
-      <div class="contact__form" data-reveal>
+      <div class="contact__form">
         <h2 id="form-title" class="h3">O déjanos tu mensaje</h2>
         <form class="contact-form" novalidate data-wa-number={site.whatsappNumber}>
           <div class="field" data-field="name">
@@ -306,21 +305,25 @@ const emptyMessage = "Sin esto no podemos ayudarte: cuéntanos aunque sea en una
 </script>
 
 <style>
+  .contact-act {
+    padding-block-start: 0;
+  }
   .contact {
     align-items: start;
   }
   .contact__side {
-    --col: 1 / span 5;
+    --col: 1 / span 4;
     position: sticky;
     inset-block-start: var(--space-9);
     display: grid;
-    gap: var(--space-7);
+    gap: var(--space-6);
   }
   .contact__form {
-    --col: 7 / span 6;
-    padding: clamp(var(--space-5), 4vw, var(--space-7));
+    --col: 6 / -1;
+    padding: clamp(var(--space-4), 3vw, var(--space-6));
     background: var(--bg-raised);
-    border-radius: var(--radius-xl);
+    border: var(--hairline) solid var(--fog-400);
+    border-radius: var(--radius-l);
   }
   /* On a phone the order is: WhatsApp, form, Directo, Qué sigue. */
   @media (width <= 56rem) {
@@ -348,22 +351,19 @@ const emptyMessage = "Sin esto no podemos ayudarte: cuéntanos aunque sea en una
 
   .wa-card {
     display: grid;
-    gap: var(--space-3);
-    padding: var(--space-6);
-    border-radius: var(--radius-xl);
+    gap: var(--space-2);
+    padding: var(--space-5);
+    border-radius: var(--radius-l);
     color: var(--fg);
     text-decoration: none;
-    transition: background-color var(--dur-2) var(--ease-out), scale var(--dur-1) var(--ease-out);
+    transition: background-color var(--dur-1) var(--ease-out);
   }
   .wa-card:hover {
     background-color: var(--bg-raised);
   }
-  .wa-card:active {
-    scale: 0.99;
-  }
-  /* the ring sits inside the card, where it lands on night, not on paper */
+  /* the ring sits inside the card, where it lands on cobalt, not on white */
   .wa-card:focus-visible {
-    border-radius: var(--radius-xl);
+    border-radius: var(--radius-l);
     outline-offset: calc(-2 * var(--focus-width));
   }
   .wa-card__text {
@@ -397,9 +397,9 @@ const emptyMessage = "Sin esto no podemos ayudarte: cuéntanos aunque sea en una
   }
 
   .contact-form {
-    margin-block-start: var(--space-6);
+    margin-block-start: var(--space-5);
     display: grid;
-    gap: var(--space-5);
+    gap: var(--space-4);
   }
   .contact-form__micro {
     margin-block-start: calc(var(--space-2) * -1);
@@ -442,9 +442,8 @@ const emptyMessage = "Sin esto no podemos ayudarte: cuéntanos aunque sea en una
     width: fit-content;
     max-width: calc(100% - 2 * var(--margin));
     margin-inline: auto;
-    padding: var(--space-3) var(--space-5);
-    border-radius: var(--radius-pill);
-    box-shadow: var(--shadow-float);
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-m);
     font-size: var(--text-small);
     text-align: center;
     opacity: 0;
@@ -455,7 +454,7 @@ const emptyMessage = "Sin esto no podemos ayudarte: cuéntanos aunque sea en una
       translate var(--dur-3) var(--ease-out);
   }
   .toast:empty {
-    box-shadow: none;
+    display: none;
   }
   .toast.is-visible {
     opacity: 1;
