@@ -1,0 +1,6 @@
+{
+  "redirects": [
+    { "source": "/calculadora", "destination": "/contacto", "permanent": true },
+    { "source": "/calculadora/", "destination": "/contacto", "permanent": true }
+  ]
+}
