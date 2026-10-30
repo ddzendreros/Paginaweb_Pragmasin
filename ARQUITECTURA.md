@@ -16,7 +16,7 @@
 | Fuentes | Estáticas en `public/fonts` (3 woff2 variable, subset latin) | Autohospedadas con `font-display: swap` + preload; latin cubre es-MX completo. |
 | Tokens | `public/styles/tokens.css` como asset estático | Un solo archivo consumido por el sitio Y el specimen; sin build-step no hay deriva entre ambos. |
 | Dominio | Placeholder `https://pragmasyn.example` vía `SITE_URL` | No se inventa un dominio real; `.example` es TLD reservado y canonical/sitemap/robots se regeneran solos al fijarlo. |
-| Formulario | POST JSON a `PUBLIC_FORM_ENDPOINT` (env) | No existe backend/correo todavía; sin endpoint degrada al mensaje de error con contacto directo — no hay estado fingido. |
+| Formulario | POST JSON a `/api/contacto` | `vercel.json` lo reenvía al Worker `workers/contacto`, que lo manda por Email Routing de Cloudflare. Sin proveedor de formularios ni base de datos; si falla, se ofrece el mismo mensaje por WhatsApp. |
 
 ## Estructura
 

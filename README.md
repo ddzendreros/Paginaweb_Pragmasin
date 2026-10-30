@@ -33,7 +33,7 @@ Requiere Node ≥ 22.12.
 - **El gradiente de marca aparece exactamente 2 veces:** el logo del header y la OG image. Nada más lo usa — es la regla dura del brief.
 - **Dos colores interactivos, uno por mundo:** azul `--accent` sobre claro (5.02:1), cian `--signal` sobre oscuro (11.66:1). Ambos salen del logo; ninguno cruza de mundo.
 - **Sin fotografía**, a propósito: no hay fotos reales que mostrar y el stock fingiría que sí (justificación completa en `CONTENIDO.md`).
-- **Formulario:** requiere `PUBLIC_FORM_ENDPOINT` (variable de entorno) al desplegar; sin él degrada con honestidad al mensaje de contacto directo.
+- **Formulario:** lo recibe el Worker de `workers/contacto`, que se despliega aparte en Cloudflare (ver su README). Si falla, el formulario ofrece el mismo mensaje por WhatsApp.
 - **Dominio:** placeholder `pragmasyn.example` vía `SITE_URL`; canonical, sitemap y robots se regeneran al fijar el real.
 
 ## Antes de lanzar
