@@ -158,7 +158,21 @@ const emptyMessage = "Sin esto no podemos ayudarte: cuéntanos aunque sea en una
               </span>
             </label>
           </div>
-          <button class="btn btn--primary" type="submit" disabled>Enviar mensaje</button>
+          <div class="contact-form__trap" aria-hidden="true">
+            <label>
+              Sitio web
+              <input name="website" type="text" tabindex="-1" autocomplete="off" />
+            </label>
+          </div>
+          <button
+            class="btn btn--primary"
+            type="submit"
+            aria-describedby="cf-consent-hint"
+            disabled
+          >
+            Enviar mensaje
+          </button>
+          <p class="caption" id="cf-consent-hint">Para enviarlo, acepta el aviso de privacidad.</p>
           <p class="caption contact-form__micro">
             Respondemos en menos de 24 horas hábiles. Sin secuencia de correos automáticos.
           </p>
@@ -173,10 +187,7 @@ const emptyMessage = "Sin esto no podemos ayudarte: cuéntanos aunque sea en una
 
 <script>
   // Mejora progresiva: validación y envío con la voz de la marca.
-  // El endpoint es requisito de lanzamiento; sin él el formulario degrada al
-  // mensaje de error que apunta al contacto directo.
-  const endpoint = import.meta.env.PUBLIC_FORM_ENDPOINT as string | undefined;
-  const web3Key = import.meta.env.PUBLIC_WEB3FORMS_KEY as string | undefined;
+  // El mensaje va a nuestro Worker (workers/contacto) y de ahí a nuestro correo.
   const form = document.querySelector<HTMLFormElement>(".contact-form");
   const toast = document.querySelector<HTMLElement>("[data-toast]");
   const waNumber = form?.dataset["waNumber"] ?? "";
@@ -184,8 +195,11 @@ const emptyMessage = "Sin esto no podemos ayudarte: cuéntanos aunque sea en una
   // El botón queda deshabilitado hasta que se acepte el aviso de privacidad.
   const consent = form?.querySelector<HTMLInputElement>("#cf-consent");
   const submitBtn = form?.querySelector<HTMLButtonElement>("button[type=submit]");
+  const consentHint = form?.querySelector<HTMLElement>("#cf-consent-hint");
   const syncSubmit = (): void => {
-    if (consent && submitBtn) submitBtn.disabled = !consent.checked;
+    if (!consent || !submitBtn) return;
+    submitBtn.disabled = !consent.checked;
+    if (consentHint) consentHint.hidden = consent.checked;
   };
   consent?.addEventListener("change", syncSubmit);
   // A reload or a trip back can restore the checked box without a change event.
@@ -269,27 +283,18 @@ const emptyMessage = "Sin esto no podemos ayudarte: cuéntanos aunque sea en una
       status.append(link);
     };
 
-    if (!endpoint) {
-      fail();
-      return;
-    }
-
     button.classList.add("btn--loading");
     button.setAttribute("aria-busy", "true");
-    const payload: Record<string, string> = { name, company, email, size, message };
-    if (web3Key) {
-      payload["access_key"] = web3Key;
-      payload["subject"] = `Nuevo contacto Pragmasyn: ${name} (${company})`;
-    }
-    fetch(endpoint, {
+    const website = String(data.get("website") ?? "");
+    fetch("/api/contacto", {
       method: "POST",
       headers: { "Content-Type": "application/json", Accept: "application/json" },
-      body: JSON.stringify(payload),
+      body: JSON.stringify({ name, company, email, size, message, website }),
     })
       .then((res) => {
         if (!res.ok) throw new Error(String(res.status));
         form.reset();
-        button.disabled = true; // el reset destilda el consentimiento
+        syncSubmit(); // el reset destilda el consentimiento
         showToast("Recibido. Te contesta una persona, no un autoresponder.");
       })
       .catch(fail)
@@ -398,6 +403,14 @@ const emptyMessage = "Sin esto no podemos ayudarte: cuéntanos aunque sea en una
   }
   .contact-form__micro {
     margin-block-start: calc(var(--space-2) * -1);
+  }
+  /* the honeypot stays in the DOM for bots and off screen for people */
+  .contact-form__trap {
+    position: absolute;
+    inset-inline-start: -100vw;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
   }
   .contact-form__status:empty {
     display: none;

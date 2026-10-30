@@ -1,0 +1,12 @@
+name = "pragmasyn-contacto"
+main = "index.js"
+compatibility_date = "2026-10-01"
+workers_dev = false
+routes = [{ pattern = "formulario.pragmasyn.com", custom_domain = true }]
+
+[vars]
+CONTACT_FROM = "formulario@pragmasyn.com"
+
+# El destino sale de CONTACT_TO (secreto) y debe estar verificado en Email Routing.
+[[send_email]]
+name = "EMAIL"
