@@ -184,9 +184,12 @@ const emptyMessage = "Sin esto no podemos ayudarte: cuéntanos aunque sea en una
   // El botón queda deshabilitado hasta que se acepte el aviso de privacidad.
   const consent = form?.querySelector<HTMLInputElement>("#cf-consent");
   const submitBtn = form?.querySelector<HTMLButtonElement>("button[type=submit]");
-  consent?.addEventListener("change", () => {
-    if (submitBtn) submitBtn.disabled = !consent.checked;
-  });
+  const syncSubmit = (): void => {
+    if (consent && submitBtn) submitBtn.disabled = !consent.checked;
+  };
+  consent?.addEventListener("change", syncSubmit);
+  // A reload or a trip back can restore the checked box without a change event.
+  window.addEventListener("pageshow", syncSubmit);
 
   function setFieldError(name: string, on: boolean): void {
     const wrap = form?.querySelector<HTMLElement>(`[data-field="${name}"]`);
@@ -370,6 +373,11 @@ const emptyMessage = "Sin esto no podemos ayudarte: cuéntanos aunque sea en una
   .direct {
     display: grid;
     gap: var(--space-2);
+  }
+  .direct .link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
   }
   .next {
     display: grid;
