@@ -1,10 +1,9 @@
 /* ==========================================================================
    PRAGMASYN — DESIGN TOKENS (single source of truth)
-   Direction C "Contraluz", v2 surface language: dark/light acts woven
-   together, now built from layered surfaces instead of flat planes. Every
-   component reads contextual tokens from its ground (.ground-dark /
-   .ground-light), never raw primitives. No hardcoded values outside this
-   file. Ever.
+   Direction "Hecho a tu medida": warm paper with dark chapters. Every
+   component reads contextual tokens from its ground (.ground-light /
+   .ground-dark), never raw primitives. No hardcoded values outside this
+   file, except the sample-brand colors scoped inside the Configurator.
    ========================================================================== */
 
 /* --- Self-hosted variable fonts (latin subset covers es-MX) --------------- */
@@ -32,62 +31,62 @@
 }
 
 :root {
-  /* --- Color primitives — indigo-tinted ramp, no neutral grays ----------- */
-  /* Every "gray" carries the ink hue (~230). #000, #FFF and slate-* banned. */
-  --ink-950: #060B22;      /* wells, deepest ground */
-  --ink-900: #0A1030;      /* --ink: dominant structural color */
-  --ink-800: #111844;      /* raised surfaces on dark */
-  --ink-700: #262E55;      /* hairlines on dark (1.42:1 vs ink) */
-  --ink-600: #3D4577;      /* strong secondary on light (8.47:1) */
-  --ink-500: #565F9A;      /* secondary text on light (5.61:1) */
-  --ink-450: #5A6499;      /* muted UI on dark (3.29:1) */
-  --ink-400: #868DB5;      /* muted UI on light (3.02:1) */
-  --ink-350: #8A93C4;      /* secondary text on dark (6.24:1) */
-  --ink-300: #AEB4D2;      /* disabled fg on light (contrast-exempt) */
-  --ink-250: #454F85;      /* disabled fg on dark (contrast-exempt) */
-  --ink-200: #D9DCEC;      /* hairlines on light (1.27:1 vs surface) */
-  --ink-100: #ECEEF7;      /* sunken surfaces on light */
-  --ink-050: #F6F7FB;      /* --surface: cooled off-white, never pure #FFF */
+  /* --- Color primitives. Contrast measured against the ground named. ----- */
+  --paper-0: #FFFDFA;        /* raised surfaces */
+  --paper-50: #F8F5EF;       /* canvas */
+  --paper-100: #EFEAE1;      /* sunken surfaces */
+  --paper-200: #DFD8CB;      /* hairlines on paper */
+  --paper-300: #A39B8D;      /* control borders on paper */
+  --stone-600: #6B665E;      /* muted text: 4.5+ on every paper */
+  --stone-700: #5A564F;      /* secondary text: 6.09+ on every paper */
+  --ink-900: #1A191D;        /* text on paper: 14.60+ */
 
-  --accent: #1E5CF5;       /* ONLY interactive color on light (5.02:1) */
-  --accent-strong: #184AC6;/* hover/active on light (6.92:1) */
-  --signal: #0FE3E8;       /* cyan punctuation + interactive on dark (11.66:1) */
-  --signal-strong: #3FEAEE;/* hover/active on dark */
-  --reserve: #C31FDD;      /* magenta: ONE use in the whole site, or none.
-                              Passes 4.04:1 on ink -> large text / UI only */
+  --night-950: #0D0C0F;      /* sunken on night */
+  --night-900: #141316;      /* chapter canvas */
+  --night-800: #1E1D21;      /* raised on night */
+  --night-700: #322F36;      /* hairlines on night */
+  --night-400: #8F8A81;      /* muted text: 4.88+ on every night */
+  --night-300: #B9B3A9;      /* secondary text: 8.05+ on every night */
+  --night-100: #F6F2EB;      /* text on night: 15.02+ */
 
-  /* Channel triples for alpha composition (shadows, glass, overlays).
-     Same colors as above — only expressed so rgb(x / a) can dilute them. */
-  --rgb-ink: 10 16 48;
-  --rgb-well: 6 11 34;
-  --rgb-surface: 246 247 251;
+  --cobalt: #2123EA;         /* only action color on paper, from the logo */
+  --cobalt-strong: #1818B8;  /* hover and active on paper */
+  --cobalt-tint: #E9E9FD;    /* selected states on paper */
+  --cobalt-on-night: #ADAFFF;        /* links on night: 8.26+ */
+  --cobalt-on-night-strong: #C8C9FF; /* hover on night */
+
+  --warm-100: #FBE7D6;       /* human moments, one per page at most */
+  --warm-ink: #6B3213;       /* text on warm-100: 8.37 */
+
+  --error: #B3261E;          /* 6.01 on paper */
+  --error-on-night: #FFB4A9; /* 10.89 on night */
+  --success: #1E6B4A;        /* 6.35 on raised */
+
+  /* Channel triples for alpha composition (shadows, glass). */
+  --rgb-ink: 26 25 29;
+  --rgb-paper: 248 245 239;
+  --rgb-night: 20 19 22;
 
   /* --- Typography --------------------------------------------------------
-     Pair unchanged: Instrument Sans (variable grotesk, wght + wdth 75-100)
-     now leads — display sizes at tight tracking are the interface voice.
-     Newsreader (variable serif) becomes the brand accent: etymology, pull
-     quotes, the slogan. Ratio ~1.25 (major third): sans headlines need a
-     calmer ramp than the serif did.                                     */
+     Newsreader regular leads the large headings; one italic phrase is the
+     human gesture. Instrument Sans carries text and interface. Hierarchy
+     comes from scale, not from weight.                                   */
   --font-display: "Newsreader", "Georgia", serif;
   --font-text: "Instrument Sans", "Segoe UI", system-ui, sans-serif;
 
-  --text-caption: 0.75rem;                                       /* 12px */
-  --text-small: 0.875rem;                                        /* 14px */
-  --text-body: clamp(1rem, 0.97rem + 0.15vw, 1.0625rem);         /* 16 -> 17 */
-  --text-lead: clamp(1.125rem, 1.05rem + 0.35vw, 1.3125rem);     /* 18 -> 21 */
-  --text-h4: 1.1875rem;                                          /* 19px */
-  --text-h3: clamp(1.375rem, 1.27rem + 0.45vw, 1.625rem);        /* 22 -> 26 */
-  --text-h2: clamp(1.75rem, 1.45rem + 1.3vw, 2.5rem);            /* 28 -> 40 */
-  --text-h1: clamp(2rem, 1.6rem + 1.8vw, 3rem);                  /* 32 -> 48 */
-  --text-display-2: clamp(2.25rem, 1.7rem + 2.4vw, 3.5rem);      /* 36 -> 56 */
-  --text-display: clamp(2.625rem, 1.85rem + 3.5vw, 4.5rem);      /* 42 -> 72 */
-  --text-numeral: clamp(2rem, 1.5rem + 2.2vw, 3rem);             /* stats */
+  --text-caption: 0.75rem;                                      /* 12 */
+  --text-small: 0.875rem;                                       /* 14 */
+  --text-body: clamp(1rem, 0.97rem + 0.15vw, 1.0625rem);        /* 16 -> 17 */
+  --text-lead: clamp(1.125rem, 1.06rem + 0.3vw, 1.3125rem);     /* 18 -> 21 */
+  --text-h4: 1.125rem;                                          /* 18 */
+  --text-h3: clamp(1.375rem, 1.3rem + 0.35vw, 1.5rem);          /* 22 -> 24 */
+  --text-h2: clamp(2.25rem, 1.55rem + 3vw, 3.75rem);            /* 36 -> 60 */
+  --text-display-2: clamp(2.5rem, 1.6rem + 3.8vw, 4.5rem);      /* 40 -> 72 */
+  --text-display: clamp(3rem, 1.9rem + 4.6vw, 5.75rem);         /* 48 -> 92 */
 
-  /* Optical adjustments are per-size decisions, not one global value. */
-  --leading-display: 1.05;
-  --leading-display-2: 1.08;
-  --leading-h1: 1.1;
-  --leading-h2: 1.15;
+  --leading-display: 1;
+  --leading-display-2: 1.04;
+  --leading-h2: 1.06;
   --leading-h3: 1.25;
   --leading-h4: 1.35;
   --leading-lead: 1.5;
@@ -95,27 +94,21 @@
   --leading-small: 1.5;
   --leading-caption: 1.4;
 
-  /* Sans at display size needs negative tracking; the serif never did. */
-  --tracking-display: -0.035em;
-  --tracking-display-2: -0.03em;
-  --tracking-h1: -0.028em;
-  --tracking-h2: -0.022em;
-  --tracking-h3: -0.015em;
-  --tracking-h4: -0.008em;
-  --tracking-lead: -0.005em;
-  --tracking-body: 0em;
+  --tracking-display: -0.022em;
+  --tracking-display-2: -0.02em;
+  --tracking-h2: -0.018em;
+  --tracking-h3: -0.012em;
+  --tracking-h4: -0.006em;
+  --tracking-lead: -0.004em;
   --tracking-small: 0.002em;
   --tracking-caption: 0.01em;
-  --tracking-caps: 0.08em;   /* uppercase labels need air */
+  --tracking-caps: 0.09em;
 
-  --weight-display: 680;     /* Instrument Sans upper range: interface voice */
-  --weight-strong: 640;
+  --weight-serif: 400;
+  --weight-text: 430;
   --weight-medium: 530;
-  --weight-text: 430;        /* hair above 400 for --surface */
-  --weight-serif: 460;       /* Newsreader authority without the bold shout */
-  --weight-serif-quiet: 340;
-  --width-text: 100%;
-  --width-condensed: 80%;    /* wdth axis: labels, numerals, dense annotations */
+  --weight-strong: 620;
+  --width-condensed: 82%;
 
   /* --- Spacing — 4/8 base ------------------------------------------------ */
   --space-1: 0.25rem;   /*   4 */
@@ -128,133 +121,119 @@
   --space-8: 4rem;      /*  64 */
   --space-9: 6rem;      /*  96 */
   --space-10: 8rem;     /* 128 */
-  --space-11: 12rem;    /* 192 */
 
-  /* --- Grid --------------------------------------------------------------
-     12 columns. Content capped so 2560px screens get composition, not
-     stretched text. --measure-wide is the centred marketing column:
-     headline plus intro, wider than prose but never full bleed.         */
-  --grid-columns: 12;
-  --gutter: clamp(1rem, 2.5vw, 2rem);
-  --margin: clamp(1.25rem, 5vw, 5rem);
-  --content-max: 76rem;    /* 1216px — tighter than v1, centred compositions */
-  --measure: 38rem;        /* max line length for body text (~66ch) */
-  --measure-wide: 46rem;   /* section headers and leads */
+  /* --- Grid --------------------------------------------------------------- */
+  --gutter: clamp(1rem, 2.2vw, 1.5rem);
+  --margin: clamp(1rem, 4vw, 3rem);
+  --content-max: 75rem;     /* 1200 */
+  --measure: 38rem;
+  --measure-wide: 46rem;
+  --chapter-inset: clamp(0.5rem, 1.1vw, 1rem);
 
-  /* --- Geometry ----------------------------------------------------------
-     30 deg stays the only non-orthogonal angle (the mark's 120/3 family),
-     now reserved for the mark itself. Interface geometry is the radius
-     ramp: continuous and generous, never one template 8px everywhere.   */
-  --angle-weave: 30deg;
-  --tan-weave: 0.57735;
+  /* --- Geometry ----------------------------------------------------------- */
   --hairline: 1px;
   --hairline-strong: 2px;
-  --radius-xs: 0.375rem;    /*  6 — chips, tags */
-  --radius-s: 0.625rem;     /* 10 — inputs, small surfaces */
-  --radius-m: 0.875rem;     /* 14 — list rows, inner panels */
-  --radius-l: 1.25rem;      /* 20 — cards */
-  --radius-xl: 1.75rem;     /* 28 — feature panels */
-  --radius-pill: 62.5rem;   /* buttons, badges */
+  --radius-xs: 0.375rem;   /*  6 */
+  --radius-s: 0.625rem;    /* 10 */
+  --radius-m: 0.875rem;    /* 14 */
+  --radius-l: 1.25rem;     /* 20 */
+  --radius-xl: 1.75rem;    /* 28 */
+  --radius-pill: 62.5rem;
 
-  /* --- Elevation — light diffuses, it does not drop a hard box ----------- */
-  --shadow-1: 0 1px 2px rgb(var(--rgb-ink) / 0.05),
-              0 4px 12px rgb(var(--rgb-ink) / 0.05);
-  --shadow-2: 0 2px 4px rgb(var(--rgb-ink) / 0.05),
-              0 12px 32px rgb(var(--rgb-ink) / 0.08);
-  --shadow-3: 0 4px 8px rgb(var(--rgb-ink) / 0.06),
-              0 24px 64px rgb(var(--rgb-ink) / 0.12);
-  --blur-glass: 20px;
-  --saturate-glass: 180%;
+  /* --- Elevation: only floating pieces earn a shadow ---------------------- */
+  --shadow-float: 0 0 0 1px rgb(var(--rgb-ink) / 0.06),
+                  0 24px 48px -16px rgb(var(--rgb-ink) / 0.18),
+                  0 8px 16px -8px rgb(var(--rgb-ink) / 0.1);
+  --blur-glass: 16px;
+  --saturate-glass: 160%;
 
-  /* --- Motion --------------------------------------------------------------
-     Motion communicates hierarchy or state; it never decorates.
-     --ease-rise is the entrance curve: everything that arrives on scroll
-     uses it, so the whole page moves with a single accent.              */
-  --dur-1: 120ms;           /* micro: hover, focus */
-  --dur-2: 200ms;           /* state changes */
-  --dur-3: 320ms;           /* content reveals */
-  --dur-4: 560ms;           /* panels, sheets */
-  --dur-5: 720ms;           /* scroll entrances */
-  --ease-swift: cubic-bezier(0.32, 0, 0.18, 1);   /* functional default */
-  --ease-exit: cubic-bezier(0.5, 0.1, 0.9, 0.4);  /* leaving elements */
-  --ease-rise: cubic-bezier(0.16, 1, 0.3, 1);     /* entrances, signature */
+  /* --- Motion: state and hierarchy only, never decoration ----------------- */
+  --dur-1: 120ms;           /* hover, focus */
+  --dur-2: 180ms;           /* control state */
+  --dur-3: 280ms;           /* sliding indicator, sheets */
+  --dur-4: 420ms;           /* configurator morph */
+  --dur-reveal: 320ms;      /* scroll entrance */
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-back: cubic-bezier(0.34, 1.3, 0.64, 1);  /* indicator settle */
 
-  /* --- Focus (designed, never outline:none) ------------------------------ */
+  /* --- Focus ---------------------------------------------------------------- */
   --focus-width: 2px;
   --focus-offset: 3px;
 
   --z-base: 0;
-  --z-weave: 10;            /* elements crossing a seam */
   --z-nav: 100;
-  --z-float: 500;           /* the floating contact affordance */
+  --z-float: 500;
   --z-overlay: 1000;
 }
 
 /* --- Ground contexts ------------------------------------------------------
    Components consume ONLY these contextual tokens. Switching ground never
-   touches a component: the act defines the physics, the component obeys.
-   v2 adds the surface trio (card / border / glass) so a card knows how to
-   sit on its ground without knowing which ground it is.                 */
+   touches a component. Buttons read --action-*, links read --interactive. */
+.ground-light {
+  --bg: var(--paper-50);
+  --bg-raised: var(--paper-0);
+  --bg-sunken: var(--paper-100);
+  --fg: var(--ink-900);
+  --fg-secondary: var(--stone-700);
+  --fg-muted: var(--stone-600);
+  --hairline-color: var(--paper-200);
+  --control-border: var(--paper-300);
+  --surface-card: var(--paper-0);
+  --surface-border: var(--paper-200);
+  --surface-glass: rgb(var(--rgb-paper) / 0.78);
+  --interactive: var(--cobalt);
+  --interactive-strong: var(--cobalt-strong);
+  --action-bg: var(--cobalt);
+  --action-bg-strong: var(--cobalt-strong);
+  --action-fg: var(--paper-50);
+  --error-color: var(--error);
+  --focus-ring: var(--cobalt);
+  --selection-bg: var(--cobalt);
+  --selection-fg: var(--paper-50);
+  background-color: var(--bg);
+  color: var(--fg);
+}
 .ground-dark {
-  --bg: var(--ink-900);
-  --bg-raised: var(--ink-800);
-  --bg-sunken: var(--ink-950);
-  --fg: var(--ink-050);
-  --fg-secondary: var(--ink-350);
-  --fg-muted-ui: var(--ink-450);
-  --fg-disabled: var(--ink-250);
-  --hairline-color: var(--ink-700);
-  --surface-card: rgb(var(--rgb-surface) / 0.045);
-  --surface-card-hover: rgb(var(--rgb-surface) / 0.075);
-  --surface-border: rgb(var(--rgb-surface) / 0.1);
-  --surface-border-hover: rgb(var(--rgb-surface) / 0.2);
-  --surface-glass: rgb(var(--rgb-ink) / 0.72);
-  --shadow-card: none;      /* shadow is invisible on ink: the border carries it */
-  --shadow-card-hover: none;
-  --interactive: var(--signal);
-  --interactive-strong: var(--signal-strong);
-  --on-interactive: var(--ink-900);
-  --focus-ring: var(--signal);
-  --selection-bg: var(--signal);
+  --bg: var(--night-900);
+  --bg-raised: var(--night-800);
+  --bg-sunken: var(--night-950);
+  --fg: var(--night-100);
+  --fg-secondary: var(--night-300);
+  --fg-muted: var(--night-400);
+  --hairline-color: var(--night-700);
+  --control-border: var(--night-400);
+  --surface-card: var(--night-800);
+  --surface-border: var(--night-700);
+  --surface-glass: rgb(var(--rgb-night) / 0.78);
+  --interactive: var(--cobalt-on-night);
+  --interactive-strong: var(--cobalt-on-night-strong);
+  --action-bg: var(--night-100);
+  --action-bg-strong: var(--paper-0);
+  --action-fg: var(--ink-900);
+  --error-color: var(--error-on-night);
+  --focus-ring: var(--cobalt-on-night);
+  --selection-bg: var(--cobalt-on-night);
   --selection-fg: var(--ink-900);
   background-color: var(--bg);
   color: var(--fg);
 }
-.ground-light {
-  --bg: var(--ink-050);
-  --bg-raised: #FFFFFF;     /* the one pure white in the system: card faces
-                               have to lift off the cooled off-white ground */
-  --bg-sunken: var(--ink-100);
-  --fg: var(--ink-900);
-  --fg-secondary: var(--ink-500);
-  --fg-muted-ui: var(--ink-400);
-  --fg-disabled: var(--ink-300);
-  --hairline-color: var(--ink-200);
-  --surface-card: var(--bg-raised);
-  --surface-card-hover: var(--bg-raised);
-  --surface-border: rgb(var(--rgb-ink) / 0.08);
-  --surface-border-hover: rgb(var(--rgb-ink) / 0.16);
-  --surface-glass: rgb(var(--rgb-surface) / 0.72);
-  --shadow-card: var(--shadow-1);
-  --shadow-card-hover: var(--shadow-2);
-  --interactive: var(--accent);
-  --interactive-strong: var(--accent-strong);
-  --on-interactive: var(--ink-050);
-  --focus-ring: var(--accent);
-  --selection-bg: var(--accent);
-  --selection-fg: var(--ink-050);
-  background-color: var(--bg);
-  color: var(--fg);
+
+.ground-dark ::selection,
+.ground-light ::selection {
+  background: var(--selection-bg);
+  color: var(--selection-fg);
 }
 
-/* --- System-level rules that belong to the tokens, not to components ---- */
-.ground-dark ::selection { background: var(--selection-bg); color: var(--selection-fg); }
-.ground-light ::selection { background: var(--selection-bg); color: var(--selection-fg); }
-
 :focus-visible {
-  outline: var(--focus-width) solid var(--focus-ring, var(--accent));
+  outline: var(--focus-width) solid var(--focus-ring, var(--cobalt));
   outline-offset: var(--focus-offset);
-  border-radius: var(--radius-s);
+  border-radius: var(--radius-xs);
+}
+
+/* Page changes crossfade natively; browsers without support just navigate. */
+@view-transition {
+  navigation: auto;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -263,6 +242,9 @@
     --dur-2: 0.01ms;
     --dur-3: 0.01ms;
     --dur-4: 0.01ms;
-    --dur-5: 0.01ms;
+    --dur-reveal: 0.01ms;
+  }
+  @view-transition {
+    navigation: none;
   }
 }
