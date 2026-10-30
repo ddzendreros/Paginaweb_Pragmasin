@@ -264,8 +264,8 @@ const waHref = whatsappUrl(waMessages.flotante);
                   <svg class="art-chart" viewBox="0 0 160 96" fill="none">
                     <rect class="art-chart__bar" x="24" y="52" width="32" height="44" rx="4" />
                     <rect class="art-chart__bar" x="72" y="32" width="32" height="64" rx="4" />
-                    <path class="art-chart__line" d="M8 76 L 56 48 L 104 56 L 152 12" />
-                    <circle class="art-chart__tip" cx="152" cy="12" r="5" />
+                    <path class="art-chart__line" d="M8 44 L 40 38 L 88 24 L 152 8" />
+                    <circle class="art-chart__tip" cx="152" cy="8" r="5" />
                   </svg>
                 )}
                 {t.art === "phone" && (
@@ -583,12 +583,42 @@ const waHref = whatsappUrl(waMessages.flotante);
     .bento {
       grid-template-columns: 1fr;
     }
+    .tile {
+      min-height: auto;
+    }
+    .tile__art {
+      margin-block-end: var(--space-5);
+    }
   }
   .tile__art {
     margin-block-end: auto;
     height: var(--space-9);
     display: flex;
     align-items: flex-start;
+  }
+  /* wide tiles read as a diagonal: art top right, text bottom left */
+  .tile--wide .tile__art {
+    justify-content: flex-end;
+    height: var(--space-10);
+  }
+  .tile--wide .art-bars,
+  .tile--wide .art-browser,
+  .tile--wide .art-chart {
+    width: 14rem;
+  }
+  @media (max-width: 56rem) {
+    .tile--wide .tile__art {
+      justify-content: flex-start;
+      height: var(--space-9);
+    }
+    .tile--wide .art-bars,
+    .tile--wide .art-browser,
+    .tile--wide .art-chart {
+      width: 9rem;
+    }
+    .tile--wide .art-chart {
+      width: 10rem;
+    }
   }
   .tile__title {
     max-width: 22ch;
@@ -805,6 +835,17 @@ const waHref = whatsappUrl(waMessages.flotante);
     color: var(--fg-secondary);
     text-wrap: pretty;
   }
+  .company__card .h2 {
+    font-size: calc(var(--text-h2) * 0.8);
+  }
+  @media (56rem < width <= 80rem) {
+    .company__card {
+      --col: 1 / span 6;
+    }
+    .company__steps {
+      --col: 7 / span 6;
+    }
+  }
   @media (width <= 56rem) {
     .company__card {
       position: static;
@@ -905,6 +946,9 @@ const waHref = whatsappUrl(waMessages.flotante);
   }
   .qa__q:hover {
     color: var(--interactive);
+  }
+  .qa__q:active {
+    color: var(--interactive-strong);
   }
   .qa__q:focus-visible {
     border-radius: var(--radius-xs);
