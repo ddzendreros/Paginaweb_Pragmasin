@@ -1,101 +1,94 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 
-const services = [
+const lines = [
   {
     num: "01",
-    name: "Diagnóstico de Horas Recuperables",
-    text: "Entramos con datos, no con propuestas: medimos dónde se van las horas, priorizamos qué automatizar y arrancamos la primera pieza contigo. Es el punto de entrada natural: si funciona, seguimos; si no, no te amarramos a nada.",
+    name: "Software a la medida",
+    text: "Sistemas, portales, paneles y apps diseñados alrededor de cómo trabaja tu empresa.",
     signals: [
-      "sospechas que se van horas pero nadie las tiene contadas;",
-      "quieres empezar por algo acotado antes de firmar un proyecto;",
-      "necesitas números para justificar la inversión ante dirección.",
+      "ya probaste varios sistemas y ninguno te queda;",
+      "tu operación vive entre Excels, libretas y mensajes;",
+      "quieres que tu equipo deje de pelearse con la pantalla.",
     ],
   },
   {
     num: "02",
-    name: "Automatización de procesos",
-    text: "Implementación de lo que salió priorizado en el diagnóstico. Documentos que se leen solos, capturas que desaparecen, reportes que se arman sin que nadie los arme. Con tu equipo o con el nuestro.",
+    name: "Reemplazo de SaaS",
+    text: "Revisamos lo que pagas y lo que usas. Si te conviene, construimos tu propia versión con lo que sí necesitas.",
     signals: [
-      "tu gente dedica el día a capturar lo que llegó por correo o WhatsApp;",
-      "el reporte de cada semana se arma a mano, siempre igual;",
-      "conciliar facturas contra órdenes de compra consume a una persona.",
+      "pagas cada mes por usuarios o funciones que no usas;",
+      "el precio sube y tú no recibes más;",
+      "dependes de una herramienta que no controlas.",
     ],
   },
   {
     num: "03",
-    name: "Integración y datos",
-    text: "Conectamos los sistemas que hoy no se hablan y convertimos lo que ya tienes en respuestas a tiempo. Sin migrar, sin reemplazar y sin tocar lo que ya funciona.",
+    name: "Automatización e integración",
+    text: "Lo que se repite lo hace el sistema. Lo que no se habla se conecta.",
     signals: [
-      "el mismo dato se teclea dos veces en dos sistemas distintos;",
-      "para responder una pregunta simple hay que abrir cinco pantallas;",
-      "cada área tiene su propio Excel y ninguna cifra coincide.",
+      "alguien teclea lo que ya venía escrito;",
+      "el mismo dato se captura dos veces;",
+      "el reporte de cada semana se arma a mano.",
     ],
   },
 ];
 
-const principles = [
-  {
-    title: "Si no se puede medir, no lo vendemos.",
-    text: "El ahorro se compromete en horas, contra una línea base que medimos antes de empezar.",
-  },
-  {
-    title: "Entregamos funcionando, no en diapositivas.",
-    text: "El entregable es un proceso corriendo en tu operación, no un documento que describe uno.",
-  },
-  {
-    title: "Alcance escrito antes de firmar.",
-    text: "El costo y lo que incluye quedan por escrito con datos de tu operación, no con horas abiertas.",
-  },
-  {
-    title: "No reemplazamos lo que ya funciona.",
-    text: "Nos montamos encima de tu sistema. Lo que ya invertiste se aprovecha, no se tira.",
-  },
-  {
-    title: "Decimos que no.",
-    text: "Si tu problema no se resuelve con automatización, te lo decimos en la primera llamada.",
-  },
+const rules: [string, string][] = [
+  ["Primero entendemos.", "Si no cabe en una página, todavía no entendimos el problema."],
+  [
+    "Entregamos funcionando, no en diapositivas.",
+    "Lo que recibes es software corriendo en tu operación, no un documento que describe uno.",
+  ],
+  [
+    "Alcance escrito antes de firmar.",
+    "Qué se construye, qué incluye y cuánto cuesta quedan por escrito.",
+  ],
+  ["Hablas con quien construye.", "Sin intermediarios entre tu idea y quien la programa."],
+  ["Decimos que no.", "Si no te conviene construir algo, te lo decimos en la primera llamada."],
 ];
 ---
 
 <BaseLayout
-  title="Servicios — Pragmasyn"
-  description="Diagnóstico de Horas Recuperables, automatización de procesos e integración de sistemas. Un criterio para las tres: si el ahorro no se puede medir, no lo vendemos."
-  ogTitle="Tres maneras de recuperar horas."
-  ogDescription="Diagnóstico Pragmasyn, automatización de procesos e integración de sistemas. Sobre el sistema que ya tienes, sin migrar nada."
+  title="Qué construimos — Pragmasyn"
+  description="Software a la medida, reemplazo de SaaS, automatización e integración para PyMEs en México. Sin catálogo y sin paquetes."
+  ogTitle="No tenemos catálogo. Tenemos oficio."
+  ogDescription="Cada empresa tiene variables distintas. Escuchamos qué necesitas y lo construimos."
   path="/servicios"
 >
-  <section class="ground-dark act opening" aria-labelledby="services-title">
+  <section class="opening" aria-labelledby="servicios-title">
     <div class="act__inner">
-      <div class="act__head" data-reveal>
-        <p class="label eyebrow">Servicios</p>
-        <h1 id="services-title" class="display">Tres maneras de recuperar horas.</h1>
-        <p class="lead">
-          Un criterio para las tres: si el ahorro no se puede medir, no lo
-          vendemos.
-        </p>
+      <div class="opening__top grid-12">
+        <div class="opening__main">
+          <p class="label label--rule">Qué construimos</p>
+          <h1 id="servicios-title" class="display">
+            No tenemos catálogo. <em>Tenemos oficio.</em>
+          </h1>
+        </div>
+        <div class="opening__aside">
+          <p class="lead">
+            Cada empresa tiene variables distintas. Por eso no vendemos paquetes: escuchamos qué
+            necesitas y lo construimos.
+          </p>
+        </div>
       </div>
     </div>
   </section>
 
-  <section class="ground-light act services" aria-label="Líneas de servicio">
+  <section class="act lines" aria-label="Líneas de trabajo">
     <div class="act__inner">
-      <ol class="services__list">
+      <ol>
         {
-          services.map((s) => (
-            <li class="card card--feature service" data-reveal>
-              <div class="service__head">
-                <span class="numeral service__num" aria-hidden="true">
-                  {s.num}
-                </span>
-                <h2 class="h3 service__name">{s.name}</h2>
-              </div>
-              <div class="service__body">
-                <p class="body service__text">{s.text}</p>
-                <p class="label service__signals-label">Es para ti si…</p>
-                <ul class="service__signals">
-                  {s.signals.map((signal) => (
-                    <li class="small">{signal}</li>
+          lines.map((l) => (
+            <li class="line grid-12" data-reveal>
+              <span class="caption numeral line__num">{l.num}</span>
+              <h2 class="h2 line__name">{l.name}</h2>
+              <div class="line__body">
+                <p class="lead">{l.text}</p>
+                <p class="label line__label">Es para ti si…</p>
+                <ul class="line__signals">
+                  {l.signals.map((s) => (
+                    <li>{s}</li>
                   ))}
                 </ul>
               </div>
@@ -106,107 +99,126 @@ const principles = [
     </div>
   </section>
 
-  <section class="ground-light act act--well principles" aria-labelledby="principles-title">
-    <div class="act__inner">
-      <div class="act__head" data-reveal>
-        <p class="label eyebrow">Cómo trabajamos</p>
-        <h2 id="principles-title" class="h2">Cinco reglas que no negociamos.</h2>
+  <section class="chapter ground-light rules act" aria-labelledby="reglas-title">
+    <div class="act__inner grid-12">
+      <div class="rules__head" data-reveal>
+        <p class="label label--rule">Cómo decidimos</p>
+        <h2 id="reglas-title" class="h2">
+          Cinco reglas que <em>no negociamos.</em>
+        </h2>
       </div>
-      <ul class="cards principles__list">
+      <ol class="rules__list">
         {
-          principles.map((p) => (
-            <li class="card principles__item" data-reveal>
-              <h3 class="h4">{p.title}</h3>
-              <p class="small principles__text">{p.text}</p>
+          rules.map(([rule, text]) => (
+            <li class="rule" data-reveal>
+              <h3 class="h3">{rule}</h3>
+              <p class="rule__text">{text}</p>
             </li>
           ))
         }
-      </ul>
+      </ol>
     </div>
   </section>
 
-  <section class="ground-dark act closing" aria-labelledby="closing-title">
+  <section class="chapter ground-dark act closing-act" aria-labelledby="cierre-title">
     <div class="act__inner">
-      <div class="act__head" data-reveal>
-        <h2 id="closing-title" class="display-2">Empecemos por el diagnóstico.</h2>
+      <div class="closing" data-reveal>
+        <h2 id="cierre-title" class="display-2">
+          Empecemos por lo que <em>te estorba.</em>
+        </h2>
         <p class="lead">
-          Medimos con tus datos cuántas horas hay en la mesa. Si no las hay,
-          te lo decimos.
+          Cuéntanos qué te gustaría resolver. Si no somos la opción correcta, te lo decimos.
         </p>
-        <a class="btn btn--primary closing__cta" href="/contacto">Agendar el diagnóstico</a>
+        <a class="btn btn--primary" href="/contacto">Cuéntanos tu idea</a>
       </div>
     </div>
   </section>
 </BaseLayout>
 
 <style>
-  .opening {
-    padding-block: clamp(var(--space-8), 10vw, var(--space-10)) clamp(var(--space-8), 9vw, var(--space-10));
+  .line {
+    align-items: start;
+    padding-block: var(--space-7);
+    border-block-start: var(--hairline) solid var(--hairline-color);
   }
-  .services {
-    /* aire para la tarjeta que cruza la frontera desde el acto oscuro */
-    padding-top: clamp(var(--space-9), 10vw, var(--space-11));
+  .line:last-child {
+    border-block-end: var(--hairline) solid var(--hairline-color);
   }
-  .services__list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
+  .line__num {
+    --col: 1 / span 1;
+    padding-block-start: var(--space-2);
+  }
+  .line__name {
+    --col: 2 / span 5;
+  }
+  .line__body {
+    --col: 7 / span 6;
     display: grid;
-    gap: var(--gutter);
+    gap: var(--space-3);
   }
-  .service {
+  .line__label {
+    margin-block-start: var(--space-4);
+  }
+  .line__signals {
     display: grid;
-    gap: var(--space-5) var(--space-8);
-  }
-  /* en pantalla ancha el servicio se lee como una ficha: título a la
-     izquierda, argumento a la derecha */
-  @media (min-width: 64rem) {
-    .service {
-      grid-template-columns: 2fr 3fr;
-      align-items: start;
-    }
-  }
-  .service__num {
-    color: var(--interactive);
-    font-size: var(--text-h4);
-    font-weight: var(--weight-strong);
-  }
-  .service__name {
-    margin-top: var(--space-2);
-  }
-  .service__signals-label {
-    margin-top: var(--space-6);
-  }
-  .service__signals {
-    list-style: none;
-    margin: var(--space-3) 0 0;
-    padding: 0;
+    gap: var(--space-2);
     max-width: var(--measure);
   }
-  .service__signals li {
-    padding-block: var(--space-3);
-    border-top: var(--hairline) solid var(--hairline-color);
+  .line__signals li {
+    position: relative;
+    padding-inline-start: var(--space-5);
+    text-wrap: pretty;
+  }
+  .line__signals li::before {
+    content: "";
+    position: absolute;
+    inset-inline-start: 0;
+    inset-block-start: 0.85em;
+    width: var(--space-3);
+    border-block-start: var(--hairline-strong) solid var(--interactive);
+  }
+  @media (width <= 56rem) {
+    .line__name {
+      margin-block-start: var(--space-3);
+    }
+    .line__body {
+      margin-block-start: var(--space-4);
+    }
   }
 
-  .principles__list {
-    list-style: none;
-    margin: var(--space-8) 0 0;
-    padding: 0;
+  .rules {
+    background: var(--bg-sunken);
   }
-  .principles__text {
-    margin-top: var(--space-3);
+  .rules__head {
+    --col: 1 / span 5;
+    display: grid;
+    gap: var(--space-4);
+    align-content: start;
+  }
+  .rules__list {
+    --col: 7 / span 6;
+  }
+  .rule {
+    display: grid;
+    gap: var(--space-2);
+    padding-block: var(--space-5);
+    border-block-start: var(--hairline) solid var(--hairline-color);
+  }
+  .rule:last-child {
+    border-block-end: var(--hairline) solid var(--hairline-color);
+  }
+  .rule__text {
+    max-width: var(--measure);
+    color: var(--fg-secondary);
+    text-wrap: pretty;
+  }
+  @media (width <= 56rem) {
+    .rules__head {
+      margin-block-end: var(--space-7);
+    }
   }
 
-  .closing {
-    padding-block: clamp(var(--space-9), 10vw, var(--space-11));
-  }
-  .closing__cta {
-    margin-top: var(--space-4);
-  }
-
-  .seam-card__text {
-    margin-block: var(--space-2) var(--space-3);
-    font-size: var(--text-small);
-    line-height: var(--leading-small);
+  .closing-act {
+    margin-block: var(--chapter-inset);
   }
 </style>
