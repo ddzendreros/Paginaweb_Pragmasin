@@ -1,10 +1,38 @@
 ---
 /**
- * El sello del hero: el visitante elige un negocio y la interfaz de ejemplo se
- * reacomoda. Sin JS cambia con :has(); con JS lo hace una view transition y
- * un indicador que se desliza. Los datos son genéricos: ni personas ni
- * empresas reales (docs/PROPUESTAS-COPY.md, "Datos del configurador").
+ * El sello del hero: una app de ejemplo que funciona de verdad. Cambias el
+ * estado de un registro y los indicadores responden; creas uno y aparece. Cada
+ * negocio trae su propia pantalla (tablero, agenda, tabla o plano), no el mismo
+ * molde con otras palabras. Sin JS se lee completa y cambia de negocio con
+ * :has(). Los datos son genéricos: ni personas ni empresas reales
+ * (docs/PROPUESTAS-COPY.md, "Datos del configurador").
  */
+type Tone = "wait" | "active" | "done";
+
+interface Status {
+  name: string;
+  tone: Tone;
+}
+interface Item {
+  title: string;
+  detail: string;
+  extra: string;
+  status: string;
+}
+interface Kpi {
+  label: string;
+  /** Lo que no se ve en esta pantalla. Con lo visible suma la cifra del copy. */
+  base: number;
+  /** Estados que cuentan; "*" cuenta todos y "" no cuenta ninguno. */
+  counts: string;
+}
+interface Draft {
+  titles: string[];
+  detail: string;
+  extra: string;
+  status: string;
+  place: "start" | "end";
+}
 interface Business {
   id: string;
   name: string;
@@ -12,8 +40,11 @@ interface Business {
   menu: string[];
   title: string;
   action: string;
-  kpis: [string, string][];
-  rows: [string, string, string][];
+  layout: "board" | "agenda" | "table" | "floor";
+  statuses: Status[];
+  kpis: Kpi[];
+  items: Item[];
+  draft: Draft;
 }
 
 const businesses: Business[] = [
@@ -24,16 +55,32 @@ const businesses: Business[] = [
     menu: ["Órdenes", "Refacciones", "Clientes", "Caja"],
     title: "Órdenes de hoy",
     action: "Nueva orden",
+    layout: "board",
+    statuses: [
+      { name: "En proceso", tone: "active" },
+      { name: "Espera pieza", tone: "wait" },
+      { name: "Lista", tone: "done" },
+    ],
     kpis: [
-      ["Autos en piso", "12"],
-      ["Por entregar", "5"],
-      ["Por surtir", "3"],
+      { label: "Autos en piso", base: 6, counts: "*" },
+      { label: "Por entregar", base: 4, counts: "Lista" },
+      { label: "Por surtir", base: 1, counts: "Espera pieza" },
     ],
-    rows: [
-      ["Orden 1042", "Afinación", "En proceso"],
-      ["Orden 1043", "Frenos", "Espera pieza"],
-      ["Orden 1044", "Suspensión", "Lista"],
+    items: [
+      { title: "Orden 1042", detail: "Afinación", extra: "Sedán 2018", status: "En proceso" },
+      { title: "Orden 1045", detail: "Cambio de aceite", extra: "Hatchback 2021", status: "En proceso" },
+      { title: "Orden 1047", detail: "Alineación", extra: "Sedán 2022", status: "En proceso" },
+      { title: "Orden 1043", detail: "Frenos", extra: "Pick-up 2020", status: "Espera pieza" },
+      { title: "Orden 1046", detail: "Clutch", extra: "Camioneta 2017", status: "Espera pieza" },
+      { title: "Orden 1044", detail: "Suspensión", extra: "SUV 2016", status: "Lista" },
     ],
+    draft: {
+      titles: ["Orden 1048", "Orden 1049", "Orden 1050"],
+      detail: "Servicio general",
+      extra: "Sedán 2019",
+      status: "En proceso",
+      place: "start",
+    },
   },
   {
     id: "clinica",
@@ -42,16 +89,32 @@ const businesses: Business[] = [
     menu: ["Agenda", "Pacientes", "Expedientes", "Cobros"],
     title: "Agenda de hoy",
     action: "Nueva cita",
+    layout: "agenda",
+    statuses: [
+      { name: "Por confirmar", tone: "wait" },
+      { name: "Confirmada", tone: "active" },
+      { name: "Atendida", tone: "done" },
+    ],
     kpis: [
-      ["Citas", "18"],
-      ["Confirmadas", "14"],
-      ["Por cobrar", "3"],
+      { label: "Citas", base: 12, counts: "*" },
+      { label: "Confirmadas", base: 10, counts: "Confirmada" },
+      { label: "Por cobrar", base: 3, counts: "Atendida" },
     ],
-    rows: [
-      ["09:00", "Consulta general", "Confirmada"],
-      ["09:30", "Seguimiento", "Confirmada"],
-      ["10:00", "Primera vez", "Por confirmar"],
+    items: [
+      { title: "09:00", detail: "Consulta general", extra: "Consultorio 1", status: "Confirmada" },
+      { title: "09:30", detail: "Seguimiento", extra: "Consultorio 2", status: "Confirmada" },
+      { title: "10:00", detail: "Primera vez", extra: "Consultorio 1", status: "Por confirmar" },
+      { title: "10:30", detail: "Consulta general", extra: "Consultorio 2", status: "Confirmada" },
+      { title: "11:00", detail: "Seguimiento", extra: "Consultorio 1", status: "Por confirmar" },
+      { title: "11:30", detail: "Primera vez", extra: "Consultorio 2", status: "Confirmada" },
     ],
+    draft: {
+      titles: ["12:00", "12:30", "13:00"],
+      detail: "Consulta general",
+      extra: "Consultorio 1",
+      status: "Por confirmar",
+      place: "end",
+    },
   },
   {
     id: "distribuidora",
@@ -60,16 +123,32 @@ const businesses: Business[] = [
     menu: ["Pedidos", "Inventario", "Rutas", "Cobranza"],
     title: "Pedidos de hoy",
     action: "Nuevo pedido",
+    layout: "table",
+    statuses: [
+      { name: "Cargando", tone: "wait" },
+      { name: "En ruta", tone: "active" },
+      { name: "Entregado", tone: "done" },
+    ],
     kpis: [
-      ["Pedidos", "46"],
-      ["En ruta", "9"],
-      ["Bajo mínimo", "7"],
+      { label: "Pedidos", base: 40, counts: "*" },
+      { label: "En ruta", base: 7, counts: "En ruta" },
+      { label: "Bajo mínimo", base: 7, counts: "" },
     ],
-    rows: [
-      ["Pedido 5210", "Ruta Norte", "Cargando"],
-      ["Pedido 5211", "Ruta Centro", "En ruta"],
-      ["Pedido 5212", "Ruta Sur", "Entregado"],
+    items: [
+      { title: "Pedido 5210", detail: "Ruta Norte", extra: "24 cajas", status: "Cargando" },
+      { title: "Pedido 5211", detail: "Ruta Centro", extra: "12 cajas", status: "En ruta" },
+      { title: "Pedido 5212", detail: "Ruta Sur", extra: "31 cajas", status: "Entregado" },
+      { title: "Pedido 5213", detail: "Ruta Norte", extra: "8 cajas", status: "Cargando" },
+      { title: "Pedido 5214", detail: "Ruta Oriente", extra: "16 cajas", status: "En ruta" },
+      { title: "Pedido 5215", detail: "Ruta Centro", extra: "40 cajas", status: "Cargando" },
     ],
+    draft: {
+      titles: ["Pedido 5216", "Pedido 5217", "Pedido 5218"],
+      detail: "Ruta Sur",
+      extra: "10 cajas",
+      status: "Cargando",
+      place: "start",
+    },
   },
   {
     id: "restaurante",
@@ -78,25 +157,51 @@ const businesses: Business[] = [
     menu: ["Comandas", "Menú", "Insumos", "Corte"],
     title: "Comandas abiertas",
     action: "Nueva comanda",
+    layout: "floor",
+    statuses: [
+      { name: "En cocina", tone: "wait" },
+      { name: "Lista", tone: "active" },
+      { name: "Servida", tone: "done" },
+    ],
     kpis: [
-      ["Mesas activas", "14"],
-      ["En cocina", "8"],
-      ["Insumos bajos", "2"],
+      { label: "Mesas activas", base: 8, counts: "*" },
+      { label: "En cocina", base: 5, counts: "En cocina" },
+      { label: "Insumos bajos", base: 2, counts: "" },
     ],
-    rows: [
-      ["Mesa 4", "3 platillos", "En cocina"],
-      ["Mesa 7", "2 platillos", "Servida"],
-      ["Para llevar 31", "1 platillo", "Lista"],
+    items: [
+      { title: "Mesa 4", detail: "3 platillos", extra: "Salón", status: "En cocina" },
+      { title: "Mesa 7", detail: "2 platillos", extra: "Salón", status: "Servida" },
+      { title: "Para llevar 31", detail: "1 platillo", extra: "Mostrador", status: "Lista" },
+      { title: "Mesa 2", detail: "4 platillos", extra: "Terraza", status: "En cocina" },
+      { title: "Mesa 9", detail: "2 platillos", extra: "Terraza", status: "Servida" },
+      { title: "Mesa 12", detail: "5 platillos", extra: "Salón", status: "En cocina" },
     ],
+    draft: {
+      titles: ["Mesa 15", "Mesa 16", "Mesa 17"],
+      detail: "1 platillo",
+      extra: "Salón",
+      status: "En cocina",
+      place: "end",
+    },
   },
 ];
+
+const toneOf = (business: Business, status: string): Tone =>
+  business.statuses.find((s) => s.name === status)?.tone ?? "wait";
+
+const kpiValue = (business: Business, kpi: Kpi): number => {
+  const counted = kpi.counts.split("|");
+  const visible = business.items.filter(
+    (item) => kpi.counts === "*" || counted.includes(item.status),
+  );
+  return kpi.base + visible.length;
+};
 ---
 
 <div class="cfg" data-cfg>
   <fieldset class="cfg__top">
     <legend class="cfg__legend">Elige un negocio y mira cómo cambia.</legend>
     <div class="cfg__picker">
-      <span class="cfg__pill" aria-hidden="true"></span>
       {
         businesses.map((b, i) => (
           <label class="cfg__option">
@@ -107,131 +212,396 @@ const businesses: Business[] = [
       }
     </div>
   </fieldset>
+
   <div class="cfg__frame">
-    <div class="cfg__bar" aria-hidden="true">
-      <span class="cfg__dots"><i></i><i></i><i></i></span>
-      <span class="caption">Ejemplo ilustrativo</span>
-    </div>
-    <div class="cfg__stage">
-      {
-        businesses.map((b) => (
-          <article
-            class="mock"
-            data-panel={b.id}
-            aria-label={`Ejemplo de interfaz para ${b.name.toLowerCase()}`}
-          >
-            <div class="mock__nav">
-              <strong class="mock__app">{b.app}</strong>
-              <ul class="mock__menu">
-                {b.menu.map((m) => (
-                  <li>{m}</li>
-                ))}
-              </ul>
-            </div>
-            <div class="mock__head">
-              <p class="mock__title">{b.title}</p>
-              <span class="mock__action">{b.action}</span>
-            </div>
-            <dl class="mock__kpis">
-              {b.kpis.map(([label, value]) => (
-                <div class="mock__kpi">
-                  <dt>{label}</dt>
-                  <dd>{value}</dd>
-                </div>
-              ))}
-            </dl>
-            <ul class="mock__rows">
-              {b.rows.map(([first, second, status]) => (
-                <li class="mock__row">
-                  <b>{first}</b>
-                  <span>{second}</span>
-                  <em>{status}</em>
+    {
+      businesses.map((b) => (
+        <article
+          class="app"
+          data-panel={b.id}
+          data-draft={JSON.stringify(b.draft)}
+          aria-label={`Ejemplo de interfaz para ${b.name.toLowerCase()}`}
+        >
+          <div class="app__side">
+            <strong class="app__name">{b.app}</strong>
+            <ul class="app__menu">
+              {b.menu.map((m, i) => (
+                <li>
+                  <button
+                    type="button"
+                    class="app__tab"
+                    data-tab
+                    aria-current={i === 0 ? "true" : undefined}
+                  >
+                    {m}
+                  </button>
                 </li>
               ))}
             </ul>
-          </article>
-        ))
-      }
-    </div>
+          </div>
+
+          <div class="app__main">
+            <div class="app__head">
+              <p class="app__title">{b.title}</p>
+              <button type="button" class="app__action" data-new>
+                {b.action}
+              </button>
+            </div>
+
+            <dl class="app__kpis">
+              {b.kpis.map((k) => (
+                <div class="app__kpi" data-kpi={k.counts} data-base={k.base}>
+                  <dt>{k.label}</dt>
+                  <dd>{kpiValue(b, k)}</dd>
+                </div>
+              ))}
+            </dl>
+
+            <div class="app__view">
+              {b.layout === "board" && (
+                <div class="board">
+                  {b.statuses.map((s) => {
+                    const cards = b.items.filter((item) => item.status === s.name);
+                    return (
+                      <div class="board__col" data-col={s.name}>
+                        <p class="board__head">
+                          <span class="st" data-tone={s.tone}>
+                            {s.name}
+                          </span>
+                          <span data-col-count>{cards.length}</span>
+                        </p>
+                        <div class="board__list" data-list>
+                          {cards.map((item) => (
+                            <button
+                              type="button"
+                              class="card"
+                              data-item
+                              data-status={item.status}
+                            >
+                              <b data-f="title">{item.title}</b>
+                              <span data-f="detail">{item.detail}</span>
+                              <span class="app__muted" data-f="extra">
+                                {item.extra}
+                              </span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+
+              {b.layout === "agenda" && (
+                <ol class="agenda" data-list>
+                  {b.items.map((item) => (
+                    <li data-item data-status={item.status}>
+                      <button type="button" class="slot">
+                        <b class="slot__time" data-f="title">
+                          {item.title}
+                        </b>
+                        <span class="slot__body">
+                          <span data-f="detail">{item.detail}</span>
+                          <span class="app__muted" data-f="extra">
+                            {item.extra}
+                          </span>
+                        </span>
+                        <span class="st" data-tone={toneOf(b, item.status)} data-status-label>
+                          {item.status}
+                        </span>
+                      </button>
+                    </li>
+                  ))}
+                </ol>
+              )}
+
+              {b.layout === "table" && (
+                <table class="rows">
+                  <thead>
+                    <tr>
+                      <th scope="col">Pedido</th>
+                      <th scope="col">Ruta</th>
+                      <th scope="col">Carga</th>
+                      <th scope="col">Estado</th>
+                    </tr>
+                  </thead>
+                  <tbody data-list>
+                    {b.items.map((item) => (
+                      <tr data-item data-status={item.status}>
+                        <td>
+                          <button type="button" class="rows__open" data-f="title">
+                            {item.title}
+                          </button>
+                        </td>
+                        <td data-f="detail">{item.detail}</td>
+                        <td data-f="extra">{item.extra}</td>
+                        <td>
+                          <span class="st" data-tone={toneOf(b, item.status)} data-status-label>
+                            {item.status}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+
+              {b.layout === "floor" && (
+                <ul class="floor" data-list>
+                  {b.items.map((item) => (
+                    <li data-item data-status={item.status}>
+                      <button type="button" class="tile">
+                        <b data-f="title">{item.title}</b>
+                        <span data-f="detail">{item.detail}</span>
+                        <span class="app__muted" data-f="extra">
+                          {item.extra}
+                        </span>
+                        <span class="st" data-tone={toneOf(b, item.status)} data-status-label>
+                          {item.status}
+                        </span>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+
+            <div class="app__empty">
+              <p class="app__title" data-empty-title></p>
+              <p>El tuyo se diseña con tus variables.</p>
+              <a class="link" href="/contacto">Cuéntanos tu idea</a>
+            </div>
+          </div>
+
+          <div class="app__detail" aria-live="polite">
+            <p class="app__detail-title" data-d="title"></p>
+            <p data-d="detail"></p>
+            <p class="app__muted" data-d="extra"></p>
+            <p class="app__detail-label">Estado</p>
+            <div class="app__statuses" role="group" aria-label="Estado">
+              {b.statuses.map((s) => (
+                <button
+                  type="button"
+                  class="app__status"
+                  data-set-status={s.name}
+                  aria-pressed="false"
+                >
+                  <span class="st" data-tone={s.tone}>
+                    {s.name}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </article>
+      ))
+    }
   </div>
-  <p class="caption cfg__note">El tuyo se diseña con tus variables.</p>
+
+  <div class="cfg__foot">
+    <p class="caption">Ejemplo ilustrativo</p>
+    <p class="caption">El tuyo se diseña con tus variables.</p>
+  </div>
 </div>
 
 <script>
-  // Sin JS funciona con :has(); esto solo agrega la transición y el
-  // indicador que se desliza entre opciones.
-  const root = document.querySelector<HTMLElement>("[data-cfg]");
+  // Sin JS el selector cambia de negocio con :has(). Esto le da vida a la app:
+  // seleccionar, cambiar estados, crear registros y recalcular indicadores.
+  interface Draft {
+    titles: string[];
+    detail: string;
+    extra: string;
+    status: string;
+    place: "start" | "end";
+  }
 
-  if (root) {
-    const picker = root.querySelector<HTMLElement>(".cfg__picker");
-    const pill = root.querySelector<HTMLElement>(".cfg__pill");
-    const inputs = Array.from(root.querySelectorAll<HTMLInputElement>('input[name="cfg"]'));
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const controlOf = (item: HTMLElement): HTMLElement =>
+    item.matches("button") ? item : (item.querySelector<HTMLElement>("button") ?? item);
 
-    const movePill = (): void => {
-      const label = root
-        .querySelector<HTMLInputElement>('input[name="cfg"]:checked')
-        ?.closest("label");
-      if (!label || !pill || !picker) return;
-      picker.style.setProperty("--pill-x", `${label.offsetLeft}px`);
-      picker.style.setProperty("--pill-w", `${label.offsetWidth}px`);
-      picker.scrollTo({ left: label.offsetLeft - picker.clientWidth / 2 + label.offsetWidth / 2 });
+  function setupPanel(panel: HTMLElement): void {
+    const draft = JSON.parse(panel.dataset["draft"] ?? "{}") as Draft;
+    const statusButtons = Array.from(
+      panel.querySelectorAll<HTMLButtonElement>("[data-set-status]"),
+    );
+    const toneByStatus = new Map(
+      statusButtons.map((button) => [
+        button.dataset["setStatus"] ?? "",
+        button.querySelector<HTMLElement>(".st")?.dataset["tone"] ?? "",
+      ]),
+    );
+    const tabs = Array.from(panel.querySelectorAll<HTMLButtonElement>("[data-tab]"));
+    const view = panel.querySelector<HTMLElement>(".app__view");
+    const items = (): HTMLElement[] =>
+      Array.from(panel.querySelectorAll<HTMLElement>("[data-item]"));
+    let selected: HTMLElement | null = null;
+
+    const field = (item: HTMLElement, key: string): string =>
+      item.querySelector(`[data-f="${key}"]`)?.textContent?.trim() ??
+      (item.matches(`[data-f="${key}"]`) ? (item.textContent ?? "") : "");
+
+    const showDetail = (key: string, value: string): void => {
+      const target = panel.querySelector(`[data-d="${key}"]`);
+      if (target) target.textContent = value;
     };
 
+    const syncStatusButtons = (): void => {
+      for (const button of statusButtons) {
+        const current = button.dataset["setStatus"] === selected?.dataset["status"];
+        button.setAttribute("aria-pressed", String(current));
+      }
+    };
+
+    const refresh = (): void => {
+      const all = items();
+      for (const kpi of panel.querySelectorAll<HTMLElement>("[data-kpi]")) {
+        const counts = (kpi.dataset["kpi"] ?? "").split("|");
+        const visible = all.filter(
+          (item) => counts.includes("*") || counts.includes(item.dataset["status"] ?? ""),
+        );
+        const value = String(Number(kpi.dataset["base"]) + visible.length);
+        const output = kpi.querySelector("dd");
+        if (!output || output.textContent === value) continue;
+        output.textContent = value;
+        // restart the flash on every change
+        output.classList.remove("is-bumped");
+        void output.offsetWidth;
+        output.classList.add("is-bumped");
+      }
+      for (const column of panel.querySelectorAll<HTMLElement>("[data-col]")) {
+        const count = column.querySelector("[data-col-count]");
+        if (count) count.textContent = String(column.querySelectorAll("[data-item]").length);
+      }
+    };
+
+    const select = (item: HTMLElement): void => {
+      if (selected) {
+        selected.classList.remove("is-selected");
+        controlOf(selected).removeAttribute("aria-current");
+      }
+      selected = item;
+      item.classList.add("is-selected");
+      controlOf(item).setAttribute("aria-current", "true");
+      showDetail("title", field(item, "title"));
+      showDetail("detail", field(item, "detail"));
+      showDetail("extra", field(item, "extra"));
+      syncStatusButtons();
+    };
+
+    const setStatus = (item: HTMLElement, status: string): void => {
+      item.dataset["status"] = status;
+      const label = item.querySelector<HTMLElement>("[data-status-label]");
+      if (label) {
+        label.textContent = status;
+        label.dataset["tone"] = toneByStatus.get(status) ?? "";
+      }
+      // On the board a change of status is a change of column.
+      panel.querySelector(`[data-col="${status}"] [data-list]`)?.prepend(item);
+      refresh();
+      syncStatusButtons();
+    };
+
+    const create = (button: HTMLButtonElement): void => {
+      const title = draft.titles.shift();
+      const source = panel.querySelector<HTMLElement>("[data-item]");
+      const list =
+        panel.querySelector(`[data-col="${draft.status}"] [data-list]`) ??
+        panel.querySelector("[data-list]");
+      if (!title || !source || !list) return;
+
+      const item = source.cloneNode(true) as HTMLElement;
+      item.classList.remove("is-selected");
+      controlOf(item).removeAttribute("aria-current");
+      const fill = (key: string, value: string): void => {
+        const target = item.querySelector(`[data-f="${key}"]`);
+        if (target) target.textContent = value;
+      };
+      fill("title", title);
+      fill("detail", draft.detail);
+      fill("extra", draft.extra);
+      if (draft.place === "start") list.prepend(item);
+      else list.append(item);
+
+      setStatus(item, draft.status);
+      select(item);
+      if (view) view.scrollTop = draft.place === "start" ? 0 : view.scrollHeight;
+      if (draft.titles.length === 0) button.disabled = true;
+    };
+
+    const openTab = (tab: HTMLButtonElement): void => {
+      for (const other of tabs) other.removeAttribute("aria-current");
+      tab.setAttribute("aria-current", "true");
+      panel.classList.toggle("is-empty", tab !== tabs[0]);
+      const title = panel.querySelector("[data-empty-title]");
+      if (title) title.textContent = tab.textContent?.trim() ?? "";
+    };
+
+    panel.addEventListener("click", (event) => {
+      const target = event.target as HTMLElement;
+      const tab = target.closest<HTMLButtonElement>("[data-tab]");
+      if (tab) return openTab(tab);
+      const statusButton = target.closest<HTMLButtonElement>("[data-set-status]");
+      if (statusButton && selected) {
+        return setStatus(selected, statusButton.dataset["setStatus"] ?? "");
+      }
+      const newButton = target.closest<HTMLButtonElement>("[data-new]");
+      if (newButton) return create(newButton);
+      const item = target.closest<HTMLElement>("[data-item]");
+      if (item) select(item);
+    });
+
+    const first = items()[0];
+    if (first) select(first);
+  }
+
+  const root = document.querySelector<HTMLElement>("[data-cfg]");
+  if (root) {
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
     const apply = (value: string): void => {
       root.dataset["active"] = value;
-      movePill();
     };
 
-    apply(inputs.find((input) => input.checked)?.value ?? "taller");
-    requestAnimationFrame(() => requestAnimationFrame(() => root.setAttribute("data-ready", "")));
+    root.querySelectorAll<HTMLElement>("[data-panel]").forEach(setupPanel);
+    apply(root.querySelector<HTMLInputElement>('input[name="cfg"]:checked')?.value ?? "taller");
 
     root.addEventListener("change", (event) => {
       if (!(event.target instanceof HTMLInputElement)) return;
       const { value } = event.target;
-      if (!("startViewTransition" in document) || reduced.matches) {
-        apply(value);
-        return;
-      }
-      document.startViewTransition(() => apply(value));
+      apply(value);
+      if (reduced.matches) return;
+      root.querySelector(`[data-panel="${value}"]`)?.animate({ opacity: [0, 1] }, 220);
     });
-
-    // Las opciones cambian de ancho cuando carga la fuente o cambia el viewport.
-    const observer = new ResizeObserver(movePill);
-    root.querySelectorAll(".cfg__option").forEach((option) => observer.observe(option));
   }
 </script>
 
 <style is:global>
-  /* Las únicas marcas fuera de tokens son las de cada negocio de ejemplo:
-     representan el software del cliente, no a Pragmasyn. */
+  /* --- El selector y el marco ------------------------------------------- */
   .cfg {
-    margin-block-start: clamp(var(--space-7), 5vw, var(--space-8));
+    margin-block-start: clamp(var(--space-6), 5vw, var(--space-8));
   }
   .cfg__top {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    gap: var(--space-3) var(--space-5);
-    margin-block-end: var(--space-4);
+    gap: var(--space-2) var(--space-5);
+    margin-block-end: var(--space-3);
     border: 0;
     padding: 0;
     min-width: 0;
   }
   .cfg__legend {
     float: left;
-    font-size: var(--text-small);
-    color: var(--fg-secondary);
     padding: 0;
+    font-size: var(--text-small);
+    font-weight: var(--weight-medium);
+    color: var(--fg);
   }
   .cfg__picker {
-    position: relative;
     display: inline-flex;
-    gap: var(--space-1);
-    padding: var(--space-1);
+    gap: 2px;
+    padding: 2px;
     background: var(--bg-sunken);
-    border-radius: var(--radius-pill);
+    border-radius: var(--radius-m);
     max-width: 100%;
     overflow-x: auto;
     scrollbar-width: none;
@@ -248,88 +618,58 @@ const businesses: Business[] = [
     cursor: pointer;
   }
   .cfg__option span {
-    position: relative;
-    z-index: 1;
     display: flex;
     align-items: center;
-    padding: var(--space-2) var(--space-4);
-    min-height: 44px;
-    line-height: 1.5;
-    border-radius: var(--radius-pill);
+    min-height: 40px;
+    padding-inline: var(--space-4);
+    border-radius: var(--radius-s);
     font-size: var(--text-small);
     font-weight: var(--weight-medium);
     color: var(--fg-secondary);
-    transition: color var(--dur-2) var(--ease-out), scale var(--dur-1) var(--ease-out);
+    transition: color var(--dur-1) var(--ease-out);
   }
-  .cfg__option:active span {
-    scale: 0.96;
-  }
-  .cfg__option:hover input:not(:checked) + span {
+  .cfg__option:hover span {
     color: var(--fg);
   }
   .cfg__option input:checked + span {
-    color: var(--action-fg);
+    background: var(--bg-raised);
+    color: var(--fg);
+    box-shadow: 0 0 0 var(--hairline) var(--hairline-color);
   }
   .cfg__option input:focus-visible + span {
     outline: var(--focus-width) solid var(--focus-ring);
-    outline-offset: var(--focus-offset);
+    outline-offset: calc(-1 * var(--focus-width));
   }
-  /* Sin JS el resaltado va en la opción; con JS lo lleva el indicador que se desliza */
-  .cfg:not([data-active]) .cfg__option input:checked + span {
-    background: var(--ink-900);
-  }
-  .cfg__pill {
-    position: absolute;
-    inset-block: var(--space-1);
-    inset-inline-start: 0;
-    width: var(--pill-w, 0);
-    translate: var(--pill-x, 0) 0;
-    background: var(--ink-900);
-    border-radius: var(--radius-pill);
-  }
-  /* Solo después de la primera colocación: al cargar el indicador no se anima */
-  .cfg[data-ready] .cfg__pill {
-    transition: translate var(--dur-3) var(--ease-back), width var(--dur-3) var(--ease-back);
-  }
-  .cfg:not([data-active]) .cfg__pill {
-    display: none;
-  }
-
   .cfg__frame {
+    height: 35rem;
     background: var(--bg-raised);
-    border-radius: var(--radius-xl);
-    box-shadow: var(--shadow-float);
+    border: var(--hairline) solid var(--fog-400);
+    border-radius: var(--radius-l);
     overflow: hidden;
   }
-  .cfg__bar {
+  .cfg__foot {
     display: flex;
-    align-items: center;
+    flex-wrap: wrap;
     justify-content: space-between;
-    padding: var(--space-3) var(--space-5);
-    border-block-end: var(--hairline) solid var(--hairline-color);
-  }
-  .cfg__dots {
-    display: flex;
-    gap: var(--space-2);
-  }
-  .cfg__dots i {
-    width: var(--space-3);
-    height: var(--space-3);
-    border-radius: 50%;
-    background: var(--paper-200);
-  }
-  .cfg__stage {
-    height: clamp(24rem, 33vw, 27rem);
-  }
-  .cfg__note {
+    gap: var(--space-1) var(--space-5);
     margin-block-start: var(--space-3);
-    text-align: end;
   }
 
-  /* El panel activo: funciona sin JS con :has() y con JS con data-active */
-  .mock {
+  /* El negocio activo: funciona sin JS con :has() y con JS con data-active */
+  .app {
     display: none;
     height: 100%;
+    grid-template-columns: 12.5rem minmax(0, 1fr) 15.5rem;
+    font-size: var(--text-caption);
+    line-height: var(--leading-caption);
+    font-variant-numeric: tabular-nums;
+    color: var(--fg);
+  }
+  .cfg:not([data-active]) .app {
+    grid-template-columns: 12.5rem minmax(0, 1fr);
+  }
+  .cfg:not([data-active]) .app__detail {
+    display: none;
   }
   .cfg:not([data-active]):has(input[value="taller"]:checked) [data-panel="taller"],
   .cfg:not([data-active]):has(input[value="clinica"]:checked) [data-panel="clinica"],
@@ -342,7 +682,8 @@ const businesses: Business[] = [
     display: grid;
   }
 
-  /* Marcas de ejemplo: cada negocio trae su propio color */
+  /* Las únicas marcas fuera de tokens son las de cada negocio de ejemplo:
+     representan el software del cliente, no a Pragmasyn. */
   [data-panel="taller"] {
     --brand: #a04610;
     --brand-tint: #fbeadf;
@@ -353,389 +694,538 @@ const businesses: Business[] = [
   }
   [data-panel="distribuidora"] {
     --brand: #2123ea;
-    --brand-tint: #e9e9fd;
+    --brand-tint: #e8e8fd;
   }
   [data-panel="restaurante"] {
     --brand: #9f1d4f;
     --brand-tint: #fbe4ec;
   }
-
-  .mock__nav,
-  .mock__head,
-  .mock__kpis,
-  .mock__rows {
-    min-width: 0;
+  .st[data-tone="wait"] {
+    --dot: #b7650c;
   }
-  .mock__nav {
-    view-transition-name: cfg-nav;
+  .st[data-tone="active"] {
+    --dot: #2563eb;
   }
-  .mock__head {
-    view-transition-name: cfg-head;
-  }
-  .mock__kpis {
-    view-transition-name: cfg-kpis;
-  }
-  .mock__rows {
-    view-transition-name: cfg-rows;
+  .st[data-tone="done"] {
+    --dot: #15803d;
   }
 
-  .mock__app {
-    display: block;
-    font-weight: var(--weight-strong);
-    font-size: var(--text-small);
-    color: var(--brand);
+  /* --- La app --------------------------------------------------------------- */
+  .app button {
+    font: inherit;
+    color: inherit;
+    background: none;
+    border: 0;
+    padding: 0;
+    text-align: start;
+    cursor: pointer;
   }
-  .mock__menu {
-    display: flex;
-    gap: var(--space-1);
-    font-size: var(--text-small);
+  .app button:focus-visible {
+    outline-offset: calc(-1 * var(--focus-width));
+    outline-color: var(--brand);
   }
-  .mock__menu li {
-    padding: var(--space-2) var(--space-3);
-    border-radius: var(--radius-s);
-    color: var(--fg-secondary);
+  .app__muted {
+    color: var(--fg-muted);
+  }
+  .st {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4375rem;
     white-space: nowrap;
   }
-  .mock__menu li:first-child {
-    background: var(--brand-tint);
-    color: var(--brand);
-    font-weight: var(--weight-medium);
-  }
-
-  .mock__head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-4);
-  }
-  .mock__title {
-    font-size: var(--text-h3);
-    font-family: var(--font-display);
-    line-height: 1.1;
-  }
-  .mock__action {
+  .st::before {
+    content: "";
     flex: none;
-    background: var(--brand);
-    color: var(--paper-0);
-    padding: var(--space-2) var(--space-4);
-    border-radius: var(--radius-s);
-    font-size: var(--text-small);
-    font-weight: var(--weight-medium);
-  }
-  .mock__kpis {
-    display: grid;
-    gap: var(--space-3);
-  }
-  .mock__kpi {
-    padding: var(--space-3) var(--space-4);
-    background: var(--bg);
-    border-radius: var(--radius-m);
-  }
-  .mock__kpi dt {
-    font-size: var(--text-caption);
-    color: var(--fg-secondary);
-  }
-  .mock__kpi dd {
-    font-family: var(--font-display);
-    font-size: 1.875rem;
-    line-height: 1.1;
+    width: 0.4375rem;
+    height: 0.4375rem;
+    border-radius: 50%;
+    background: var(--dot);
   }
 
-  .mock__rows {
-    display: grid;
-    gap: var(--space-2);
-    font-size: var(--text-small);
-    align-content: start;
-  }
-  .mock__row {
-    display: grid;
-    gap: var(--space-3);
-    align-items: center;
-    background: var(--bg);
-    border-radius: var(--radius-m);
-    padding: var(--space-3) var(--space-4);
-  }
-  .mock__row b {
-    font-weight: var(--weight-medium);
-  }
-  .mock__row span {
-    color: var(--fg-secondary);
-  }
-  .mock__row em {
-    font-style: normal;
-    font-size: var(--text-caption);
-    font-weight: var(--weight-medium);
-    color: var(--brand);
-    background: var(--brand-tint);
-    padding: var(--space-1) var(--space-2);
-    border-radius: var(--radius-xs);
-    justify-self: start;
-  }
-
-  /* Taller: menú lateral, indicadores arriba, tablero de tres columnas */
-  [data-panel="taller"] {
-    grid-template-columns: 11rem 1fr;
-    grid-template-rows: auto auto 1fr;
-    grid-template-areas: "nav head" "nav kpis" "nav rows";
-    gap: var(--space-4) var(--space-5);
-    padding: var(--space-5);
-  }
-  [data-panel="taller"] .mock__nav {
-    grid-area: nav;
+  .app__side {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    padding: var(--space-4) var(--space-2);
+    background: var(--bg-chrome);
     border-inline-end: var(--hairline) solid var(--hairline-color);
-    padding-inline-end: var(--space-4);
-    display: grid;
-    gap: var(--space-4);
-    align-content: start;
   }
-  [data-panel="taller"] .mock__menu {
-    flex-direction: column;
+  .app__name {
+    padding-inline: var(--space-3);
+    font-size: var(--text-small);
+    font-weight: var(--weight-strong);
+    color: var(--brand);
   }
-  [data-panel="taller"] .mock__head {
-    grid-area: head;
-  }
-  [data-panel="taller"] .mock__kpis {
-    grid-area: kpis;
-    grid-template-columns: repeat(3, 1fr);
-  }
-  [data-panel="taller"] .mock__rows {
-    grid-area: rows;
-    grid-template-columns: repeat(3, 1fr);
-    align-content: stretch;
-  }
-  [data-panel="taller"] .mock__row {
-    align-content: start;
-    gap: var(--space-1);
-  }
-
-  /* Clínica: menú superior, agenda ancha, indicadores en columna */
-  [data-panel="clinica"] {
-    grid-template-columns: 1fr 13rem;
-    grid-template-rows: auto auto 1fr;
-    grid-template-areas: "nav nav" "head head" "rows kpis";
-    gap: var(--space-4) var(--space-5);
-    padding: var(--space-5);
-  }
-  [data-panel="clinica"] .mock__nav {
-    grid-area: nav;
+  .app__tab {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: var(--space-4);
+    width: 100%;
+    min-height: 2.125rem;
+    padding-inline: var(--space-3) !important;
+    border-radius: var(--radius-s);
+    color: var(--fg-secondary) !important;
+    font-weight: var(--weight-medium) !important;
   }
-  [data-panel="clinica"] .mock__head {
-    grid-area: head;
+  .app__tab:hover {
+    color: var(--fg) !important;
   }
-  [data-panel="clinica"] .mock__kpis {
-    grid-area: kpis;
-    align-content: start;
-  }
-  [data-panel="clinica"] .mock__rows {
-    grid-area: rows;
-    grid-auto-rows: 1fr;
-    align-content: stretch;
-  }
-  [data-panel="clinica"] .mock__row {
-    grid-template-columns: 4.5rem 1fr auto;
-    background: transparent;
-    border-inline-start: var(--hairline-strong) solid var(--brand);
-    border-radius: 0;
-    padding-block: var(--space-4);
-  }
-
-  /* Distribuidora: menú lateral angosto, tabla a todo lo ancho */
-  [data-panel="distribuidora"] {
-    grid-template-columns: auto 1fr;
-    grid-template-rows: auto 1fr auto;
-    grid-template-areas: "nav head" "nav rows" "nav kpis";
-    gap: var(--space-4) var(--space-5);
-    padding: 0 var(--space-5) var(--space-5) 0;
-  }
-  [data-panel="distribuidora"] .mock__nav {
-    grid-area: nav;
-    background: var(--brand);
-    color: var(--paper-0);
-    padding: var(--space-5) var(--space-4);
-    display: grid;
-    gap: var(--space-4);
-    align-content: start;
-  }
-  [data-panel="distribuidora"] .mock__app {
-    color: var(--paper-0);
-  }
-  [data-panel="distribuidora"] .mock__menu {
-    flex-direction: column;
-  }
-  [data-panel="distribuidora"] .mock__menu li {
-    color: var(--paper-0);
-    opacity: 0.85;
-  }
-  [data-panel="distribuidora"] .mock__menu li:first-child {
-    background: rgb(255 255 255 / 0.16);
-    color: var(--paper-0);
-    opacity: 1;
-  }
-  [data-panel="distribuidora"] .mock__head {
-    grid-area: head;
-    padding-block-start: var(--space-5);
-  }
-  [data-panel="distribuidora"] .mock__rows {
-    grid-area: rows;
-    gap: 0;
-    grid-auto-rows: 1fr;
-    align-content: stretch;
-  }
-  [data-panel="distribuidora"] .mock__row {
-    grid-template-columns: 1fr 1fr auto;
-    background: transparent;
-    border-radius: 0;
-    border-block-end: var(--hairline) solid var(--hairline-color);
-    padding-inline: 0;
-  }
-  [data-panel="distribuidora"] .mock__kpis {
-    grid-area: kpis;
-    grid-template-columns: repeat(3, 1fr);
-  }
-
-  /* Restaurante: indicadores arriba, mesas en mosaico, menú abajo */
-  [data-panel="restaurante"] {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto 1fr auto;
-    grid-template-areas: "head" "kpis" "rows" "nav";
-    gap: var(--space-4);
-    padding: var(--space-5);
-  }
-  [data-panel="restaurante"] .mock__nav {
-    grid-area: nav;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-4);
-    border-block-start: var(--hairline) solid var(--hairline-color);
-    padding-block-start: var(--space-3);
-  }
-  [data-panel="restaurante"] .mock__head {
-    grid-area: head;
-  }
-  [data-panel="restaurante"] .mock__kpis {
-    grid-area: kpis;
-    grid-template-columns: repeat(3, 1fr);
-  }
-  [data-panel="restaurante"] .mock__rows {
-    grid-area: rows;
-    grid-template-columns: repeat(3, 1fr);
-    align-content: stretch;
-  }
-  [data-panel="restaurante"] .mock__row {
+  .app__tab[aria-current] {
     background: var(--brand-tint);
-    gap: var(--space-1);
-    grid-template-rows: auto auto 1fr;
-  }
-  [data-panel="restaurante"] .mock__row em {
-    align-self: end;
-    background: var(--paper-0);
+    color: var(--brand) !important;
   }
 
-  ::view-transition-old(root) {
-    display: none;
+  .app__main {
+    display: grid;
+    grid-template-rows: auto auto minmax(0, 1fr);
+    min-width: 0;
   }
-  ::view-transition-new(root) {
-    animation: none;
+  .app__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding: var(--space-3) var(--space-5);
   }
-  ::view-transition-group(cfg-nav),
-  ::view-transition-group(cfg-head),
-  ::view-transition-group(cfg-kpis),
-  ::view-transition-group(cfg-rows) {
-    animation-duration: var(--dur-4);
-    animation-timing-function: var(--ease-out);
+  .app__title {
+    font-size: 1.125rem;
+    line-height: 1.3;
+    font-weight: var(--weight-strong);
+    letter-spacing: var(--tracking-h3);
   }
-  ::view-transition-old(cfg-nav),
-  ::view-transition-new(cfg-nav),
-  ::view-transition-old(cfg-head),
-  ::view-transition-new(cfg-head),
-  ::view-transition-old(cfg-kpis),
-  ::view-transition-new(cfg-kpis),
-  ::view-transition-old(cfg-rows),
-  ::view-transition-new(cfg-rows) {
-    animation-duration: var(--dur-3);
-    height: 100%;
-    object-fit: cover;
-    object-position: top left;
+  .app__action {
+    flex: none;
+    min-height: 2.25rem;
+    padding-inline: var(--space-3) !important;
+    border-radius: var(--radius-m);
+    background: var(--brand) !important;
+    color: var(--white) !important;
+    font-weight: var(--weight-medium) !important;
   }
-
-  @media (max-width: 56rem) {
-    .cfg__stage {
-      height: 27rem;
-    }
-    [data-panel="taller"],
-    [data-panel="clinica"],
-    [data-panel="distribuidora"],
-    [data-panel="restaurante"] {
-      grid-template-columns: 1fr;
-      grid-template-rows: auto auto 1fr;
-      grid-template-areas: "nav" "head" "rows";
-      gap: var(--space-3);
-      padding: var(--space-4);
-    }
-    .mock__kpis {
-      display: none;
-    }
-    .mock__menu {
-      overflow: hidden;
-    }
-    [data-panel] .mock__nav {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      justify-content: space-between;
-      background: transparent;
-      padding: 0;
-      border: 0;
-      color: inherit;
-    }
-    [data-panel] .mock__app {
+  .app__action:disabled {
+    opacity: 0.45;
+    cursor: not-allowed !important;
+  }
+  .app__kpis {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    border-block: var(--hairline) solid var(--hairline-color);
+  }
+  .app__kpi {
+    padding: var(--space-2) var(--space-5);
+  }
+  .app__kpi + .app__kpi {
+    border-inline-start: var(--hairline) solid var(--hairline-color);
+  }
+  .app__kpi dt {
+    color: var(--fg-secondary);
+  }
+  .app__kpi dd {
+    font-size: 1.375rem;
+    line-height: 1.3;
+    font-weight: var(--weight-medium);
+    letter-spacing: var(--tracking-h3);
+  }
+  .app__kpi dd.is-bumped {
+    animation: cfg-bump var(--dur-3) var(--ease-out) 2;
+  }
+  @keyframes cfg-bump {
+    50% {
       color: var(--brand);
     }
-    [data-panel] .mock__menu {
-      flex-direction: row;
-      display: none;
-    }
-    [data-panel] .mock__rows {
-      grid-template-columns: 1fr;
+  }
+  .app__view {
+    min-height: 0;
+    overflow: auto;
+    padding: var(--space-4) var(--space-5);
+    scrollbar-width: thin;
+  }
+
+  /* Las otras pantallas del menú no existen todavía, y eso es el mensaje */
+  .app__empty {
+    display: none;
+    align-content: center;
+    justify-items: center;
+    gap: var(--space-2);
+    padding: var(--space-5);
+    text-align: center;
+    color: var(--fg-secondary);
+  }
+  .app__empty .app__title {
+    color: var(--fg);
+  }
+  .app__empty .link {
+    color: var(--brand);
+  }
+  .app.is-empty .app__head,
+  .app.is-empty .app__kpis,
+  .app.is-empty .app__view,
+  .app.is-empty .app__detail {
+    display: none;
+  }
+  .app.is-empty .app__empty {
+    display: grid;
+    grid-row: 1 / -1;
+  }
+  .cfg[data-active] .app.is-empty {
+    grid-template-columns: 12.5rem minmax(0, 1fr);
+  }
+
+  /* El panel de detalle: aquí se cambia el estado */
+  .app__detail {
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-4);
+    border-inline-start: var(--hairline) solid var(--hairline-color);
+  }
+  .app__detail-title {
+    font-size: 1rem;
+    line-height: 1.3;
+    font-weight: var(--weight-strong);
+    margin-block-end: var(--space-2);
+  }
+  .app__detail-label {
+    margin-block: var(--space-5) var(--space-2);
+    color: var(--fg-secondary);
+  }
+  .app__statuses {
+    display: grid;
+    gap: var(--space-1);
+  }
+  .app__status {
+    display: flex;
+    align-items: center;
+    min-height: 2.25rem;
+    padding-inline: var(--space-3) !important;
+    border: var(--hairline) solid var(--hairline-color) !important;
+    border-radius: var(--radius-m);
+    font-weight: var(--weight-medium) !important;
+    transition: border-color var(--dur-1) var(--ease-out);
+  }
+  .app__status:hover {
+    border-color: var(--fog-400) !important;
+  }
+  .app__status[aria-pressed="true"] {
+    border-color: var(--brand) !important;
+    background: var(--brand-tint) !important;
+  }
+
+  /* Taller: tablero por estado */
+  .board {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-3);
+    min-height: 100%;
+  }
+  .board__col {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    min-width: 0;
+  }
+  .board__head {
+    display: flex;
+    justify-content: space-between;
+    color: var(--fg-secondary);
+    font-weight: var(--weight-medium);
+  }
+  .board__list {
+    display: grid;
+    gap: var(--space-2);
+    align-content: start;
+  }
+  .card {
+    display: grid !important;
+    gap: 1px;
+    width: 100%;
+    padding: var(--space-2) var(--space-3) !important;
+    border: var(--hairline) solid var(--hairline-color) !important;
+    border-radius: var(--radius-s);
+    transition: border-color var(--dur-1) var(--ease-out);
+  }
+  .card b {
+    font-weight: var(--weight-strong);
+  }
+  .card:hover {
+    border-color: var(--fog-400) !important;
+  }
+  .card.is-selected {
+    border-color: var(--brand) !important;
+    box-shadow: inset 0 0 0 var(--hairline) var(--brand);
+  }
+
+  /* Clínica: agenda por hora */
+  .agenda > li + li {
+    border-block-start: var(--hairline) solid var(--hairline-color);
+  }
+  .slot {
+    display: grid !important;
+    grid-template-columns: 3.25rem minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--space-3);
+    width: 100%;
+    min-height: 3.25rem;
+    padding-inline: var(--space-3) !important;
+    border-radius: var(--radius-s);
+  }
+  .slot:hover {
+    background: var(--bg-chrome) !important;
+  }
+  .is-selected > .slot {
+    background: var(--brand-tint) !important;
+  }
+  .slot__time {
+    font-weight: var(--weight-strong);
+  }
+  .slot__body {
+    display: grid;
+    min-width: 0;
+  }
+
+  /* Distribuidora: tabla densa */
+  .rows {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .rows th {
+    padding: 0 var(--space-3) var(--space-2) 0;
+    text-align: start;
+    font-weight: var(--weight-medium);
+    color: var(--fg-secondary);
+    border-block-end: var(--hairline) solid var(--hairline-color);
+  }
+  .rows td {
+    padding: 0 var(--space-3) 0 0;
+    height: 2.75rem;
+    border-block-end: var(--hairline) solid var(--hairline-color);
+  }
+  .rows td:first-child,
+  .rows th:first-child {
+    padding-inline-start: var(--space-2);
+  }
+  .rows tbody tr {
+    cursor: pointer;
+  }
+  .rows tbody tr:hover {
+    background: var(--bg-chrome);
+  }
+  .rows tbody tr.is-selected {
+    background: var(--brand-tint);
+  }
+  .rows__open {
+    font-weight: var(--weight-strong) !important;
+    min-height: 2.75rem;
+  }
+
+  /* Restaurante: plano de mesas */
+  .floor {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-2);
+  }
+  .tile {
+    display: grid !important;
+    gap: 1px;
+    width: 100%;
+    height: 100%;
+    min-height: 6.75rem;
+    padding: var(--space-3) !important;
+    border: var(--hairline) solid var(--hairline-color) !important;
+    border-radius: var(--radius-s);
+    transition: border-color var(--dur-1) var(--ease-out);
+  }
+  .tile b {
+    font-weight: var(--weight-strong);
+  }
+  .tile .st {
+    margin-block-start: var(--space-2);
+  }
+  .tile:hover {
+    border-color: var(--fog-400) !important;
+  }
+  .is-selected > .tile {
+    border-color: var(--brand) !important;
+    box-shadow: inset 0 0 0 var(--hairline) var(--brand);
+  }
+
+  /* Cada negocio se ve como su propio software, no como un tema de colores */
+  [data-panel="clinica"] .app__side {
+    background: var(--brand-tint);
+  }
+  [data-panel="clinica"] .app__tab[aria-current] {
+    background: var(--brand);
+    color: var(--white) !important;
+  }
+  [data-panel="distribuidora"] .app__side {
+    background: var(--brand);
+    border-inline-end: 0;
+  }
+  [data-panel="distribuidora"] .app__name,
+  [data-panel="distribuidora"] .app__tab,
+  [data-panel="distribuidora"] .app__tab:hover {
+    color: var(--white) !important;
+  }
+  [data-panel="distribuidora"] .app__tab[aria-current] {
+    background: rgb(255 255 255 / 0.18);
+  }
+  [data-panel="restaurante"] {
+    grid-template-columns: minmax(0, 1fr) 15.5rem !important;
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+  [data-panel="restaurante"] .app__side {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-5);
+    padding-block: var(--space-2);
+    border-inline-end: 0;
+    border-block-end: var(--hairline) solid var(--hairline-color);
+  }
+  [data-panel="restaurante"] .app__menu {
+    display: flex;
+    gap: var(--space-1);
+  }
+  .cfg[data-active] .app.is-empty[data-panel="restaurante"] {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  /* --- En el teléfono la app se ve como app de teléfono -------------------- */
+  @media (width <= 56rem) {
+    .cfg__top {
       gap: var(--space-2);
-    }
-    [data-panel] .mock__row {
-      grid-template-columns: 1fr auto;
-      min-height: 0;
-      background: var(--bg);
-      border: 0;
-      border-radius: var(--radius-m);
-      padding: var(--space-3);
-    }
-    [data-panel] .mock__row span {
-      grid-column: 1;
-      grid-row: 2;
-    }
-    [data-panel] .mock__row em {
-      grid-column: 2;
-      grid-row: 1 / span 2;
-    }
-    [data-panel="distribuidora"] .mock__head {
-      padding-block-start: 0;
     }
     .cfg__legend {
       float: none;
+      margin-block-end: var(--space-2);
     }
     .cfg__picker {
-      gap: 2px;
+      display: flex;
+      width: 100%;
+    }
+    .cfg__option {
+      flex: 1 0 auto;
     }
     .cfg__option span {
-      padding-inline: 0.625rem;
+      justify-content: center;
+      min-height: 44px;
+      padding-inline: var(--space-2);
+    }
+    .cfg__frame {
+      height: auto;
+    }
+    .app,
+    .cfg:not([data-active]) .app,
+    .cfg[data-active] .app.is-empty,
+    [data-panel="restaurante"] {
+      grid-template-columns: minmax(0, 1fr) !important;
+      grid-template-rows: none;
+      height: auto;
+    }
+    .app__side,
+    [data-panel="restaurante"] .app__side {
+      flex-direction: column;
+      align-items: stretch;
+      gap: var(--space-1);
+      padding: var(--space-3) var(--space-3) 0;
+      border-inline-end: 0;
+      border-block-end: var(--hairline) solid var(--hairline-color);
+    }
+    [data-panel="distribuidora"] .app__side {
+      border-block-end: 0;
+    }
+    .app__name {
+      padding-inline: 0;
+    }
+    .app__menu,
+    [data-panel="restaurante"] .app__menu {
+      display: flex;
+      gap: var(--space-1);
+      margin-inline: calc(-1 * var(--space-3));
+      padding-inline: var(--space-2);
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .app__tab {
+      min-height: 44px;
+      width: auto;
+      white-space: nowrap;
+      border-radius: var(--radius-s) var(--radius-s) 0 0;
+    }
+    .app__head {
+      padding: var(--space-3);
+    }
+    .app__action {
+      min-height: 44px;
+    }
+    .app__kpi {
+      padding: var(--space-2) var(--space-3);
+    }
+    .app__view {
+      height: 20.5rem;
+      padding: var(--space-3);
+    }
+    .board {
+      grid-template-columns: none;
+      grid-auto-flow: column;
+      grid-auto-columns: 72%;
+      overflow-x: auto;
+      scroll-snap-type: x proximity;
+      scrollbar-width: none;
+    }
+    .board__col {
+      scroll-snap-align: start;
+    }
+    .card {
+      min-height: 44px;
+    }
+    .slot {
+      grid-template-columns: 2.75rem minmax(0, 1fr) auto;
+      gap: var(--space-2);
+      padding-inline: var(--space-2) !important;
+    }
+    .rows th:nth-child(3),
+    .rows td:nth-child(3) {
+      display: none;
+    }
+    .floor {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .tile {
+      min-height: 0;
+      padding: var(--space-2) !important;
+    }
+    .tile .app__muted {
+      display: none;
+    }
+    .tile .st {
+      margin-block-start: var(--space-1);
+    }
+    .app__detail {
+      border-inline-start: 0;
+      border-block-start: var(--hairline) solid var(--hairline-color);
+      padding: var(--space-3);
+    }
+    .app__detail-title {
+      margin-block-end: 0;
+    }
+    .app__detail-label {
+      margin-block: var(--space-2) var(--space-1);
+    }
+    .app__statuses {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .app__status {
+      min-height: 44px;
+      padding-inline: var(--space-2) !important;
+    }
+    .app__empty {
+      min-height: 14rem;
     }
   }
+  /* the four names have to fit without scrolling on the narrowest phones */
   @media (width <= 24rem) {
     .cfg__option span {
-      padding-inline: var(--space-2);
+      padding-inline: var(--space-1);
+      font-size: var(--text-caption);
     }
   }
 </style>
