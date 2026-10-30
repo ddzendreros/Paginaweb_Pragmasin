@@ -24,7 +24,7 @@ const socialDescription = ogDescription ?? description;
 
 // theme-color follows the canvas token, so the browser chrome never drifts
 // from tokens.css (the single source of color).
-const themeColor = /--paper-50:\s*(#[0-9a-f]{6})/i.exec(tokensCss)?.[1];
+const themeColor = /--white:\s*(#[0-9a-f]{6})/i.exec(tokensCss)?.[1];
 
 const organizationSchema = {
   "@context": "https://schema.org",
@@ -71,21 +71,7 @@ const organizationSchema = {
 
     <link
       rel="preload"
-      href="/fonts/instrument-sans-latin-var.woff2"
-      as="font"
-      type="font/woff2"
-      crossorigin
-    />
-    <link
-      rel="preload"
-      href="/fonts/newsreader-latin-var.woff2"
-      as="font"
-      type="font/woff2"
-      crossorigin
-    />
-    <link
-      rel="preload"
-      href="/fonts/newsreader-latin-var-italic.woff2"
+      href="/fonts/mona-sans-latin-var.woff2"
       as="font"
       type="font/woff2"
       crossorigin
@@ -94,11 +80,6 @@ const organizationSchema = {
 
     <noscript>
       <style>
-        /* Sin JS no hay entradas al hacer scroll: el contenido se ve, punto. */
-        html [data-reveal] {
-          opacity: 1;
-          translate: none;
-        }
         /* Sin JS el menú no abre, y el pie lleva los mismos enlaces. */
         .site-header__toggle {
           display: none !important;
@@ -116,30 +97,5 @@ const organizationSchema = {
     </main>
     <SiteFooter />
     <WhatsAppButton />
-
-    <script>
-      // One entrance curve for the whole site. Siblings stagger by their
-      // position so a card grid arrives as a grid, not as one block.
-      const revealables = document.querySelectorAll<HTMLElement>("[data-reveal]");
-      for (const el of revealables) {
-        const siblings = el.parentElement
-          ? Array.from(el.parentElement.children).filter((c) => c.hasAttribute("data-reveal"))
-          : [];
-        const index = Math.max(0, Math.min(siblings.indexOf(el), 3));
-        el.style.setProperty("--reveal-index", String(index));
-      }
-
-      const observer = new IntersectionObserver(
-        (entries) => {
-          for (const entry of entries) {
-            if (!entry.isIntersecting) continue;
-            entry.target.classList.add("is-revealed");
-            observer.unobserve(entry.target);
-          }
-        },
-        { threshold: 0.15, rootMargin: "0px 0px -8% 0px" },
-      );
-      revealables.forEach((el) => observer.observe(el));
-    </script>
   </body>
 </html>

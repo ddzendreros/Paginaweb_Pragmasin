@@ -1,114 +1,84 @@
 /* ==========================================================================
    PRAGMASYN — DESIGN TOKENS (single source of truth)
-   Direction "Hecho a tu medida": warm paper with dark chapters. Every
-   component reads contextual tokens from its ground (.ground-light /
-   .ground-dark), never raw primitives. No hardcoded values outside this
+   Direction "Oficio": the work is the proof. Cool neutrals, the logo's cobalt
+   as a full field instead of a sprinkled accent, one typeface. Every component
+   reads contextual tokens from its ground (.ground-light / .ground-dark /
+   .ground-cobalt), never raw primitives. No hardcoded values outside this
    file, except the sample-brand colors scoped inside the Configurator.
    ========================================================================== */
 
-/* --- Self-hosted variable fonts (latin subset covers es-MX) --------------- */
+/* --- Self-hosted variable font (latin subset covers es-MX) ----------------- */
 @font-face {
-  font-family: "Newsreader";
+  font-family: "Mona Sans";
   font-style: normal;
-  font-weight: 200 800;
+  font-weight: 200 900;
+  font-stretch: 75% 125%;
   font-display: swap;
-  src: url("/fonts/newsreader-latin-var.woff2") format("woff2-variations");
-}
-@font-face {
-  font-family: "Newsreader";
-  font-style: italic;
-  font-weight: 200 800;
-  font-display: swap;
-  src: url("/fonts/newsreader-latin-var-italic.woff2") format("woff2-variations");
-}
-@font-face {
-  font-family: "Instrument Sans";
-  font-style: normal;
-  font-weight: 400 700;
-  font-stretch: 75% 100%;
-  font-display: swap;
-  src: url("/fonts/instrument-sans-latin-var.woff2") format("woff2-variations");
+  src: url("/fonts/mona-sans-latin-var.woff2") format("woff2-variations");
 }
 
 :root {
   /* --- Color primitives. Contrast measured against the ground named. ----- */
-  --paper-0: #FFFDFA;        /* raised surfaces */
-  --paper-50: #F8F5EF;       /* canvas */
-  --paper-100: #EFEAE1;      /* sunken surfaces */
-  --paper-200: #DFD8CB;      /* hairlines on paper */
-  --paper-300: #A39B8D;      /* control borders on paper */
-  --stone-600: #6B665E;      /* muted text: 4.5+ on every paper */
-  --stone-700: #5A564F;      /* secondary text: 6.09+ on every paper */
-  --ink-900: #1A191D;        /* text on paper: 14.60+ */
+  --white: #FFFFFF;          /* canvas and surfaces */
+  --fog-50: #F6F7FA;         /* app chrome */
+  --fog-100: #EDEFF5;        /* sunken bands */
+  --fog-200: #DDE0EA;        /* hairlines on light */
+  --fog-400: #7C829B;        /* control borders: 3+ on every light ground */
+  --slate-600: #565C75;      /* muted text: 5.7+ on every light ground */
+  --slate-700: #434962;      /* secondary text: 7.7+ on every light ground */
+  --ink-900: #0F1236;        /* text on light: 15.7+ */
 
-  --night-950: #0D0C0F;      /* sunken on night */
-  --night-900: #141316;      /* chapter canvas */
-  --night-800: #1E1D21;      /* raised on night */
-  --night-700: #322F36;      /* hairlines on night */
-  --night-400: #8F8A81;      /* muted text: 4.88+ on every night */
-  --night-300: #B9B3A9;      /* secondary text: 8.05+ on every night */
-  --night-100: #F6F2EB;      /* text on night: 15.02+ */
+  --deep-950: #090B26;       /* sunken on deep */
+  --deep-900: #0F1236;       /* dark canvas, same ink as the text */
+  --deep-800: #1A1E4D;       /* raised on deep */
+  --deep-700: #30356E;       /* hairlines on deep */
+  --deep-400: #9196C4;       /* muted text: 5.5+ on deep */
+  --deep-300: #BEC1E0;       /* secondary text: 8.9+ on deep */
+  --deep-100: #F3F4FB;       /* text on deep: 14+ */
 
-  --cobalt: #2123EA;         /* only action color on paper, from the logo */
-  --cobalt-strong: #1818B8;  /* hover and active on paper */
-  --cobalt-tint: #E9E9FD;    /* selected states on paper */
-  --cobalt-on-night: #ADAFFF;        /* links on night: 8.26+ */
-  --cobalt-on-night-strong: #C8C9FF; /* hover on night */
+  --cobalt: #2123EA;         /* from the logo. White on it: 8.4 */
+  --cobalt-strong: #1718B4;  /* hover and active on light */
+  --cobalt-tint: #E8E8FD;    /* selected states on light */
+  --cobalt-line: #5A5CF2;    /* hairlines on cobalt */
+  --cobalt-300: #D9DAFF;     /* secondary text on cobalt: 6.1 */
+  --cobalt-on-deep: #B4B6FF; /* links on deep: 8.2+ */
 
-  --warm-100: #FBE7D6;       /* human moments, one per page at most */
-  --warm-ink: #6B3213;       /* text on warm-100: 8.37 */
+  --error: #B3261E;          /* 6.5 on white */
+  --error-on-dark: #FFB4A9;  /* 10 on deep */
 
-  --error: #B3261E;          /* 6.01 on paper */
-  --error-on-night: #FFB4A9; /* 10.89 on night */
-  --success: #1E6B4A;        /* 6.35 on raised */
-
-  /* Channel triples for alpha composition (shadows, glass). */
-  --rgb-ink: 26 25 29;
-  --rgb-paper: 248 245 239;
-  --rgb-night: 20 19 22;
+  /* Channel triple for alpha composition. */
+  --rgb-ink: 15 18 54;
 
   /* --- Typography --------------------------------------------------------
-     Newsreader regular leads the large headings; one italic phrase is the
-     human gesture. Instrument Sans carries text and interface. Hierarchy
-     comes from scale, not from weight.                                   */
-  --font-display: "Newsreader", "Georgia", serif;
-  --font-text: "Instrument Sans", "Segoe UI", system-ui, sans-serif;
+     One family. Width and weight do the work a second typeface would do:
+     headings run slightly wide and tight, text sits at normal width.      */
+  --font-sans: "Mona Sans", "Segoe UI", system-ui, sans-serif;
 
-  --text-caption: 0.75rem;                                      /* 12 */
+  --text-caption: 0.8125rem;                                    /* 13 */
   --text-small: 0.875rem;                                       /* 14 */
   --text-body: clamp(1rem, 0.97rem + 0.15vw, 1.0625rem);        /* 16 -> 17 */
-  --text-lead: clamp(1.125rem, 1.06rem + 0.3vw, 1.3125rem);     /* 18 -> 21 */
-  --text-h4: 1.125rem;                                          /* 18 */
-  --text-h3: clamp(1.375rem, 1.3rem + 0.35vw, 1.5rem);          /* 22 -> 24 */
-  --text-h2: clamp(2.25rem, 1.55rem + 3vw, 3.75rem);            /* 36 -> 60 */
-  --text-display-2: clamp(2.5rem, 1.6rem + 3.8vw, 4.5rem);      /* 40 -> 72 */
-  --text-display: clamp(3rem, 1.9rem + 4.6vw, 5.75rem);         /* 48 -> 92 */
+  --text-lead: clamp(1.0625rem, 1rem + 0.3vw, 1.25rem);         /* 17 -> 20 */
+  --text-h3: clamp(1.25rem, 1.16rem + 0.4vw, 1.5rem);           /* 20 -> 24 */
+  --text-h2: clamp(1.875rem, 1.3rem + 2.4vw, 3.25rem);          /* 30 -> 52 */
+  --text-display: clamp(2.625rem, 1.6rem + 4.4vw, 5.5rem);      /* 42 -> 88 */
 
   --leading-display: 1;
-  --leading-display-2: 1.04;
-  --leading-h2: 1.06;
+  --leading-h2: 1.08;
   --leading-h3: 1.25;
-  --leading-h4: 1.35;
-  --leading-lead: 1.5;
-  --leading-body: 1.6;
-  --leading-small: 1.5;
+  --leading-lead: 1.45;
+  --leading-body: 1.55;
+  --leading-small: 1.45;
   --leading-caption: 1.4;
 
-  --tracking-display: -0.022em;
-  --tracking-display-2: -0.02em;
-  --tracking-h2: -0.018em;
-  --tracking-h3: -0.012em;
-  --tracking-h4: -0.006em;
-  --tracking-lead: -0.004em;
-  --tracking-small: 0.002em;
-  --tracking-caption: 0.01em;
-  --tracking-caps: 0.09em;
+  --tracking-display: -0.032em;
+  --tracking-h2: -0.026em;
+  --tracking-h3: -0.016em;
+  --tracking-lead: -0.006em;
 
-  --weight-serif: 400;
-  --weight-text: 430;
-  --weight-medium: 530;
-  --weight-strong: 620;
-  --width-condensed: 82%;
+  --weight-text: 400;
+  --weight-medium: 500;
+  --weight-strong: 600;
+  --width-heading: 106%;
 
   /* --- Spacing — 4/8 base ------------------------------------------------ */
   --space-1: 0.25rem;   /*   4 */
@@ -125,41 +95,26 @@
   /* --- Grid --------------------------------------------------------------- */
   --gutter: clamp(1rem, 2.2vw, 1.5rem);
   --margin: clamp(1rem, 4vw, 3rem);
-  --content-max: 75rem;     /* 1200 */
+  --content-max: 82.5rem;   /* 1320 */
   --measure: 38rem;
-  --measure-wide: 46rem;
-  --chapter-inset: clamp(0.5rem, 1.1vw, 1rem);
 
-  /* --- Geometry ----------------------------------------------------------- */
+  /* --- Geometry: radius follows hierarchy, small things stay small -------- */
   --hairline: 1px;
   --hairline-strong: 2px;
-  --radius-xs: 0.375rem;   /*  6 */
-  --radius-s: 0.625rem;    /* 10 */
-  --radius-m: 0.875rem;    /* 14 */
-  --radius-l: 1.25rem;     /* 20 */
-  --radius-xl: 1.75rem;    /* 28 */
-  --radius-pill: 62.5rem;
+  --radius-s: 0.25rem;     /*  4: statuses, cards inside the app */
+  --radius-m: 0.375rem;    /*  6: controls */
+  --radius-l: 0.625rem;    /* 10: the app frame */
 
-  /* --- Elevation: only floating pieces earn a shadow ---------------------- */
-  --shadow-float: 0 0 0 1px rgb(var(--rgb-ink) / 0.06),
-                  0 24px 48px -16px rgb(var(--rgb-ink) / 0.18),
-                  0 8px 16px -8px rgb(var(--rgb-ink) / 0.1);
-  --blur-glass: 16px;
-  --saturate-glass: 160%;
-
-  /* --- Motion: state and hierarchy only, never decoration ----------------- */
-  --dur-1: 120ms;           /* hover, focus */
-  --dur-2: 180ms;           /* control state */
-  --dur-3: 280ms;           /* sliding indicator, sheets */
-  --dur-4: 420ms;           /* configurator morph */
-  --dur-reveal: 320ms;      /* scroll entrance */
+  /* --- Motion: answers a person's action, nothing else -------------------- */
+  --dur-1: 90ms;            /* hover, focus */
+  --dur-2: 140ms;           /* control state */
+  --dur-3: 220ms;           /* sheets, the app changing business */
   --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
-  --ease-back: cubic-bezier(0.34, 1.3, 0.64, 1);  /* indicator settle */
 
   /* --- Focus ---------------------------------------------------------------- */
   --focus-width: 2px;
-  --focus-offset: 3px;
+  --focus-offset: 2px;
 
   --z-base: 0;
   --z-nav: 100;
@@ -171,56 +126,75 @@
    Components consume ONLY these contextual tokens. Switching ground never
    touches a component. Buttons read --action-*, links read --interactive. */
 .ground-light {
-  --bg: var(--paper-50);
-  --bg-raised: var(--paper-0);
-  --bg-sunken: var(--paper-100);
+  --bg: var(--white);
+  --bg-raised: var(--white);
+  --bg-sunken: var(--fog-100);
+  --bg-chrome: var(--fog-50);
   --fg: var(--ink-900);
-  --fg-secondary: var(--stone-700);
-  --fg-muted: var(--stone-600);
-  --hairline-color: var(--paper-200);
-  --control-border: var(--paper-300);
-  --surface-card: var(--paper-0);
-  --surface-border: var(--paper-200);
-  --surface-glass: rgb(var(--rgb-paper) / 0.88); /* 4.5+ for links over night */
+  --fg-secondary: var(--slate-700);
+  --fg-muted: var(--slate-600);
+  --hairline-color: var(--fog-200);
+  --control-border: var(--fog-400);
   --interactive: var(--cobalt);
   --interactive-strong: var(--cobalt-strong);
   --action-bg: var(--cobalt);
   --action-bg-strong: var(--cobalt-strong);
-  --action-fg: var(--paper-50);
+  --action-fg: var(--white);
   --error-color: var(--error);
   --focus-ring: var(--cobalt);
   --selection-bg: var(--cobalt);
-  --selection-fg: var(--paper-50);
+  --selection-fg: var(--white);
   background-color: var(--bg);
   color: var(--fg);
 }
 .ground-dark {
-  --bg: var(--night-900);
-  --bg-raised: var(--night-800);
-  --bg-sunken: var(--night-950);
-  --fg: var(--night-100);
-  --fg-secondary: var(--night-300);
-  --fg-muted: var(--night-400);
-  --hairline-color: var(--night-700);
-  --control-border: var(--night-400);
-  --surface-card: var(--night-800);
-  --surface-border: var(--night-700);
-  --surface-glass: rgb(var(--rgb-night) / 0.78);
-  --interactive: var(--cobalt-on-night);
-  --interactive-strong: var(--cobalt-on-night-strong);
-  --action-bg: var(--night-100);
-  --action-bg-strong: var(--paper-0);
+  --bg: var(--deep-900);
+  --bg-raised: var(--deep-800);
+  --bg-sunken: var(--deep-950);
+  --bg-chrome: var(--deep-800);
+  --fg: var(--deep-100);
+  --fg-secondary: var(--deep-300);
+  --fg-muted: var(--deep-400);
+  --hairline-color: var(--deep-700);
+  --control-border: var(--deep-400);
+  --interactive: var(--cobalt-on-deep);
+  --interactive-strong: var(--white);
+  --action-bg: var(--white);
+  --action-bg-strong: var(--cobalt-tint);
   --action-fg: var(--ink-900);
-  --error-color: var(--error-on-night);
-  --focus-ring: var(--cobalt-on-night);
-  --selection-bg: var(--cobalt-on-night);
+  --error-color: var(--error-on-dark);
+  --focus-ring: var(--cobalt-on-deep);
+  --selection-bg: var(--cobalt-on-deep);
   --selection-fg: var(--ink-900);
   background-color: var(--bg);
   color: var(--fg);
 }
+.ground-cobalt {
+  --bg: var(--cobalt);
+  --bg-raised: var(--cobalt-strong);
+  --bg-sunken: var(--cobalt-strong);
+  --bg-chrome: var(--cobalt-strong);
+  --fg: var(--white);
+  --fg-secondary: var(--cobalt-300);
+  --fg-muted: var(--cobalt-300);
+  --hairline-color: var(--cobalt-line);
+  --control-border: var(--cobalt-300);
+  --interactive: var(--white);
+  --interactive-strong: var(--cobalt-300);
+  --action-bg: var(--white);
+  --action-bg-strong: var(--cobalt-tint);
+  --action-fg: var(--cobalt);
+  --error-color: var(--white);
+  --focus-ring: var(--white);
+  --selection-bg: var(--white);
+  --selection-fg: var(--cobalt);
+  background-color: var(--bg);
+  color: var(--fg);
+}
 
+.ground-light ::selection,
 .ground-dark ::selection,
-.ground-light ::selection {
+.ground-cobalt ::selection {
   background: var(--selection-bg);
   color: var(--selection-fg);
 }
@@ -228,12 +202,7 @@
 :focus-visible {
   outline: var(--focus-width) solid var(--focus-ring, var(--cobalt));
   outline-offset: var(--focus-offset);
-  border-radius: var(--radius-xs);
-}
-
-/* Page changes crossfade natively; browsers without support just navigate. */
-@view-transition {
-  navigation: auto;
+  border-radius: var(--radius-s);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -241,10 +210,14 @@
     --dur-1: 0.01ms;
     --dur-2: 0.01ms;
     --dur-3: 0.01ms;
-    --dur-4: 0.01ms;
-    --dur-reveal: 0.01ms;
   }
-  @view-transition {
-    navigation: none;
+}
+
+/* White text on a stripped background would print as nothing. */
+@media print {
+  .ground-dark,
+  .ground-cobalt {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
   }
 }
