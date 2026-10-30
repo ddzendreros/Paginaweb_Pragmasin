@@ -52,6 +52,8 @@ const steps = [
   },
 ];
 
+const columns = ["Qué hacemos", "Qué recibes", "Qué necesitamos de ti"];
+
 const nots = [
   "Reportes de ochenta láminas que nadie abre dos veces.",
   "Facturar por estar sentados en tus juntas.",
@@ -73,8 +75,8 @@ const nots = [
     <div class="act__inner">
       <div class="opening__top grid-12">
         <div class="opening__main">
-          <p class="label label--rule">Cómo trabajamos</p>
-          <h1 id="metodo-title" class="display">Lo que se decide, <em>se entrega.</em></h1>
+          <p class="label">Cómo trabajamos</p>
+          <h1 id="metodo-title" class="display">Lo que se decide, se entrega.</h1>
         </div>
         <div class="opening__aside">
           <p class="lead">Cuatro pasos, contigo en todos. Sin pasos secretos.</p>
@@ -83,57 +85,50 @@ const nots = [
     </div>
   </section>
 
-  <section class="act steps" aria-label="Cuatro pasos">
+  <section class="steps-act" aria-label="Cuatro pasos">
     <div class="act__inner">
-      <ol>
-        {
-          steps.map((s) => (
-            <li class="step grid-12" data-reveal>
-              <div class="step__head">
-                <span class="caption numeral">{s.num}</span>
-                <h2 class="h2">{s.name}</h2>
-              </div>
-              <dl class="step__rows">
+      <table class="steps">
+        <thead>
+          <tr>
+            <td></td>
+            {columns.map((c) => <th scope="col">{c}</th>)}
+          </tr>
+        </thead>
+        <tbody>
+          {
+            steps.map((s) => (
+              <tr>
+                <th scope="row">
+                  <span class="caption numeral">{s.num}</span>
+                  <span class="h3 steps__name">{s.name}</span>
+                </th>
                 {s.rows.map(([label, text]) => (
-                  <div class="step__row">
-                    <dt class="label">{label}</dt>
-                    <dd>{text}</dd>
-                  </div>
+                  <td data-label={label}>{text}</td>
                 ))}
-              </dl>
-            </li>
-          ))
-        }
-      </ol>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
     </div>
   </section>
 
-  <section class="chapter ground-dark act" aria-labelledby="nots-title">
-    <div class="act__inner">
-      <div class="head" data-reveal>
-        <p class="label label--rule">Qué no hacemos</p>
-        <h2 id="nots-title" class="h2 head__title">
-          También hay que <em>decirlo.</em>
-        </h2>
+  <section class="ground-dark act" aria-labelledby="nots-title">
+    <div class="act__inner grid-12">
+      <p class="sec__name">Qué no hacemos</p>
+      <div class="sec__body">
+        <h2 id="nots-title" class="h2 head">También hay que decirlo.</h2>
+        <ul class="nots">
+          {nots.map((n) => <li class="not h3">{n}</li>)}
+        </ul>
       </div>
-      <ul class="nots">
-        {
-          nots.map((n) => (
-            <li class="not h3" data-reveal>
-              {n}
-            </li>
-          ))
-        }
-      </ul>
     </div>
   </section>
 
-  <section class="act" aria-labelledby="cierre-title">
-    <div class="act__inner">
-      <div class="closing" data-reveal>
-        <h2 id="cierre-title" class="display-2">
-          El primer paso es <em>hablar.</em>
-        </h2>
+  <section class="ground-cobalt act" aria-labelledby="cierre-title">
+    <div class="act__inner grid-12 closing">
+      <h2 id="cierre-title" class="display closing__title">El primer paso es hablar.</h2>
+      <div class="closing__aside">
         <p class="lead">Cuéntanos qué te estorba. De ahí sale todo lo demás.</p>
         <a class="btn btn--primary" href="/contacto">Cuéntanos tu idea</a>
       </div>
@@ -142,67 +137,102 @@ const nots = [
 </BaseLayout>
 
 <style>
-  .step {
-    align-items: start;
-    padding-block: var(--space-7);
+  .steps-act {
+    padding-block-end: clamp(var(--space-8), 8vw, var(--space-10));
+  }
+  .steps {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
+  .steps thead th {
+    padding-block-end: var(--space-3);
+    text-align: start;
+    font-size: var(--text-small);
+    font-weight: var(--weight-medium);
+    color: var(--fg-secondary);
+  }
+  .steps thead td {
+    width: 17%;
+  }
+  .steps tbody th,
+  .steps tbody td {
+    padding: var(--space-5) var(--gutter) var(--space-6) 0;
+    text-align: start;
+    vertical-align: top;
+    font-weight: var(--weight-text);
     border-block-start: var(--hairline) solid var(--hairline-color);
-  }
-  .step:last-child {
-    border-block-end: var(--hairline) solid var(--hairline-color);
-  }
-  .step__head {
-    --col: 1 / span 4;
-    position: sticky;
-    inset-block-start: var(--space-9);
-    display: grid;
-    gap: var(--space-2);
-  }
-  .step__rows {
-    --col: 5 / span 8;
-  }
-  .step__row {
-    display: grid;
-    grid-template-columns: 1fr 3fr;
-    align-items: baseline;
-    gap: var(--gutter);
-    padding-block: var(--space-4);
-    border-block-start: var(--hairline) solid var(--hairline-color);
-  }
-  .step__row:first-child {
-    border-block-start: 0;
-    padding-block-start: 0;
-  }
-  .step__row dd {
-    max-width: var(--measure);
     text-wrap: pretty;
   }
-  @media (width <= 56rem) {
-    .step__head {
-      position: static;
-      margin-block-end: var(--space-5);
-    }
+  .steps tbody tr:last-child th,
+  .steps tbody tr:last-child td {
+    border-block-end: var(--hairline) solid var(--hairline-color);
   }
-  @media (width <= 40rem) {
-    .step__row {
-      grid-template-columns: 1fr;
-      gap: var(--space-1);
+  .steps tbody td:last-child {
+    padding-inline-end: 0;
+  }
+  .steps tbody th span {
+    display: block;
+  }
+  .steps__name {
+    margin-block-start: var(--space-1);
+  }
+  /* each step stacks on a phone: the column names travel with the text */
+  @media (width <= 56rem) {
+    .steps thead {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+    }
+    .steps,
+    .steps tbody,
+    .steps tr,
+    .steps tbody th,
+    .steps tbody td {
+      display: block;
+      width: 100%;
+    }
+    .steps tr {
+      padding-block: var(--space-5);
+      border-block-start: var(--hairline) solid var(--hairline-color);
+    }
+    .steps tbody th,
+    .steps tbody td {
+      padding: 0;
+      border: 0;
+    }
+    .steps tbody tr:last-child th,
+    .steps tbody tr:last-child td {
+      border: 0;
+    }
+    .steps tbody td {
+      margin-block-start: var(--space-3);
+    }
+    .steps tbody td::before {
+      content: attr(data-label);
+      display: block;
+      font-size: var(--text-small);
+      font-weight: var(--weight-medium);
+      color: var(--fg-secondary);
     }
   }
 
   .nots {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     column-gap: var(--gutter);
     border-block-end: var(--hairline) solid var(--hairline-color);
   }
   .not {
-    padding-block: var(--space-5);
+    padding-block: var(--space-4);
     border-block-start: var(--hairline) solid var(--hairline-color);
     text-wrap: pretty;
   }
   @media (width <= 40rem) {
     .nots {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
     }
   }
 </style>
