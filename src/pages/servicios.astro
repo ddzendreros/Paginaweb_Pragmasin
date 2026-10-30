@@ -60,10 +60,8 @@ const rules: [string, string][] = [
     <div class="act__inner">
       <div class="opening__top grid-12">
         <div class="opening__main">
-          <p class="label label--rule">Qué construimos</p>
-          <h1 id="servicios-title" class="display">
-            No tenemos catálogo. <em>Tenemos oficio.</em>
-          </h1>
+          <p class="label">Qué construimos</p>
+          <h1 id="servicios-title" class="display">No tenemos catálogo. Tenemos oficio.</h1>
         </div>
         <div class="opening__aside">
           <p class="lead">
@@ -75,14 +73,16 @@ const rules: [string, string][] = [
     </div>
   </section>
 
-  <section class="act lines" aria-label="Líneas de trabajo">
+  <section class="lines" aria-label="Líneas de trabajo">
     <div class="act__inner">
       <ol>
         {
           lines.map((l) => (
-            <li class="line grid-12" data-reveal>
-              <span class="caption numeral line__num">{l.num}</span>
-              <h2 class="h2 line__name" set:html={l.name} />
+            <li class="line grid-12">
+              <div class="line__head">
+                <span class="caption numeral">{l.num}</span>
+                <h2 class="h2 line__name" set:html={l.name} />
+              </div>
               <div class="line__body">
                 <p class="lead">{l.text}</p>
                 <p class="label line__label">Es para ti si…</p>
@@ -99,33 +99,29 @@ const rules: [string, string][] = [
     </div>
   </section>
 
-  <section class="chapter ground-light rules act" aria-labelledby="reglas-title">
+  <section class="act rules" aria-labelledby="reglas-title">
     <div class="act__inner grid-12">
-      <div class="rules__head" data-reveal>
-        <p class="label label--rule">Cómo decidimos</p>
-        <h2 id="reglas-title" class="h2">
-          Cinco reglas que <em>no negociamos.</em>
-        </h2>
+      <p class="sec__name">Cómo decidimos</p>
+      <div class="sec__body">
+        <h2 id="reglas-title" class="h2 head">Cinco reglas que no negociamos.</h2>
+        <ol>
+          {
+            rules.map(([rule, text]) => (
+              <li class="spec__row">
+                <h3 class="h3">{rule}</h3>
+                <p class="spec__text">{text}</p>
+              </li>
+            ))
+          }
+        </ol>
       </div>
-      <ol class="rules__list">
-        {
-          rules.map(([rule, text]) => (
-            <li class="rule" data-reveal>
-              <h3 class="h3">{rule}</h3>
-              <p class="rule__text">{text}</p>
-            </li>
-          ))
-        }
-      </ol>
     </div>
   </section>
 
-  <section class="chapter ground-dark act closing-act" aria-labelledby="cierre-title">
-    <div class="act__inner">
-      <div class="closing" data-reveal>
-        <h2 id="cierre-title" class="display-2">
-          Empecemos por lo que <em>te estorba.</em>
-        </h2>
+  <section class="ground-cobalt act" aria-labelledby="cierre-title">
+    <div class="act__inner grid-12 closing">
+      <h2 id="cierre-title" class="display closing__title">Empecemos por lo que te estorba.</h2>
+      <div class="closing__aside">
         <p class="lead">
           Cuéntanos qué te gustaría resolver. Si no somos la opción correcta, te lo decimos.
         </p>
@@ -141,15 +137,10 @@ const rules: [string, string][] = [
     padding-block: var(--space-7);
     border-block-start: var(--hairline) solid var(--hairline-color);
   }
-  .line:last-child {
-    border-block-end: var(--hairline) solid var(--hairline-color);
-  }
-  .line__num {
-    --col: 1 / span 1;
-    padding-block-start: var(--space-2);
-  }
-  .line__name {
-    --col: 2 / span 5;
+  .line__head {
+    --col: 1 / span 6;
+    display: grid;
+    gap: var(--space-2);
   }
   /* a stranded "a" at the end of a line reads as a typo */
   .line__name :global(span) {
@@ -161,68 +152,23 @@ const rules: [string, string][] = [
     gap: var(--space-3);
   }
   .line__label {
-    margin-block-start: var(--space-4);
-  }
-  .line__signals {
-    display: grid;
-    gap: var(--space-2);
-    max-width: var(--measure);
+    margin-block-start: var(--space-3);
   }
   .line__signals li {
-    position: relative;
-    padding-inline-start: var(--space-5);
+    padding-block: var(--space-2);
+    border-block-start: var(--hairline) solid var(--hairline-color);
     text-wrap: pretty;
   }
-  .line__signals li::before {
-    content: "";
-    position: absolute;
-    inset-inline-start: 0;
-    inset-block-start: 0.85em;
-    width: var(--space-3);
-    border-block-start: var(--hairline-strong) solid var(--interactive);
+  .line__signals li:last-child {
+    padding-block-end: 0;
   }
   @media (width <= 56rem) {
-    .line__name {
-      margin-block-start: var(--space-3);
-    }
     .line__body {
       margin-block-start: var(--space-4);
     }
   }
 
   .rules {
-    background: var(--bg-sunken);
-  }
-  .rules__head {
-    --col: 1 / span 5;
-    display: grid;
-    gap: var(--space-4);
-    align-content: start;
-  }
-  .rules__list {
-    --col: 7 / span 6;
-  }
-  .rule {
-    display: grid;
-    gap: var(--space-2);
-    padding-block: var(--space-5);
-    border-block-start: var(--hairline) solid var(--hairline-color);
-  }
-  .rule:last-child {
-    border-block-end: var(--hairline) solid var(--hairline-color);
-  }
-  .rule__text {
-    max-width: var(--measure);
-    color: var(--fg-secondary);
-    text-wrap: pretty;
-  }
-  @media (width <= 56rem) {
-    .rules__head {
-      margin-block-end: var(--space-7);
-    }
-  }
-
-  .closing-act {
-    margin-block: var(--chapter-inset);
+    background: var(--bg-chrome);
   }
 </style>
