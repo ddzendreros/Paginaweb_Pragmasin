@@ -4,6 +4,7 @@ import SiteFooter from "../components/SiteFooter.astro";
 import SiteHeader from "../components/SiteHeader.astro";
 import WhatsAppButton from "../components/WhatsAppButton.astro";
 import { site } from "../site";
+import tokensCss from "../../public/styles/tokens.css?raw";
 
 interface Props {
   title: string;
@@ -21,12 +22,16 @@ const ogImage = new URL("/og-image.png", Astro.site);
 const socialTitle = ogTitle ?? title;
 const socialDescription = ogDescription ?? description;
 
+// theme-color follows the canvas token, so the browser chrome never drifts
+// from tokens.css (the single source of color).
+const themeColor = /--paper-50:\s*(#[0-9a-f]{6})/i.exec(tokensCss)?.[1];
+
 const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "Organization",
   name: "Pragmasyn",
   description:
-    "Automatización operativa con IA para empresas medianas en México. Recuperamos las horas que hoy se van en captura manual, conciliaciones y reportes.",
+    "Software y automatización a la medida para PyMEs en México. Diseñamos, construimos y acompañamos. El software es del cliente.",
   url: Astro.site?.toString(),
   logo: new URL("/favicon.svg", Astro.site).toString(),
   email: site.email,
@@ -43,7 +48,7 @@ const organizationSchema = {
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    <meta name="theme-color" content="#0A1030" />
+    <meta name="theme-color" content={themeColor} />
 
     <link rel="icon" href="/favicon.ico" sizes="48x48" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
@@ -78,6 +83,13 @@ const organizationSchema = {
       type="font/woff2"
       crossorigin
     />
+    <link
+      rel="preload"
+      href="/fonts/newsreader-latin-var-italic.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
     <link rel="stylesheet" href="/styles/tokens.css" />
 
     <noscript>
@@ -92,7 +104,7 @@ const organizationSchema = {
 
     <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
   </head>
-  <body class="ground-dark">
+  <body class="ground-light">
     <a class="skip-link" href="#contenido">Saltar al contenido</a>
     <SiteHeader />
     <main id="contenido">
@@ -109,7 +121,7 @@ const organizationSchema = {
         const siblings = el.parentElement
           ? Array.from(el.parentElement.children).filter((c) => c.hasAttribute("data-reveal"))
           : [];
-        const index = Math.max(0, Math.min(siblings.indexOf(el), 5));
+        const index = Math.max(0, Math.min(siblings.indexOf(el), 3));
         el.style.setProperty("--reveal-index", String(index));
       }
 
@@ -121,7 +133,7 @@ const organizationSchema = {
             observer.unobserve(entry.target);
           }
         },
-        { threshold: 0.12, rootMargin: "0px 0px -6% 0px" },
+        { threshold: 0.15, rootMargin: "0px 0px -8% 0px" },
       );
       revealables.forEach((el) => observer.observe(el));
     </script>

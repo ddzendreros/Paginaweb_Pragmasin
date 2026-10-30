@@ -1,5 +1,5 @@
-/* Shared visual language. Every value is a token reference — the only
-   numbers allowed here are grid fractions and content-driven ratios. */
+/* Shared visual language. Every value reads a token: the only numbers here
+   are grid fractions and content-driven ratios. */
 
 *,
 *::before,
@@ -9,7 +9,7 @@
 }
 
 html {
-  scrollbar-color: var(--ink-450) var(--ink-950);
+  scrollbar-color: var(--paper-300) var(--paper-50);
   scroll-behavior: smooth;
   /* anchors (the QR points at #diagnostico) must clear the sticky header */
   scroll-padding-top: var(--space-9);
@@ -34,12 +34,23 @@ svg {
   display: block;
   max-width: 100%;
 }
+ul,
+ol {
+  list-style: none;
+  padding: 0;
+}
 
 /* The [hidden] attribute has to win over any component's own display value —
    otherwise a component that sets `display: grid` on its root cannot be
    hidden with the attribute. This is the single rule that guarantees it. */
 [hidden] {
   display: none !important;
+}
+
+/* Focus keeps the shape of the control it lands on. */
+.btn:focus-visible,
+.link:focus-visible {
+  border-radius: var(--radius-pill);
 }
 
 /* --- skip link: first tab stop, visible only on focus --- */
@@ -49,110 +60,150 @@ svg {
   inset-block-start: var(--space-4);
   z-index: var(--z-overlay);
   translate: 0 calc(-1 * var(--space-10) - 100%);
-  background: var(--signal);
-  color: var(--ink-900);
+  background: var(--action-bg);
+  color: var(--action-fg);
   font-weight: var(--weight-medium);
   font-size: var(--text-small);
   padding: var(--space-3) var(--space-5);
   border-radius: var(--radius-pill);
   text-decoration: none;
-  transition: translate var(--dur-2) var(--ease-swift);
+  transition: translate var(--dur-2) var(--ease-out);
 }
 .skip-link:focus-visible {
   translate: 0 0;
+  border-radius: var(--radius-pill);
 }
 
-/* --- acts: the site's grounds --------------------------------------------
+/* --- composition ---------------------------------------------------------
    Vertical rhythm is one decision, taken here: sections breathe the same
-   amount everywhere so the page reads as one document, not five. */
+   amount everywhere so the page reads as one document. */
 .act {
   padding-block: clamp(var(--space-8), 8vw, var(--space-10));
-}
-.act--tight {
-  padding-block: clamp(var(--space-7), 6vw, var(--space-9));
-}
-.act--well {
-  background-color: var(--bg-sunken);
 }
 .act__inner {
   max-width: var(--content-max);
   margin-inline: auto;
   padding-inline: var(--margin);
 }
-/* the centred header block: eyebrow, headline, lead. Cards below it stay
-   left-aligned — centred prose past three lines is a readability tax. */
-.act__head {
-  max-width: var(--measure-wide);
-  margin-inline: auto;
-  text-align: center;
+.grid-12 {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  column-gap: var(--gutter);
+}
+/* Children read --col; below 56rem every column is full width. */
+.grid-12 > * {
+  grid-column: 1 / -1;
+  min-width: 0;
+}
+@media (width > 56rem) {
+  .grid-12 > * {
+    grid-column: var(--col, 1 / -1);
+  }
+}
+/* Capítulo: panel oscuro separado del borde, no banda a sangre */
+.chapter {
+  margin-inline: var(--chapter-inset);
+  border-radius: var(--radius-xl);
+}
+.head {
   display: grid;
   gap: var(--space-4);
-  justify-items: center;
+  margin-block-end: clamp(var(--space-7), 5vw, var(--space-8));
 }
-.act__head .lead {
-  margin-inline: auto;
+.head__title {
+  max-width: 18ch;
+}
+.label--rule {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+.label--rule::after {
+  content: "";
+  width: var(--space-7);
+  border-block-start: var(--hairline) solid var(--hairline-color);
+}
+.closing {
+  text-align: center;
+  display: grid;
+  justify-items: center;
+  gap: var(--space-5);
+}
+.closing .lead {
+  max-width: var(--measure);
+}
+
+/* Apertura de página: título a la izquierda, lead a la derecha, como el hero */
+.opening {
+  padding-block: clamp(var(--space-8), 7vw, var(--space-9)) clamp(var(--space-7), 6vw, var(--space-8));
+}
+.opening__top {
+  align-items: end;
+}
+.opening__main {
+  --col: 1 / span 8;
+  display: grid;
+  gap: var(--space-4);
+}
+.opening__aside {
+  --col: 9 / span 4;
+  display: grid;
+  gap: var(--space-5);
+  justify-items: start;
+  padding-block-end: var(--space-2);
+}
+@media (width <= 56rem) {
+  .opening__aside {
+    margin-block-start: var(--space-5);
+  }
 }
 
 /* --- typography --- */
 .display,
 .display-2,
-.h1,
-.h2 {
+.h2,
+.h3 {
+  font-family: var(--font-display);
+  font-weight: var(--weight-serif);
   text-wrap: balance;
 }
 .display {
-  font-family: var(--font-text);
   font-size: var(--text-display);
   line-height: var(--leading-display);
   letter-spacing: var(--tracking-display);
-  font-weight: var(--weight-display);
 }
 .display-2 {
-  font-family: var(--font-text);
   font-size: var(--text-display-2);
   line-height: var(--leading-display-2);
   letter-spacing: var(--tracking-display-2);
-  font-weight: var(--weight-display);
-}
-.h1 {
-  font-family: var(--font-text);
-  font-size: var(--text-h1);
-  line-height: var(--leading-h1);
-  letter-spacing: var(--tracking-h1);
-  font-weight: var(--weight-display);
 }
 .h2 {
-  font-family: var(--font-text);
   font-size: var(--text-h2);
   line-height: var(--leading-h2);
   letter-spacing: var(--tracking-h2);
-  font-weight: var(--weight-strong);
 }
 .h3 {
-  font-family: var(--font-text);
   font-size: var(--text-h3);
   line-height: var(--leading-h3);
   letter-spacing: var(--tracking-h3);
-  font-weight: var(--weight-strong);
 }
-.h4 {
-  font-family: var(--font-text);
-  font-size: var(--text-h4);
-  line-height: var(--leading-h4);
-  letter-spacing: var(--tracking-h4);
-  font-weight: var(--weight-medium);
+.display em,
+.display-2 em,
+.h2 em,
+.h3 em {
+  font-style: italic;
 }
 .lead {
   font-size: var(--text-lead);
   line-height: var(--leading-lead);
   letter-spacing: var(--tracking-lead);
   color: var(--fg-secondary);
-  max-width: var(--measure-wide);
+  max-width: var(--measure);
   text-wrap: pretty;
 }
 .body {
   max-width: var(--measure);
-  text-wrap: pretty; /* orphan control on prose, where supported */
+  text-wrap: pretty;
 }
 .small {
   font-size: var(--text-small);
@@ -164,53 +215,18 @@ svg {
   font-size: var(--text-caption);
   line-height: var(--leading-caption);
   letter-spacing: var(--tracking-caption);
-  color: var(--fg-secondary);
+  color: var(--fg-muted);
 }
 .label {
   font-size: var(--text-caption);
   letter-spacing: var(--tracking-caps);
   text-transform: uppercase;
-  color: var(--fg-secondary);
   font-weight: var(--weight-medium);
   font-stretch: var(--width-condensed);
-}
-/* the eyebrow carries the category — it is the one label that gets colour */
-.eyebrow {
-  color: var(--interactive);
+  color: var(--fg-secondary);
 }
 .numeral {
   font-variant-numeric: tabular-nums;
-  font-stretch: var(--width-condensed);
-  letter-spacing: var(--tracking-h2);
-}
-/* Newsreader survives as the brand's accent: etymology, pull quotes, slogan */
-.serif-italic {
-  font-family: var(--font-display);
-  font-style: italic;
-  font-weight: var(--weight-serif-quiet);
-}
-.serif {
-  font-family: var(--font-display);
-  font-weight: var(--weight-serif);
-  letter-spacing: 0;
-}
-
-/* --- hairlines: the hueco as a drawn element --- */
-.rule {
-  border: 0;
-  border-top: var(--hairline) solid var(--hairline-color);
-  margin-block: var(--space-6);
-}
-.rule--labeled {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  margin-block: var(--space-8) var(--space-5);
-}
-.rule--labeled::after {
-  content: "";
-  flex: 1;
-  border-top: var(--hairline) solid var(--hairline-color);
 }
 
 /* --- interactive --- */
@@ -219,8 +235,8 @@ svg {
   text-decoration: underline;
   text-underline-offset: 0.2em;
   text-decoration-thickness: var(--hairline);
-  transition: color var(--dur-1) var(--ease-swift),
-    text-decoration-thickness var(--dur-1) var(--ease-swift);
+  transition: color var(--dur-1) var(--ease-out),
+    text-decoration-thickness var(--dur-1) var(--ease-out);
 }
 .link:hover {
   color: var(--interactive-strong);
@@ -233,10 +249,11 @@ svg {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
+  min-height: 44px;
 }
 .link--arrow::after {
   content: "→";
-  transition: translate var(--dur-2) var(--ease-rise);
+  transition: translate var(--dur-2) var(--ease-out);
 }
 .link--arrow:hover {
   text-decoration: none;
@@ -252,69 +269,47 @@ svg {
   gap: var(--space-2);
   font: inherit;
   font-weight: var(--weight-medium);
-  font-size: var(--text-body);
   letter-spacing: var(--tracking-lead);
-  padding: var(--space-3) var(--space-6);
+  min-height: 48px;
+  padding: var(--space-3) var(--space-5);
   border-radius: var(--radius-pill);
   border: var(--hairline) solid transparent;
-  cursor: pointer;
-  min-height: 48px;
   text-decoration: none;
   white-space: nowrap;
-  transition: background-color var(--dur-2) var(--ease-swift),
-    border-color var(--dur-2) var(--ease-swift),
-    color var(--dur-2) var(--ease-swift),
-    box-shadow var(--dur-2) var(--ease-swift),
-    translate var(--dur-2) var(--ease-rise);
+  cursor: pointer;
+  transition: background-color var(--dur-2) var(--ease-out),
+    border-color var(--dur-2) var(--ease-out),
+    color var(--dur-2) var(--ease-out),
+    scale var(--dur-1) var(--ease-out);
+}
+.btn:active {
+  scale: 0.98;
 }
 .btn--sm {
   font-size: var(--text-small);
+  min-height: 40px;
   padding: var(--space-2) var(--space-4);
-  min-height: 36px;
 }
 .btn--primary {
-  background: var(--interactive);
-  color: var(--on-interactive);
-  font-weight: var(--weight-strong);
+  background: var(--action-bg);
+  color: var(--action-fg);
 }
 .btn--primary:hover {
-  background: var(--interactive-strong);
-  translate: 0 -1px;
-  box-shadow: var(--shadow-card-hover);
+  background: var(--action-bg-strong);
 }
-.btn--primary:active {
-  translate: 0 0;
-}
-/* the glass secondary: a surface, not an outline. Reads as a control. */
 .btn--secondary {
-  background: var(--surface-card);
+  background: transparent;
   color: var(--fg);
-  border-color: var(--surface-border);
-  -webkit-backdrop-filter: blur(var(--blur-glass));
-  backdrop-filter: blur(var(--blur-glass));
+  border-color: var(--control-border);
 }
 .btn--secondary:hover {
-  background: var(--surface-card-hover);
-  border-color: var(--surface-border-hover);
-  translate: 0 -1px;
-}
-.btn--secondary:active {
-  translate: 0 0;
-}
-.btn--quiet {
-  background: transparent;
-  color: var(--interactive);
-  padding-inline: var(--space-2);
-}
-.btn--quiet:hover {
-  color: var(--interactive-strong);
+  border-color: var(--fg);
 }
 .btn:disabled {
   background: var(--bg-sunken);
-  color: var(--fg-disabled);
+  color: var(--fg-muted);
   border-color: transparent;
-  box-shadow: none;
-  translate: 0 0;
+  scale: 1;
   cursor: not-allowed;
 }
 .btn--loading {
@@ -329,7 +324,7 @@ svg {
   width: 1em;
   height: 1em;
   margin: -0.5em;
-  border: var(--hairline-strong) solid var(--on-interactive);
+  border: var(--hairline-strong) solid var(--action-fg);
   border-right-color: transparent;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
@@ -342,7 +337,7 @@ svg {
 @media (prefers-reduced-motion: reduce) {
   .btn--loading::after {
     animation: none;
-    border-right-color: var(--on-interactive);
+    border-right-color: var(--action-fg);
     opacity: 0.5;
   }
 }
@@ -352,75 +347,12 @@ svg {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-4);
+  gap: var(--space-3);
 }
-.actions--center {
-  justify-content: center;
-}
-@media (max-width: 26rem) {
+@media (width <= 40rem) {
   .actions .btn {
-    width: 100%;
+    flex: 1 1 100%;
   }
-}
-
-/* --- surfaces: the v2 workhorse ----------------------------------------- */
-.card {
-  background: var(--surface-card);
-  border: var(--hairline) solid var(--surface-border);
-  border-radius: var(--radius-l);
-  box-shadow: var(--shadow-card);
-  padding: var(--space-6);
-}
-.card--flush {
-  padding: 0;
-  overflow: hidden;
-}
-.card--feature {
-  border-radius: var(--radius-xl);
-  padding: clamp(var(--space-6), 5vw, var(--space-8));
-}
-.card--link {
-  display: block;
-  color: inherit;
-  text-decoration: none;
-  transition: background-color var(--dur-2) var(--ease-swift),
-    border-color var(--dur-2) var(--ease-swift),
-    box-shadow var(--dur-3) var(--ease-rise),
-    translate var(--dur-3) var(--ease-rise);
-}
-.card--link:hover {
-  background: var(--surface-card-hover);
-  border-color: var(--surface-border-hover);
-  box-shadow: var(--shadow-card-hover);
-  translate: 0 calc(-1 * var(--space-1));
-}
-
-.cards {
-  display: grid;
-  gap: var(--gutter);
-  grid-template-columns: repeat(auto-fit, minmax(min(18rem, 100%), 1fr));
-}
-.cards--2 {
-  grid-template-columns: repeat(auto-fit, minmax(min(24rem, 100%), 1fr));
-}
-
-.badge {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  background: var(--surface-card);
-  border: var(--hairline) solid var(--surface-border);
-  border-radius: var(--radius-pill);
-  padding: var(--space-2) var(--space-4);
-  font-size: var(--text-small);
-  font-weight: var(--weight-medium);
-  color: var(--fg-secondary);
-}
-.badge__dot {
-  width: var(--space-2);
-  height: var(--space-2);
-  border-radius: 50%;
-  background: var(--interactive);
 }
 
 /* --- form fields --- */
@@ -438,13 +370,12 @@ svg {
   font: inherit;
   width: 100%;
   color: var(--fg);
-  background: var(--bg-raised);
-  border: var(--hairline) solid var(--surface-border);
+  background: var(--bg);
+  border: var(--hairline) solid var(--control-border);
   border-radius: var(--radius-s);
   padding: var(--space-3) var(--space-4);
   min-height: 48px;
-  transition: border-color var(--dur-2) var(--ease-swift),
-    box-shadow var(--dur-2) var(--ease-swift);
+  transition: border-color var(--dur-2) var(--ease-out);
 }
 .field textarea {
   resize: vertical;
@@ -474,29 +405,28 @@ svg {
 }
 .field input::placeholder,
 .field textarea::placeholder {
-  color: var(--fg-muted-ui);
+  color: var(--fg-muted);
 }
 .field input:hover,
 .field textarea:hover,
 .field select:hover {
-  border-color: var(--surface-border-hover);
+  border-color: var(--fg-secondary);
 }
 .field input:focus-visible,
 .field textarea:focus-visible,
 .field select:focus-visible {
-  outline: none;
   border-color: var(--interactive);
-  box-shadow: 0 0 0 var(--focus-width) var(--interactive);
+  border-radius: var(--radius-s);
+  outline-offset: 0;
 }
 .field--error input,
 .field--error textarea,
 .field--error select {
-  border-color: var(--reserve);
-}
-.ground-light .field--error input,
-.ground-light .field--error textarea,
-.ground-light .field--error select {
+  border-color: var(--error-color);
   border-width: var(--hairline-strong);
+}
+.field__msg {
+  color: var(--error-color);
 }
 .consent {
   display: flex;
@@ -513,51 +443,13 @@ svg {
   cursor: pointer;
 }
 
-/* --- the seam: an element crossing the frontier between two acts -------- */
-.seam {
-  position: relative;
-  height: 0;
-}
-.seam__card {
-  position: relative;
-  z-index: var(--z-weave);
-  max-width: var(--measure-wide);
-  margin-inline: auto;
-  width: calc(100% - var(--margin) * 2);
-  translate: 0 -50%;
-  background: var(--bg-raised);
-  color: var(--fg);
-  border: var(--hairline) solid var(--surface-border);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-3);
-  padding: clamp(var(--space-5), 4vw, var(--space-7));
-}
-/* the site's one personality gesture: the crossing element weaves through
-   the frontier when first seen. Everything else is functional micro-motion. */
-.seam__card[data-weave] {
-  opacity: 0;
-  translate: 0 calc(-50% + var(--space-5));
-  transition: opacity var(--dur-4) var(--ease-rise),
-    translate var(--dur-4) var(--ease-rise);
-}
-.seam__card.is-woven {
-  opacity: 1;
-  translate: 0 -50%;
-}
-@media (prefers-reduced-motion: reduce) {
-  .seam__card[data-weave] {
-    opacity: 1;
-    translate: 0 -50%;
-  }
-}
-
 /* --- scroll entrances: one curve for the whole site ---------------------- */
 [data-reveal] {
   opacity: 0;
-  translate: 0 var(--space-5);
-  transition: opacity var(--dur-5) var(--ease-rise),
-    translate var(--dur-5) var(--ease-rise);
-  transition-delay: calc(var(--reveal-index, 0) * 60ms);
+  translate: 0 var(--space-3);
+  transition: opacity var(--dur-reveal) var(--ease-out),
+    translate var(--dur-reveal) var(--ease-out);
+  transition-delay: calc(var(--reveal-index, 0) * 40ms);
 }
 [data-reveal].is-revealed {
   opacity: 1;

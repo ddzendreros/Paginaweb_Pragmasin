@@ -6,69 +6,70 @@ const year = new Date().getFullYear();
 const waHref = whatsappUrl(waMessages.pie);
 ---
 
-<footer class="ground-dark site-footer">
+<footer class="ground-light site-footer">
   <div class="site-footer__inner">
-    <div class="site-footer__brand">
-      <span class="site-footer__mark" aria-hidden="true" set:html={logoMono} />
-      <p class="site-footer__tagline serif">
-        Tu operación habla.<br />La IA actúa.
-      </p>
-      <p class="caption site-footer__category">Automatización operativa con IA</p>
+    <div class="grid-12">
+      <div class="site-footer__brand">
+        <span class="site-footer__mark" aria-hidden="true" set:html={logoMono} />
+        <p class="site-footer__tagline">Deja de <em>adaptarte</em> a tu software.</p>
+        <p class="caption">Software y automatización a la medida</p>
+      </div>
+
+      <nav class="site-footer__cols" aria-label="Pie de página">
+        <div class="site-footer__col">
+          <p class="label">Sitio</p>
+          <ul class="site-footer__list">
+            <li><a class="link" href="/servicios">Qué construimos</a></li>
+            <li><a class="link" href="/metodo">Cómo trabajamos</a></li>
+            <li><a class="link" href="/contacto">Contacto</a></li>
+          </ul>
+        </div>
+        <div class="site-footer__col">
+          <p class="label">Directo</p>
+          <ul class="site-footer__list">
+            <li><a class="link" href={`mailto:${site.email}`}>{site.email}</a></li>
+            {
+              hasWhatsapp && waHref && (
+                <li>
+                  <a class="link" href={waHref} target="_blank" rel="noopener">
+                    WhatsApp
+                  </a>
+                </li>
+              )
+            }
+            <li><a class="link" href="/privacidad">Aviso de privacidad</a></li>
+          </ul>
+        </div>
+      </nav>
     </div>
 
-    <nav class="site-footer__cols" aria-label="Pie de página">
-      <div class="site-footer__col">
-        <p class="label">Sitio</p>
-        <ul class="site-footer__list">
-          <li><a class="link" href="/#precios">El diagnóstico</a></li>
-          <li><a class="link" href="/servicios">Servicios</a></li>
-          <li><a class="link" href="/metodo">Método</a></li>
-          <li><a class="link" href="/contacto">Contacto</a></li>
-        </ul>
-      </div>
-      <div class="site-footer__col">
-        <p class="label">Directo</p>
-        <ul class="site-footer__list">
-          <li><a class="link" href={`mailto:${site.email}`}>{site.email}</a></li>
-          {
-            hasWhatsapp && waHref && (
-              <li>
-                <a class="link" href={waHref} target="_blank" rel="noopener">
-                  WhatsApp
-                </a>
-              </li>
-            )
-          }
-          <li><a class="link" href="/privacidad">Aviso de privacidad</a></li>
-        </ul>
-      </div>
-    </nav>
-
     <div class="site-footer__meta">
-      <p class="caption site-footer__etym">
+      <p class="caption">
         <span lang="grc">πρᾶγμα</span> — hecho realizado · <span lang="grc">σύν</span> — junto
         con
       </p>
-      <p class="caption">© {year} Pragmasyn</p>
-      <p class="caption">Pragmasyn es parte de Grupo Zendreros.</p>
+      <p class="caption">© {year} Pragmasyn · Pragmasyn es parte de Grupo Zendreros.</p>
     </div>
   </div>
 </footer>
 
 <style>
   .site-footer {
-    background-color: var(--bg-sunken);
-    border-top: var(--hairline) solid var(--hairline-color);
+    border-block-start: var(--hairline) solid var(--hairline-color);
   }
   .site-footer__inner {
     max-width: var(--content-max);
     margin-inline: auto;
     padding-inline: var(--margin);
-    padding-block: var(--space-9);
+    padding-block: var(--space-8) var(--space-9);
     display: grid;
-    grid-template-columns: 3fr 4fr 3fr;
-    gap: var(--space-8) var(--gutter);
-    align-items: start;
+    gap: var(--space-8);
+  }
+  .site-footer__brand {
+    --col: 1 / span 5;
+    display: grid;
+    gap: var(--space-3);
+    align-content: start;
   }
   .site-footer__mark :global(svg) {
     display: block;
@@ -78,39 +79,46 @@ const waHref = whatsappUrl(waMessages.pie);
   }
   /* the slogan is the one place the serif still speaks at size */
   .site-footer__tagline {
-    margin-top: var(--space-5);
+    margin-block-start: var(--space-3);
+    max-width: 16ch;
+    font-family: var(--font-display);
     font-size: var(--text-h3);
     line-height: var(--leading-h3);
+    letter-spacing: var(--tracking-h3);
+    text-wrap: balance;
   }
-  .site-footer__category {
-    margin-top: var(--space-3);
+  .site-footer__tagline em {
+    font-style: italic;
   }
   .site-footer__cols {
+    --col: 7 / span 6;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(11rem, 100%), 1fr));
+    grid-template-columns: repeat(2, 1fr);
     gap: var(--space-6) var(--gutter);
+    align-content: start;
   }
   .site-footer__list {
-    list-style: none;
-    margin: var(--space-4) 0 0;
-    padding: 0;
+    margin-block-start: var(--space-4);
     display: grid;
-    gap: var(--space-3);
+    gap: var(--space-1);
     font-size: var(--text-small);
   }
-  .site-footer__meta {
-    display: grid;
-    gap: var(--space-3);
-    justify-items: end;
-    text-align: right;
+  .site-footer__list .link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
   }
-  @media (max-width: 56rem) {
-    .site-footer__inner {
-      grid-template-columns: 1fr;
-    }
-    .site-footer__meta {
-      justify-items: start;
-      text-align: left;
+  .site-footer__meta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--space-3) var(--gutter);
+    padding-block-start: var(--space-5);
+    border-block-start: var(--hairline) solid var(--hairline-color);
+  }
+  @media (width <= 56rem) {
+    .site-footer__brand {
+      margin-block-end: var(--space-7);
     }
   }
 </style>
