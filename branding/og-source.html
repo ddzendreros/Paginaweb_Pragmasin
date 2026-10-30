@@ -1,8 +1,9 @@
 <!doctype html>
-<!-- Fuente del og-image. Para regenerarlo: copia este archivo a public/, corre
-     el dev server, abre /og-source.html en un viewport de 1200x630 exactos y
-     captura la pantalla completa sobre public/og-image.png. Después borra la
-     copia de public/ — esta página no se publica. -->
+<!-- Fuente del og-image. Para regenerarlo: copia este archivo y
+     branding/logo/logo-mono.svg a public/, corre el sitio, abre /og-source.html
+     en un viewport de 1200x630 exactos y captura la pantalla sobre
+     public/og-image.png. Después borra las copias de public/: esta página no
+     se publica. -->
 <html lang="es-MX">
   <head>
     <meta charset="utf-8" />
@@ -17,53 +18,49 @@
       .og {
         width: 1200px;
         height: 630px;
-        background: var(--night-900);
+        background: var(--cobalt);
+        color: var(--white);
+        font-family: var(--font-sans);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 80px;
+        box-sizing: border-box;
+      }
+      .og__brand {
         display: flex;
         align-items: center;
-        gap: 72px;
-        padding-inline: 96px;
-        box-sizing: border-box;
+        gap: 20px;
+        font-size: 40px;
+        font-weight: var(--weight-strong);
+        font-stretch: var(--width-heading);
+        letter-spacing: var(--tracking-h3);
       }
       .og__mark svg {
         display: block;
-        width: 300px;
+        width: 56px;
         height: auto;
       }
-      .og__word {
-        font-family: var(--font-display);
-        font-weight: var(--weight-serif);
-        font-size: 116px;
+      .og__title {
+        margin: 0;
+        font-size: 112px;
         line-height: 1;
-        letter-spacing: -0.01em;
-        color: var(--night-100);
-      }
-      .og__rule {
-        width: 264px;
-        height: 4px;
-        background: var(--cobalt-on-night);
-        margin-block: 28px 24px;
-      }
-      .og__tagline {
-        font-family: var(--font-text);
-        font-weight: var(--weight-text);
-        font-size: 40px;
-        line-height: 1.25;
-        letter-spacing: -0.02em;
-        color: var(--night-300);
+        font-weight: var(--weight-strong);
+        font-stretch: var(--width-heading);
+        letter-spacing: var(--tracking-display);
       }
     </style>
   </head>
   <body>
     <div class="og">
-      <div class="og__mark" id="mark"></div>
-      <div>
-        <p class="og__word">Pragmasyn</p>
-        <div class="og__rule"></div>
-        <p class="og__tagline">Deja de adaptarte a tu software.</p>
+      <div class="og__brand">
+        <span class="og__mark" id="mark"></span>
+        <span>Pragmasyn</span>
       </div>
+      <p class="og__title">Deja de adaptarte<br />a tu software.</p>
     </div>
     <script>
-      fetch("/favicon.svg")
+      fetch("/logo-mono.svg")
         .then((r) => r.text())
         .then((svg) => {
           document.getElementById("mark").innerHTML = svg;
