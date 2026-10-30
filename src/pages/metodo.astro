@@ -1,121 +1,106 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 
-const stages = [
+const steps = [
   {
     num: "01",
-    name: "Medir",
-    detail: [
-      {
-        q: "Qué hacemos",
-        a: "Entrevistas, observación y datos reales. Contamos cuántas veces al mes ocurre cada proceso y cuánto tiempo consume cada vez. No preguntamos cuánto crees que tardas: lo medimos.",
-      },
-      {
-        q: "Qué entregamos",
-        a: "El mapa de tus horas, en una página. Proceso por proceso, con el tiempo manual medido y con tus datos, no con benchmarks.",
-      },
-      {
-        q: "Qué necesitamos de ti",
-        a: "Acceso a quien hace el trabajo. No a quien lo describe: a quien lo hace.",
-      },
+    name: "Escuchar",
+    rows: [
+      [
+        "Qué hacemos",
+        "Hablamos contigo y con quien hace el trabajo. Queremos ver cómo opera tu negocio hoy, no cómo se supone que opera.",
+      ],
+      ["Qué recibes", "El problema y lo que vamos a construir, en una página."],
+      [
+        "Qué necesitamos de ti",
+        "Acceso a quien hace el trabajo. No a quien lo describe: a quien lo hace.",
+      ],
     ],
   },
   {
     num: "02",
-    name: "Priorizar",
-    detail: [
-      {
-        q: "Qué hacemos",
-        a: "Cruzamos horas ahorradas contra esfuerzo de implementación. Qué automatizar primero, qué después y qué no vale la pena tocar.",
-      },
-      {
-        q: "Qué entregamos",
-        a: "Lista priorizada con horas estimadas de ahorro, costo y esfuerzo. Con números, no con adjetivos.",
-      },
-      {
-        q: "Qué necesitamos de ti",
-        a: "Una decisión. Para eso está hecha la lista.",
-      },
+    name: "Diseñar",
+    rows: [
+      [
+        "Qué hacemos",
+        "Dibujamos las pantallas y el flujo antes de programar. Cambiar un dibujo no cuesta nada.",
+      ],
+      ["Qué recibes", "Las pantallas, el alcance y el costo, por escrito."],
+      ["Qué necesitamos de ti", "Una decisión. Para eso está hecho."],
     ],
   },
   {
     num: "03",
     name: "Construir",
-    detail: [
-      {
-        q: "Qué hacemos",
-        a: "Se implementa encima de los sistemas que ya tienes, se mide contra la línea base y se corrige. Los indicadores se acuerdan antes de empezar, para que nadie mueva la portería a medio partido.",
-      },
-      {
-        q: "Qué entregamos",
-        a: "El proceso funcionando en tu operación y el ahorro medido contra el punto de partida.",
-      },
-      {
-        q: "Qué necesitamos de ti",
-        a: "Un responsable de tu lado con poder de decisión.",
-      },
+    rows: [
+      [
+        "Qué hacemos",
+        "Programamos por partes. Ves y pruebas cada avance, y lo ajustamos contigo.",
+      ],
+      ["Qué recibes", "Software funcionando en tu operación, no una presentación."],
+      ["Qué necesitamos de ti", "Una persona de tu lado que pueda decidir."],
+    ],
+  },
+  {
+    num: "04",
+    name: "Acompañar",
+    rows: [
+      ["Qué hacemos", "Capacitamos a tu equipo y seguimos cerca después de entregar."],
+      ["Qué recibes", "Tu equipo usando el sistema y un canal directo con nosotros."],
+      ["Qué necesitamos de ti", "Que nos digas qué no está funcionando."],
     ],
   },
 ];
 
-const notWeDo = [
+const nots = [
   "Reportes de ochenta láminas que nadie abre dos veces.",
-  "Recomendaciones sin responsable ni fecha.",
   "Facturar por estar sentados en tus juntas.",
   "Prometer plazos antes de entender el problema.",
-  "Reemplazar el sistema que ya te está funcionando.",
-  "Vender automatización donde no hay horas que recuperar.",
+  "Venderte un paquete que te obliga a cambiar tu forma de trabajar.",
+  "Construir algo que no necesitas.",
+  "Desaparecer después de entregar.",
 ];
 ---
 
 <BaseLayout
-  title="El método — Pragmasyn"
-  description="Medir, priorizar, construir: el método Pragmasyn completo, con entregables y responsables por etapa. Sin pasos secretos."
-  ogTitle="Medir. Priorizar. Construir."
-  ogDescription="El método completo, publicado: qué hacemos, qué entregamos y qué necesitamos de ti en cada etapa."
+  title="Cómo trabajamos — Pragmasyn"
+  description="Escuchar, diseñar, construir y acompañar. Qué hacemos, qué recibes y qué necesitamos de ti en cada paso. Sin pasos secretos."
+  ogTitle="Lo que se decide, se entrega."
+  ogDescription="Cuatro pasos, contigo en todos. Qué hacemos, qué recibes y qué necesitamos de ti."
   path="/metodo"
 >
-  <section class="ground-dark act opening" aria-labelledby="method-title">
+  <section class="opening" aria-labelledby="metodo-title">
     <div class="act__inner">
-      <div class="act__head" data-reveal>
-        <p class="label eyebrow">El método</p>
-        <h1 id="method-title" class="display">Medir. Priorizar. Construir.</h1>
-        <p class="lead">
-          Una empresa recién fundada no puede enseñarte logotipos de clientes.
-          Puede enseñarte algo mejor: exactamente cómo va a trabajar tu
-          operación. Este es el método completo, sin adornos ni pasos secretos.
-        </p>
+      <div class="opening__top grid-12">
+        <div class="opening__main">
+          <p class="label label--rule">Cómo trabajamos</p>
+          <h1 id="metodo-title" class="display">Lo que se decide, <em>se entrega.</em></h1>
+        </div>
+        <div class="opening__aside">
+          <p class="lead">Cuatro pasos, contigo en todos. Sin pasos secretos.</p>
+        </div>
       </div>
     </div>
   </section>
 
-  <section class="ground-light act stages" aria-label="Etapas del método">
+  <section class="act steps" aria-label="Los cuatro pasos">
     <div class="act__inner">
-      <ol class="stages__list">
+      <ol>
         {
-          stages.map((s) => (
-            <li class="card card--feature stage" data-reveal>
-              <div class="stage__head">
-                <span class="numeral stage__num" aria-hidden="true">
-                  {s.num}
-                </span>
-                <h2 class="h3 stage__name">{s.name}</h2>
+          steps.map((s) => (
+            <li class="step grid-12" data-reveal>
+              <div class="step__head">
+                <span class="caption numeral">{s.num}</span>
+                <h2 class="h2">{s.name}</h2>
               </div>
-              <dl class="stage__detail">
-                {s.detail.map((d) => (
-                  <div class="stage__pair">
-                    <dt class="label">{d.q}</dt>
-                    <dd class="small stage__answer">{d.a}</dd>
+              <dl class="step__rows">
+                {s.rows.map(([label, text]) => (
+                  <div class="step__row">
+                    <dt class="label">{label}</dt>
+                    <dd>{text}</dd>
                   </div>
                 ))}
               </dl>
-              {s.num === "03" && (
-                <p class="small stage__demo">
-                  <a class="link link--arrow" href="/#demo">
-                    Ve cómo se ve funcionando
-                  </a>
-                </p>
-              )}
             </li>
           ))
         }
@@ -123,119 +108,100 @@ const notWeDo = [
     </div>
   </section>
 
-  <section class="ground-light act act--well not-we-do" aria-labelledby="not-title">
+  <section class="chapter ground-dark act" aria-labelledby="nots-title">
     <div class="act__inner">
-      <div class="act__head" data-reveal>
-        <p class="label eyebrow">Qué no hacemos</p>
-        <h2 id="not-title" class="h2">También hay que decirlo.</h2>
+      <div class="head" data-reveal>
+        <p class="label label--rule">Qué no hacemos</p>
+        <h2 id="nots-title" class="h2 head__title">
+          También hay que <em>decirlo.</em>
+        </h2>
       </div>
-      <ul class="not-we-do__list" data-reveal>
-        {notWeDo.map((item) => <li class="not-we-do__item">{item}</li>)}
+      <ul class="nots">
+        {
+          nots.map((n) => (
+            <li class="not h3" data-reveal>
+              {n}
+            </li>
+          ))
+        }
       </ul>
     </div>
   </section>
 
-  <section class="ground-dark act closing" aria-labelledby="closing-title">
+  <section class="act" aria-labelledby="cierre-title">
     <div class="act__inner">
-      <div class="act__head" data-reveal>
-        <h2 id="closing-title" class="display-2">
-          El método empieza igual siempre: midiendo.
+      <div class="closing" data-reveal>
+        <h2 id="cierre-title" class="display-2">
+          El primer paso es <em>hablar.</em>
         </h2>
-        <p class="lead">
-          Entramos con datos, no con propuestas: medimos tu operación y
-          arrancamos la primera pieza contigo.
-        </p>
-        <a class="btn btn--primary closing__cta" href="/contacto">Agendar el diagnóstico</a>
+        <p class="lead">Cuéntanos qué te estorba. De ahí sale todo lo demás.</p>
+        <a class="btn btn--primary" href="/contacto">Cuéntanos tu idea</a>
       </div>
     </div>
   </section>
 </BaseLayout>
 
 <style>
-  .opening {
-    padding-block: clamp(var(--space-8), 10vw, var(--space-10));
+  .step {
+    align-items: start;
+    padding-block: var(--space-7);
+    border-block-start: var(--hairline) solid var(--hairline-color);
   }
-  .stages__list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    gap: var(--gutter);
+  .step:last-child {
+    border-block-end: var(--hairline) solid var(--hairline-color);
   }
-  .stage {
-    display: grid;
-    gap: var(--space-6) var(--space-8);
-  }
-  @media (min-width: 64rem) {
-    .stage {
-      grid-template-columns: minmax(9rem, 1fr) 4fr;
-      align-items: start;
-    }
-  }
-  .stage__num {
-    color: var(--interactive);
-    font-size: var(--text-h4);
-    font-weight: var(--weight-strong);
-  }
-  .stage__name {
-    margin-top: var(--space-2);
-  }
-  .stage__detail {
-    margin: 0;
-    display: grid;
-    gap: var(--space-5);
-  }
-  @media (min-width: 48rem) {
-    .stage__detail {
-      grid-template-columns: repeat(3, 1fr);
-      gap: var(--gutter);
-    }
-  }
-  .stage__pair {
+  .step__head {
+    --col: 1 / span 4;
+    position: sticky;
+    inset-block-start: var(--space-9);
     display: grid;
     gap: var(--space-2);
-    align-content: start;
-    padding-top: var(--space-4);
-    border-top: var(--hairline) solid var(--hairline-color);
   }
-  .stage__answer {
-    margin: 0;
+  .step__rows {
+    --col: 5 / span 8;
   }
-  .stage__demo {
-    margin-top: var(--space-6);
-    padding-top: var(--space-5);
-    border-top: var(--hairline) solid var(--hairline-color);
+  .step__row {
+    display: grid;
+    grid-template-columns: 12rem 1fr;
+    gap: var(--gutter);
+    padding-block: var(--space-4);
+    border-block-start: var(--hairline) solid var(--hairline-color);
   }
-  @media (min-width: 64rem) {
-    .stage__demo {
-      grid-column: 2 / -1;
+  .step__row:first-child {
+    border-block-start: 0;
+    padding-block-start: 0;
+  }
+  .step__row dd {
+    max-width: var(--measure);
+    text-wrap: pretty;
+  }
+  @media (width <= 56rem) {
+    .step__head {
+      position: static;
+      margin-block-end: var(--space-5);
+    }
+  }
+  @media (width <= 40rem) {
+    .step__row {
+      grid-template-columns: 1fr;
+      gap: var(--space-1);
     }
   }
 
-  .not-we-do__list {
-    list-style: none;
-    margin: var(--space-8) auto 0;
-    padding: 0;
-    max-width: var(--measure-wide);
+  .nots {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: var(--gutter);
+    border-block-end: var(--hairline) solid var(--hairline-color);
   }
-  .not-we-do__item {
-    display: flex;
-    gap: var(--space-4);
-    align-items: baseline;
-    padding-block: var(--space-4);
-    border-top: var(--hairline) solid var(--hairline-color);
+  .not {
+    padding-block: var(--space-5);
+    border-block-start: var(--hairline) solid var(--hairline-color);
+    text-wrap: pretty;
   }
-  /* el "no" es tipográfico: se tacha antes de que preguntes */
-  .not-we-do__item::before {
-    content: "✕";
-    color: var(--fg-muted-ui);
-    font-weight: var(--weight-strong);
-  }
-
-  .closing {
-    padding-block: clamp(var(--space-9), 10vw, var(--space-11));
-  }
-  .closing__cta {
-    margin-top: var(--space-4);
+  @media (width <= 40rem) {
+    .nots {
+      grid-template-columns: 1fr;
+    }
   }
 </style>
