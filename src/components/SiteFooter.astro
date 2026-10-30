@@ -6,17 +6,17 @@ const year = new Date().getFullYear();
 const waHref = whatsappUrl(waMessages.pie);
 ---
 
-<footer class="ground-light site-footer">
-  <div class="site-footer__inner">
+<footer class="ground-dark site-footer">
+  <div class="act__inner site-footer__inner">
     <div class="grid-12">
       <div class="site-footer__brand">
         <span class="site-footer__mark" aria-hidden="true" set:html={logoMono} />
-        <p class="site-footer__tagline">Deja de <em>adaptarte</em> a tu software.</p>
+        <p class="site-footer__tagline">Deja de adaptarte a tu software.</p>
         <p class="caption">Software y automatización a la medida</p>
       </div>
 
       <nav class="site-footer__cols" aria-label="Pie de página">
-        <div class="site-footer__col">
+        <div>
           <p class="label">Sitio</p>
           <ul class="site-footer__list">
             <li><a class="link" href="/servicios">Qué construimos</a></li>
@@ -24,7 +24,7 @@ const waHref = whatsappUrl(waMessages.pie);
             <li><a class="link" href="/contacto">Contacto</a></li>
           </ul>
         </div>
-        <div class="site-footer__col">
+        <div>
           <p class="label">Directo</p>
           <ul class="site-footer__list">
             <li><a class="link" href={`mailto:${site.email}`}>{site.email}</a></li>
@@ -54,41 +54,29 @@ const waHref = whatsappUrl(waMessages.pie);
 </footer>
 
 <style>
-  .site-footer {
-    border-block-start: var(--hairline) solid var(--hairline-color);
-  }
   .site-footer__inner {
-    max-width: var(--content-max);
-    margin-inline: auto;
-    padding-inline: var(--margin);
-    padding-block: var(--space-8) var(--space-9);
     display: grid;
-    gap: var(--space-8);
+    gap: var(--space-7);
+    padding-block: var(--space-8);
   }
   .site-footer__brand {
-    --col: 1 / span 5;
+    --col: 1 / span 6;
     display: grid;
-    gap: var(--space-3);
+    gap: var(--space-2);
     align-content: start;
   }
   .site-footer__mark :global(svg) {
     display: block;
-    height: var(--space-7);
+    height: var(--space-6);
     width: auto;
-    color: var(--fg-secondary);
+    color: var(--fg);
   }
-  /* the slogan is the one place the serif still speaks at size */
   .site-footer__tagline {
     margin-block-start: var(--space-3);
-    max-width: 16ch;
-    font-family: var(--font-display);
     font-size: var(--text-h3);
     line-height: var(--leading-h3);
     letter-spacing: var(--tracking-h3);
-    text-wrap: balance;
-  }
-  .site-footer__tagline em {
-    font-style: italic;
+    font-weight: var(--weight-medium);
   }
   .site-footer__cols {
     --col: 7 / span 6;
@@ -98,33 +86,35 @@ const waHref = whatsappUrl(waMessages.pie);
     align-content: start;
   }
   .site-footer__list {
-    margin-block-start: var(--space-4);
-    display: grid;
-    gap: var(--space-1);
+    margin-block-start: var(--space-2);
     font-size: var(--text-small);
   }
   .site-footer__list .link {
     display: inline-flex;
     align-items: center;
-    min-height: 44px;
-    color: var(--fg-secondary);
-    text-decoration-color: var(--hairline-color);
+    min-height: 36px;
+    color: var(--fg);
+    text-decoration: none;
   }
   .site-footer__list .link:hover {
-    color: var(--fg);
-    text-decoration-color: currentColor;
+    color: var(--interactive);
+    text-decoration: underline;
+    text-decoration-thickness: var(--hairline);
   }
   .site-footer__meta {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    gap: var(--space-3) var(--gutter);
-    padding-block-start: var(--space-5);
+    gap: var(--space-2) var(--gutter);
+    padding-block-start: var(--space-4);
     border-block-start: var(--hairline) solid var(--hairline-color);
   }
   @media (width <= 56rem) {
     .site-footer__brand {
       margin-block-end: var(--space-7);
+    }
+    .site-footer__list .link {
+      min-height: 44px;
     }
   }
 </style>

@@ -39,42 +39,29 @@ const onContact = Astro.url.pathname.replace(/\/$/, "") === "/contacto";
 <style>
   .wa-fab {
     position: fixed;
-    inset-block-end: var(--space-5);
-    inset-inline-end: var(--space-5);
+    inset-block-end: var(--space-4);
+    inset-inline-end: var(--space-4);
     z-index: var(--z-float);
     display: grid;
     place-items: center;
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-l);
     border: var(--hairline) solid var(--hairline-color);
-    box-shadow: var(--shadow-float);
     color: var(--fg);
     text-decoration: none;
-    transition: translate var(--dur-2) var(--ease-out),
-      background-color var(--dur-2) var(--ease-out),
-      scale var(--dur-1) var(--ease-out);
+    transition: background-color var(--dur-1) var(--ease-out);
   }
   .wa-fab:hover {
-    translate: 0 calc(-1 * var(--space-1));
     background-color: var(--bg-raised);
   }
-  .wa-fab:active {
-    scale: 0.96;
-  }
-  /* the ring sits inside the circle, where it lands on night, not on paper */
+  /* the ring sits inside the button, where it lands on ink on every ground */
   .wa-fab:focus-visible {
-    border-radius: 50%;
+    border-radius: var(--radius-l);
     outline-offset: calc(-2 * var(--focus-width));
   }
   .wa-fab__glyph {
-    width: var(--space-5);
-    height: var(--space-5);
-  }
-  @media (width <= 40rem) {
-    .wa-fab {
-      inset-block-end: var(--space-4);
-      inset-inline-end: var(--space-4);
-    }
+    width: 24px;
+    height: 24px;
   }
 </style>

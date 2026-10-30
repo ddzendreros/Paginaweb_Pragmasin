@@ -1,6 +1,6 @@
 ---
-// The color logo here is gradient appearance #1 of 2 site-wide (BRIEF §2.5);
-// the second is the OG image. Everything else uses the mono mark.
+// The color logo appears here and nowhere else; every other surface uses the
+// mono mark.
 import logoSvg from "../../branding/logo/logo.svg?raw";
 
 const links = [
@@ -110,73 +110,64 @@ const current = Astro.url.pathname.replace(/\/$/, "");
 <style>
   .site-header {
     position: sticky;
-    inset-block-start: var(--space-3);
+    inset-block-start: 0;
     z-index: var(--z-nav);
-    padding-inline: var(--margin);
-    background: transparent;
+    background: var(--bg);
+    border-block-end: var(--hairline) solid var(--hairline-color);
   }
   .site-header__inner {
     max-width: var(--content-max);
     margin-inline: auto;
+    padding-inline: var(--margin);
     display: grid;
-    grid-template-columns: 1fr auto 1fr;
+    grid-template-columns: auto 1fr auto;
     align-items: center;
-    gap: var(--gutter);
-    padding: var(--space-2) var(--space-2) var(--space-2) var(--space-5);
-    background: var(--surface-glass);
-    -webkit-backdrop-filter: blur(var(--blur-glass)) saturate(var(--saturate-glass));
-    backdrop-filter: blur(var(--blur-glass)) saturate(var(--saturate-glass));
-    border: var(--hairline) solid var(--hairline-color);
-    border-radius: var(--radius-pill);
+    gap: var(--space-7);
+    min-height: var(--space-8);
   }
   .site-header__brand {
     display: inline-flex;
     align-items: center;
     gap: var(--space-2);
-    justify-self: start;
     min-height: 44px;
     color: var(--fg);
     text-decoration: none;
+    font-size: 1.0625rem;
     font-weight: var(--weight-strong);
-    letter-spacing: var(--tracking-h4);
+    font-stretch: var(--width-heading);
+    letter-spacing: var(--tracking-h3);
   }
   .site-header__mark :global(svg) {
     display: block;
-    height: 1.625rem;
+    height: 1.5rem;
     width: auto;
-    transition: rotate var(--dur-4) var(--ease-out);
-  }
-  /* rotation is the mark's implied movement; 120 deg is its own symmetry */
-  .site-header__brand:hover .site-header__mark :global(svg) {
-    rotate: 120deg;
   }
   .site-header__nav {
     display: flex;
-    gap: var(--space-1);
+    gap: var(--space-5);
   }
+  /* the current page sits on the header's own hairline, like a tab */
   .site-header__link {
+    position: relative;
     display: inline-flex;
     align-items: center;
-    min-height: 40px;
-    padding-inline: var(--space-3);
-    border-radius: var(--radius-pill);
+    min-height: var(--space-8);
     color: var(--fg-secondary);
     text-decoration: none;
     font-size: var(--text-small);
     font-weight: var(--weight-medium);
-    transition: color var(--dur-1) var(--ease-out),
-      background-color var(--dur-1) var(--ease-out);
+    transition: color var(--dur-1) var(--ease-out);
   }
   .site-header__link:hover,
   .site-header__link[aria-current="page"] {
     color: var(--fg);
-    background: var(--bg-sunken);
   }
-  .site-header__link:active {
-    background: var(--hairline-color);
-  }
-  .site-header__link:focus-visible {
-    border-radius: var(--radius-pill);
+  .site-header__link[aria-current="page"]::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    inset-block-end: calc(-1 * var(--hairline));
+    border-block-end: var(--hairline-strong) solid var(--interactive);
   }
   .site-header__actions {
     justify-self: end;
@@ -188,7 +179,8 @@ const current = Astro.url.pathname.replace(/\/$/, "");
   @media (width <= 56rem) {
     .site-header__inner {
       grid-template-columns: 1fr auto;
-      padding-inline-start: var(--space-4);
+      min-height: var(--space-7);
+      padding-block: var(--space-1);
     }
     .site-header__panel,
     .site-header__cta {
@@ -199,61 +191,50 @@ const current = Astro.url.pathname.replace(/\/$/, "");
       place-items: center;
       width: 44px;
       height: 44px;
+      margin-inline-end: calc(-1 * var(--space-2));
       padding: 0;
-      border: var(--hairline) solid var(--control-border);
-      border-radius: 50%;
+      border: 0;
+      border-radius: var(--radius-m);
       background: transparent;
       color: var(--fg);
       cursor: pointer;
-      transition: background-color var(--dur-1) var(--ease-out),
-        scale var(--dur-1) var(--ease-out);
     }
     .site-header__toggle:hover {
       background: var(--bg-sunken);
     }
-    .site-header__toggle:active {
-      scale: 0.94;
-    }
     .site-header__toggle:focus-visible {
-      border-radius: 50%;
+      border-radius: var(--radius-m);
     }
     .site-header__bars,
     .site-header__bars::before {
       display: block;
-      width: var(--space-4);
+      width: 1.25rem;
       height: var(--hairline-strong);
       background: currentColor;
-      border-radius: var(--radius-pill);
     }
     .site-header__bars {
       position: relative;
-      translate: 0 calc(var(--space-1) * -0.5);
+      translate: 0 -3px;
     }
     .site-header__bars::before {
       content: "";
       position: absolute;
-      translate: 0 var(--space-2);
-    }
-  }
-  @media (width <= 22rem) {
-    .site-header__word {
-      display: none;
+      translate: 0 7px;
     }
   }
 
-  /* --- the sheet: native dialog, slides up from the bottom edge --- */
+  /* --- the sheet: native dialog, slides down from under the header --- */
   .sheet {
     position: fixed;
-    inset: auto 0 0 0;
+    inset: 0 0 auto 0;
     margin: 0;
     width: 100%;
     max-width: none;
     border: 0;
-    padding: var(--space-5) var(--margin) var(--space-7);
+    padding: var(--space-2) var(--margin) var(--space-5);
     background: var(--bg-raised);
     color: var(--fg);
-    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
-    translate: 0 100%;
+    translate: 0 -100%;
     transition:
       translate var(--dur-3) var(--ease-out),
       display var(--dur-3) allow-discrete,
@@ -264,7 +245,7 @@ const current = Astro.url.pathname.replace(/\/$/, "");
   }
   @starting-style {
     .sheet[open] {
-      translate: 0 100%;
+      translate: 0 -100%;
     }
   }
   /* a modal dialog does not stop the page behind it from scrolling */
@@ -279,32 +260,26 @@ const current = Astro.url.pathname.replace(/\/$/, "");
     place-items: center;
     width: 44px;
     height: 44px;
-    margin-inline-start: auto;
+    margin-inline: auto calc(-1 * var(--space-2));
     padding: 0;
-    border: var(--hairline) solid var(--control-border);
-    border-radius: 50%;
+    border: 0;
+    border-radius: var(--radius-m);
     background: transparent;
     color: var(--fg);
     cursor: pointer;
-    transition: background-color var(--dur-1) var(--ease-out),
-      scale var(--dur-1) var(--ease-out);
   }
   .sheet__close:hover {
     background: var(--bg-sunken);
   }
-  .sheet__close:active {
-    scale: 0.94;
-  }
   .sheet__close:focus-visible {
-    border-radius: 50%;
+    border-radius: var(--radius-m);
   }
   .sheet__x,
   .sheet__x::before {
     display: block;
-    width: var(--space-4);
+    width: 1.25rem;
     height: var(--hairline-strong);
     background: currentColor;
-    border-radius: var(--radius-pill);
   }
   .sheet__x {
     position: relative;
@@ -317,28 +292,22 @@ const current = Astro.url.pathname.replace(/\/$/, "");
   }
   .sheet__nav {
     display: grid;
-    margin-block: var(--space-3) var(--space-5);
+    margin-block: var(--space-2) var(--space-5);
+    border-block-start: var(--hairline) solid var(--hairline-color);
   }
   .sheet__link {
     display: flex;
     align-items: center;
     min-height: 56px;
     border-block-end: var(--hairline) solid var(--hairline-color);
-    font-family: var(--font-display);
     font-size: var(--text-h3);
+    font-weight: var(--weight-medium);
+    letter-spacing: var(--tracking-h3);
     color: var(--fg);
     text-decoration: none;
-    transition: color var(--dur-1) var(--ease-out);
   }
-  .sheet__link:hover,
   .sheet__link[aria-current="page"] {
     color: var(--interactive);
-  }
-  .sheet__link:active {
-    color: var(--interactive-strong);
-  }
-  .sheet__link:focus-visible {
-    border-radius: var(--radius-xs);
   }
   .sheet__cta {
     width: 100%;
