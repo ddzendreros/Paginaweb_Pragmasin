@@ -1,4 +1,6 @@
 ---
+import Icon from "../components/Icon.astro";
+import type { IconName } from "../components/Icon.astro";
 import Strands from "../components/Strands.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 
@@ -35,18 +37,20 @@ const lines = [
   },
 ];
 
-const rules: [string, string][] = [
-  ["Primero entendemos.", "Si no cabe en una página, todavía no entendimos el problema."],
+const rules: [IconName, string, string][] = [
+  ["target", "Primero entendemos.", "Si no cabe en una página, todavía no entendimos el problema."],
   [
+    "play",
     "Entregamos funcionando, no en diapositivas.",
     "Lo que recibes es software corriendo en tu operación, no un documento que describe uno.",
   ],
   [
+    "doc",
     "Alcance escrito antes de firmar.",
     "Qué se construye, qué incluye y cuánto cuesta quedan por escrito.",
   ],
-  ["Hablas con quien construye.", "Sin intermediarios entre tu idea y quien la programa."],
-  ["Decimos que no.", "Si no te conviene construir algo, te lo decimos en la primera llamada."],
+  ["chat", "Hablas con quien construye.", "Sin intermediarios entre tu idea y quien la programa."],
+  ["ban", "Decimos que no.", "Si no te conviene construir algo, te lo decimos en la primera llamada."],
 ];
 ---
 
@@ -76,20 +80,25 @@ const rules: [string, string][] = [
 
   <section class="lines" aria-label="Líneas de trabajo">
     <div class="act__inner">
-      <ol>
+      <ol class="lines__list">
         {
           lines.map((l) => (
-            <li class="line grid-12">
+            <li class="line panel">
               <div class="line__head">
                 <span class="caption numeral">{l.num}</span>
                 <h2 class="h2 line__name" set:html={l.name} />
+                <p class="lead">{l.text}</p>
               </div>
               <div class="line__body">
-                <p class="lead">{l.text}</p>
-                <p class="label line__label">Es para ti si…</p>
+                <p class="label">Es para ti si…</p>
                 <ul class="line__signals">
                   {l.signals.map((s) => (
-                    <li>{s}</li>
+                    <li>
+                      <span class="line__check">
+                        <Icon name="check" />
+                      </span>
+                      {s}
+                    </li>
                   ))}
                 </ul>
               </div>
@@ -105,12 +114,15 @@ const rules: [string, string][] = [
       <p class="sec__name">Cómo decidimos</p>
       <div class="sec__body">
         <h2 id="reglas-title" class="h2 head">Cinco reglas que no negociamos.</h2>
-        <ol>
+        <ol class="rules__grid">
           {
-            rules.map(([rule, text]) => (
-              <li class="spec__row">
+            rules.map(([icon, rule, text]) => (
+              <li class="rule panel">
+                <span class="rule__icon">
+                  <Icon name={icon} />
+                </span>
                 <h3 class="h3">{rule}</h3>
-                <p class="spec__text">{text}</p>
+                <p class="rule__text">{text}</p>
               </li>
             ))
           }
@@ -134,43 +146,94 @@ const rules: [string, string][] = [
 </BaseLayout>
 
 <style>
+  .lines__list {
+    display: grid;
+    gap: var(--space-3);
+  }
   .line {
-    align-items: start;
-    padding-block: var(--space-7);
-    border-block-start: var(--hairline) solid var(--hairline-color);
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    gap: var(--space-6) var(--space-7);
+    align-items: center;
+    padding: clamp(var(--space-5), 3.5vw, var(--space-7));
   }
   .line__head {
-    --col: 1 / span 6;
     display: grid;
-    gap: var(--space-2);
+    gap: var(--space-3);
   }
   /* a stranded "a" at the end of a line reads as a typo */
   .line__name :global(span) {
     white-space: nowrap;
   }
   .line__body {
-    --col: 7 / span 6;
     display: grid;
     gap: var(--space-3);
   }
-  .line__label {
-    margin-block-start: var(--space-3);
+  .line__signals {
+    display: grid;
+    gap: var(--space-2);
   }
   .line__signals li {
-    padding-block: var(--space-2);
-    border-block-start: var(--hairline) solid var(--hairline-color);
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    background: rgb(var(--rgb-blue) / 0.1);
+    border-radius: var(--radius-m);
+    box-shadow: inset 0 0 0 1px rgb(var(--rgb-blue) / 0.22);
     text-wrap: pretty;
   }
-  .line__signals li:last-child {
-    padding-block-end: 0;
+  .line__check {
+    margin-block-start: 0.1875rem;
+    color: var(--sky);
+  }
+  .line__check :global(.icon) {
+    width: 1rem;
+    height: 1rem;
   }
   @media (width <= 56rem) {
-    .line__body {
-      margin-block-start: var(--space-4);
+    .line {
+      grid-template-columns: minmax(0, 1fr);
     }
   }
 
   .rules {
-    background: var(--bg-chrome);
+    border-block-start: var(--hairline) solid var(--hairline-color);
+  }
+  .rules__grid {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: var(--space-3);
+  }
+  .rule {
+    grid-column: span 2;
+    display: grid;
+    align-content: start;
+    gap: var(--space-2);
+    padding: var(--space-5);
+  }
+  .rule:nth-child(n + 4) {
+    grid-column: span 3;
+  }
+  .rule__icon {
+    display: grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    margin-block-end: var(--space-2);
+    border-radius: 50%;
+    background: var(--night-800);
+    color: var(--sky);
+    box-shadow: var(--shadow-key);
+  }
+  .rule__text {
+    color: var(--fg-secondary);
+    text-wrap: pretty;
+  }
+  @media (width <= 56rem) {
+    .rule,
+    .rule:nth-child(n + 4) {
+      grid-column: span 6;
+    }
   }
 </style>
