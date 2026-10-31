@@ -14,9 +14,9 @@ decisiones; los valores viven allá.
    Si no hay WebGL 2 o JavaScript queda el arte estático de `Strands.astro`.
 2. **El software se demuestra.** La app del hero funciona de verdad y los servicios
    (`src/components/BuildTiles.astro`) son piezas vivas, no filas de texto.
-3. **Profundidad con luz.** Nada de sombras proyectadas: brillo interno (`--shadow-key`) y halos
-   detrás de lo importante (`--glow-app`). La única excepción es la pantalla flotante de la hoja de
-   papel (`--shadow-float`).
+3. **Profundidad con luz.** Nada de sombras proyectadas: brillo interno (`--shadow-key`,
+   `--shadow-glass` en el vidrio) y halos detrás de lo importante (`--glow-app`). La única excepción
+   es la pantalla flotante de la hoja de papel (`--shadow-float`).
 4. **El color es de la marca.** Los botones son neutros. El degradado de las cintas se reserva para
    el arte, el cronograma y las piezas vivas.
 5. **El movimiento tiene oficio.** Rápido en lo que se toca, lento en lo que se lee.
@@ -80,6 +80,7 @@ muestra menos a la vez.
 | `Versus` | Pantalla saturada contra pantalla a tu medida, con interruptor, sobre la hoja de papel | Steep, dope.security |
 | `BuildTiles` | Servicios con pieza viva y borde tipo linterna | Mercury, Eraser, uimotion |
 | `StepFlow` | Cuatro pasos como nodos con luz recorriendo la línea | n8n, Workflow Node |
+| `Journey` | El acompañamiento como una línea que cruza «Entrega» y se sale del panel, sobre vidrio esmerilado, con una frase a la vez | Authkit |
 | `OwnPass` | La propiedad como pase perforado que se inclina | dope.security, Boarding Pass |
 | `Prompt` | Barra de comandos que lleva tu idea al formulario | Raycast |
 | `MethodSteps` | Método por pasos, un paso abierto a la vez | n8n, Figure |
@@ -95,7 +96,7 @@ muestra menos a la vez.
 | Hero | Las partículas forman el logo, huyen del cursor y la app se endereza al subir. |
 | App | Las tarjetas viajan de columna, los números cambian con desenfoque, la app se arma al cambiar de negocio. |
 | Comparación | Los módulos sobrantes se van, los tuyos crecen y dibujan su pieza, y la lista se enciende en morado. «A tu medida» dura el doble en pantalla. Cambia solo hasta que lo tocas. |
-| Cronograma | Las barras se dibujan. |
+| Acompañamiento | La luz avanza por la línea y enciende cada parada. Se detiene en la última, con el resplandor en la salida, y cambia solo hasta que lo tocas. |
 | Servicios | Las piezas corren solo mientras están a la vista. |
 | Páginas | Transición entre páginas; el encabezado no se mueve. |
 
