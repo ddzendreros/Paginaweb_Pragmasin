@@ -96,7 +96,7 @@ muestra menos a la vez.
 | Hero | Las partículas forman el logo, huyen del cursor y la app se endereza al subir. |
 | App | Las tarjetas viajan de columna, los números cambian con desenfoque, la app se arma al cambiar de negocio. |
 | Comparación | Los módulos sobrantes se van, los tuyos crecen y dibujan su pieza, y la lista se enciende en morado. «A tu medida» dura el doble en pantalla. Cambia solo hasta que lo tocas. |
-| Acompañamiento | La luz avanza por la línea y enciende cada parada. Se detiene en la última, con el resplandor en la salida, y cambia solo hasta que lo tocas. |
+| Acompañamiento | La luz avanza sola por la línea y enciende cada parada, en ciclo y sin que nadie toque nada. La última dura casi el doble, con el resplandor en la salida; luego la luz se apaga y empieza de nuevo. Con movimiento reducido se leen las cuatro juntas. |
 | Servicios | Las piezas corren solo mientras están a la vista. |
 | Páginas | Transición entre páginas; el encabezado no se mueve. |
 

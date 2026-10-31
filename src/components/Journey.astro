@@ -1,9 +1,9 @@
 ---
 /**
  * El acompañamiento como una sola línea: cruza la entrega, sigue subiendo y se
- * sale del panel. Se lee una parada a la vez; la luz avanza sola mientras está
- * a la vista y se queda en la última hasta que alguien toca otra. Sin JS se
- * leen las cuatro.
+ * sale del panel. Se lee una parada a la vez y nadie tiene que tocar nada: la
+ * luz recorre las cuatro en ciclo mientras está a la vista. Sin JS o con
+ * movimiento reducido se leen las cuatro juntas.
  */
 import Icon from "./Icon.astro";
 import type { IconName } from "./Icon.astro";
@@ -91,20 +91,17 @@ const stops: { icon: IconName; title: string; text: string; x: number }[] = [
       </svg>
     </div>
 
-    <div class="journey__stops" role="group" aria-label="Acompañamiento">
+    <div class="journey__stops" aria-hidden="true">
       {
         stops.map((stop, i) => (
-          <button
-            type="button"
-            class:list={["journey__stop", { "is-passed": i === 0 }]}
+          <span
+            class="journey__stop"
             style={`--x: ${stop.x}%; --y: ${rise(stop.x).toFixed(2)}%;`}
             data-stop
             data-reach={`${i === stops.length - 1 ? 100 : stop.x}%`}
-            aria-label={stop.title}
-            aria-pressed={i === 0 ? "true" : "false"}
           >
             <Icon name={stop.icon} />
-          </button>
+          </span>
         ))
       }
     </div>
@@ -113,13 +110,13 @@ const stops: { icon: IconName; title: string; text: string; x: number }[] = [
 
 <script>
   const root = document.querySelector<HTMLElement>("[data-journey]");
-  if (root) {
-    const calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const stops = Array.from(root.querySelectorAll<HTMLButtonElement>("[data-stop]"));
+  // With reduced motion nothing takes over: the four stay on the page, together.
+  if (root && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    const stops = Array.from(root.querySelectorAll<HTMLElement>("[data-stop]"));
     const says = Array.from(root.querySelectorAll<HTMLElement>("[data-say]"));
+    const last = stops.length - 1;
     let at = 0;
     let timer = 0;
-    let touched = false;
     let started = false;
 
     const show = (index: number): void => {
@@ -127,50 +124,54 @@ const stops: { icon: IconName; title: string; text: string; x: number }[] = [
       root.dataset["at"] = String(index);
       root.style.setProperty("--reach", stops[index]?.dataset["reach"] ?? "100%");
       stops.forEach((stop, i) => {
-        stop.setAttribute("aria-pressed", String(i === index));
+        stop.classList.toggle("is-at", i === index);
         stop.classList.toggle("is-passed", i <= index);
       });
       says.forEach((say, i) => say.classList.toggle("is-off", i !== index));
     };
 
     const halt = (): void => window.clearTimeout(timer);
-    // It stops at the last one on purpose: that promise has no end.
-    const play = (): void => {
-      if (at === stops.length - 1) return;
+    // The light fades out and starts again: seen running backwards, it would
+    // say the opposite of what the section promises.
+    const restart = (): void => {
+      root.classList.add("is-rewind");
       timer = window.setTimeout(() => {
+        show(0);
+        void root.offsetWidth;
+        root.classList.remove("is-rewind");
+        play();
+      }, 420);
+    };
+    // The last stop stays on screen for longer: it is the point of the section.
+    const play = (): void => {
+      timer = window.setTimeout(() => {
+        if (at === last) {
+          restart();
+          return;
+        }
         show(at + 1);
         play();
-      }, 3800);
+      }, at === last ? 7000 : 4000);
     };
 
     show(0);
+    // The line stays dark until it is on screen, so it can be seen drawing.
+    root.style.setProperty("--reach", "0%");
     root.classList.add("is-ready");
-    stops.forEach((stop, i) => {
-      const take = (): void => {
-        touched = true;
-        halt();
-        show(i);
-      };
-      stop.addEventListener("click", take);
-      stop.addEventListener("focus", take);
-      stop.addEventListener("pointerenter", take);
-    });
 
-    if (!calm) {
-      // The line stays dark until it is on screen, so it can be seen drawing.
-      root.style.setProperty("--reach", "0%");
-      new IntersectionObserver(([entry]) => {
-        const seen = entry?.isIntersecting ?? false;
-        halt();
-        root.classList.toggle("is-live", seen);
-        if (!seen || touched) return;
-        if (!started) {
-          started = true;
-          show(0);
-        }
-        play();
-      }, { threshold: 0.4 }).observe(root);
-    }
+    // Runs only while in view.
+    new IntersectionObserver(([entry]) => {
+      const seen = entry?.isIntersecting ?? false;
+      halt();
+      root.classList.remove("is-rewind");
+      root.classList.toggle("is-live", seen);
+      if (!seen) return;
+      if (!started) {
+        started = true;
+        show(0);
+      }
+      play();
+    }, { threshold: 0.4 }).observe(root);
   }
 </script>
 
@@ -247,14 +248,14 @@ const stops: { icon: IconName; title: string; text: string; x: number }[] = [
     align-content: start;
     gap: var(--space-2);
     transition: opacity var(--dur-3) var(--ease-out), translate var(--dur-3) var(--ease-out),
-      filter var(--dur-3) var(--ease-out), visibility var(--dur-3);
+      filter var(--dur-3) var(--ease-out);
   }
-  /* All four share one cell, so the longest sets the height and nothing jumps. */
+  /* All four share one cell, so the longest sets the height and nothing jumps.
+     The others are only transparent: a screen reader still reads the four. */
   .is-ready .journey__say {
     grid-area: 1 / 1;
   }
   .is-off {
-    visibility: hidden;
     opacity: 0;
     translate: 0 0.5rem;
     filter: blur(6px);
@@ -303,7 +304,11 @@ const stops: { icon: IconName; title: string; text: string; x: number }[] = [
     position: absolute;
     inset: 0;
     clip-path: inset(-20% calc(100% - var(--reach)) -20% -1%);
-    transition: clip-path var(--dur-5) var(--ease-in-out);
+    transition: clip-path var(--dur-5) var(--ease-in-out), opacity var(--dur-3) var(--ease-out);
+  }
+  .is-rewind .journey__lit {
+    opacity: 0;
+    transition: opacity var(--dur-3) var(--ease-out);
   }
   .journey__area {
     fill: url(#journey-wash);
@@ -396,7 +401,6 @@ const stops: { icon: IconName; title: string; text: string; x: number }[] = [
   .journey__stops {
     position: absolute;
     inset: 0;
-    pointer-events: none;
   }
   .journey__stop {
     position: absolute;
@@ -406,14 +410,10 @@ const stops: { icon: IconName; title: string; text: string; x: number }[] = [
     place-items: center;
     width: 3.5rem;
     height: 3.5rem;
-    padding: 0;
-    border: 0;
     border-radius: 50%;
     background: var(--night-800);
     color: var(--fg-muted);
     box-shadow: var(--shadow-glass);
-    cursor: pointer;
-    pointer-events: auto;
     translate: -50% -50%;
     transition: color var(--dur-3) var(--ease-out) var(--dur-2),
       box-shadow var(--dur-3) var(--ease-out) var(--dur-2), scale var(--dur-3) var(--ease-spring);
@@ -425,16 +425,10 @@ const stops: { icon: IconName; title: string; text: string; x: number }[] = [
   .journey__stop.is-passed {
     color: var(--white);
   }
-  .journey__stop:hover {
-    color: var(--white);
-  }
-  .journey__stop[aria-pressed="true"] {
+  .journey__stop.is-at {
     scale: 1.14;
     color: var(--white);
     box-shadow: var(--shadow-glass), 0 0 0 1px rgb(var(--rgb-blue)), 0 0 34px rgb(var(--rgb-blue) / 0.7);
-  }
-  .journey__stop:focus-visible {
-    border-radius: 50%;
   }
 
   /* --- teléfono: la frase arriba, la línea completa abajo ------------------- */
@@ -476,12 +470,19 @@ const stops: { icon: IconName; title: string; text: string; x: number }[] = [
     }
   }
 
-  /* Without JavaScript the four read one after the other, above the line. */
+  /* Without JavaScript or motion the four read together, above the whole line. */
   .journey:not(.is-ready) {
     min-height: 0;
   }
+  .journey:not(.is-ready)::after {
+    opacity: 1;
+  }
   .journey:not(.is-ready) .journey__says {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
     width: auto;
+  }
+  .journey:not(.is-ready) .journey__stop {
+    color: var(--white);
   }
   .journey:not(.is-ready) .journey__stage {
     position: relative;
