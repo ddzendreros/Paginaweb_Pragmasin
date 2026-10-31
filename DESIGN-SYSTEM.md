@@ -49,6 +49,11 @@ superficie oscura (la placa de WhatsApp, `--surface-lit`), una sola zona de colo
 en «Qué sigue», como el menta de la referencia) y líneas finas de tinta. No se adoptaron sus fuentes
 de pago ni el menta: se conserva Mona Sans y la gama del logo.
 
+**Qué construimos.** Combina Sleeve (objeto central que flota, apps en órbita, radio de 24 px) y
+Flighty (avisos inclinados alrededor del objeto, luz que sale de la pantalla). No se adoptó su fondo
+blanco, su azul, su ámbar ni la fuente del sistema: se conservan la noche, la gama del logo y Mona
+Sans. Los avisos usan `--shadow-lit`, la sombra con luz del logo.
+
 ## Tipografía
 
 Una familia: **Mona Sans**, variable en peso y ancho, en `public/fonts/mona-sans-latin-var.woff2`.
@@ -94,7 +99,8 @@ muestra menos a la vez.
 | `Constellation` | Partículas que forman el logo; se apartan del cursor | Dala |
 | `Marquee` | Franja de compromisos en movimiento continuo | n8n, Social Proof Row |
 | `Versus` | Pantalla saturada contra pantalla a tu medida, con interruptor, sobre la hoja de papel | Steep, dope.security |
-| `BuildTiles` | Servicios con pieza viva y borde tipo linterna | Mercury, Eraser, uimotion |
+| `AgentStage` | Qué es un agente, mostrado trabajando: ventana con el degradado de las cintas, apps en órbita y avisos blancos inclinados que se quedan sobre la mesa | Sleeve, Flighty |
+| `BuildTiles` | Servicios como mini apps con datos de ejemplo y borde tipo linterna; cada pieza corre solo mientras su mosaico está a la vista | Sleeve, Flighty, Mercury, Eraser, uimotion |
 | `StepFlow` | Cuatro pasos como nodos con luz recorriendo la línea | n8n, Workflow Node |
 | `Journey` | El acompañamiento como una línea que cruza «Entrega» y se sale del panel, sobre vidrio esmerilado, con una frase a la vez | Authkit |
 | `OwnPass` | La propiedad como pase perforado que se inclina | dope.security, Boarding Pass |
@@ -115,7 +121,8 @@ muestra menos a la vez.
 | App | Las tarjetas viajan de columna, los números cambian con desenfoque, la app se arma al cambiar de negocio. |
 | Comparación | Los módulos sobrantes se van, los tuyos crecen y dibujan su pieza, y la lista se enciende en morado. «A tu medida» dura el doble en pantalla. Cambia solo hasta que lo tocas. |
 | Acompañamiento | El panel se queda fijo y la luz avanza con el scroll: cada parada se enciende cuando la línea llega a ella y al subir se regresa. Al final sale por el borde con el resplandor. Con movimiento reducido se leen las cuatro juntas. |
-| Servicios | Las piezas corren solo mientras están a la vista. |
+| Agente | Tres casos en ciclo: llega un mensaje, se enciende la app de la que lee y la que consulta, cada línea trabaja antes de su palomita y el aviso cae sobre la mesa. El tercero se detiene a preguntar. Sin JavaScript o con movimiento reducido se lee el resultado completo. |
+| Servicios | Las piezas corren solo mientras están a la vista. Lo que crece o se encoge vive dentro de un alto fijo: la página no se mueve. Sin movimiento cada pieza queda en su estado final. |
 | `/servicios` | El bloque se arma con las estrellas al llegar. El scroll lo talla: pantalla por capas, módulos que se apagan, conexiones con luz y cinco hojas de las que sale la regla que se lee. El texto cambia de una idea a la vez, sin clic ni temporizador, y la línea punteada se enciende con el avance. Sin JavaScript o con movimiento reducido no hay pieza y todo se lee de corrido. |
 | `/metodo` | La ruta del pase se traza al llegar y una luz la recorre. Al bajar, cada pase se queda fijo y el siguiente lo cubre: las letras del sello entran una por una, el código de barras se imprime y la línea avanza hasta su parada. La pila solo se forma si el último pase cabe en la pantalla; si no, o sin JavaScript, se leen de corrido. |
 | `/contacto` | El título llega palabra por palabra y la hoja sube. En la placa, el mensaje de WhatsApp se escribe solo, se envía y alguien empieza a contestar, en ciclo y solo mientras está a la vista. Las líneas de «Qué sigue» se trazan una tras otra. Sin JavaScript o con movimiento reducido el mensaje queda escrito. |
