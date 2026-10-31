@@ -9,8 +9,9 @@ decisiones; los valores viven allá.
 
 ## Principios
 
-1. **El logo es el arte.** Las tres cintas (`src/components/Strands.astro`) entran por el borde de la
-   ventana a gran escala, en giro lento. Nadie más tiene esta imagen.
+1. **El logo es el arte.** Miles de triángulos (`src/components/Constellation.astro`) forman las tres
+   cintas con su color real, se dispersan como campo de estrellas al bajar y se reúnen en el cierre.
+   Si no hay WebGL 2 o JavaScript queda el arte estático de `Strands.astro`.
 2. **El software se demuestra.** La app del hero funciona de verdad y los servicios
    (`src/components/BuildTiles.astro`) son piezas vivas, no filas de texto.
 3. **Profundidad con luz.** Nada de sombras proyectadas: brillo interno (`--shadow-key`) y halos
@@ -56,15 +57,33 @@ Los títulos grandes van ligeros (`--weight-display`, 440): la escala hace el tr
 - **Sección tipo documentación:** nombre a la izquierda (`.sec__name`), contenido en la ancha.
 - **Encabezado:** barra flotante de vidrio.
 
+## Componentes
+
+Antes que un bloque de texto, un componente. El texto aprobado sigue completo en la página; solo se
+muestra menos a la vez.
+
+| Componente | Qué es | Referencia |
+|---|---|---|
+| `Constellation` | Partículas que forman el logo; se apartan del cursor | Dala |
+| `Marquee` | Franja de compromisos en movimiento continuo | n8n, Social Proof Row |
+| `Versus` | Pantalla saturada contra pantalla a tu medida, con interruptor | dope.security, Comparison Card |
+| `BuildTiles` | Servicios con pieza viva y borde tipo linterna | Mercury, Eraser, uimotion |
+| `StepFlow` | Cuatro pasos como nodos con luz recorriendo la línea | n8n, Workflow Node |
+| `OwnPass` | La propiedad como pase perforado que se inclina | dope.security, Boarding Pass |
+| `Prompt` | Barra de comandos que lleva tu idea al formulario | Raycast |
+| `MethodSteps` | Método por pasos, un paso abierto a la vez | n8n, Figure |
+| `Clock` | Hora real de Ciudad de México en el pie | Max Yinger |
+| `Icon` | Iconos de línea dibujados aquí | Authkit |
+
 ## Movimiento
 
 | Momento | Qué pasa |
 |---|---|
 | Llegada | Título, texto, acciones, app y logo entran en orden. Solo CSS: no espera a un script. |
 | Scroll | Los títulos llegan palabra por palabra y los bloques se asientan. |
-| Hero | El logo gira, se inclina hacia el puntero y la app se endereza al subir. |
+| Hero | Las partículas forman el logo, huyen del cursor y la app se endereza al subir. |
 | App | Las tarjetas viajan de columna, los números cambian con desenfoque, la app se arma al cambiar de negocio. |
-| Comparación | Lo que pide el software genérico se tacha al aparecer. |
+| Comparación | Los módulos sobrantes se van y los tuyos crecen. Cambia solo hasta que lo tocas. |
 | Cronograma | Las barras se dibujan. |
 | Servicios | Las piezas corren solo mientras están a la vista. |
 | Páginas | Transición entre páginas; el encabezado no se mueve. |
