@@ -1,0 +1,330 @@
+---
+/**
+ * La comparación como demostración: una pantalla llena de módulos que no usas
+ * contra la misma pantalla con solo lo tuyo. Se cambia con el interruptor y, si
+ * nadie lo toca, cambia sola mientras está a la vista. Sin JS se leen las dos
+ * listas completas.
+ */
+import Icon from "./Icon.astro";
+
+const sides = [
+  {
+    id: "generic",
+    label: "Con software genérico",
+    icon: "x" as const,
+    lines: [
+      "Cambias tu proceso para que quepa en sus pantallas.",
+      "Pagas cada mes por usuario, aunque uses la mitad.",
+      "Lo que le falta se queda en un Excel aparte.",
+      "Si dejas de pagar, pierdes el acceso.",
+    ],
+  },
+  {
+    id: "custom",
+    label: "Con software a tu medida",
+    icon: "check" as const,
+    lines: [
+      "El sistema sigue tu proceso, con tus nombres y tus pasos.",
+      "Pagas una sola vez por construirlo.",
+      "Lo que hoy vive en tres Excels queda en un solo lugar.",
+      "El software es tuyo.",
+    ],
+  },
+];
+
+// Doce módulos en la pantalla genérica. Cuatro sobreviven y crecen.
+const keep = new Map([
+  [1, [0, 0]],
+  [6, [1, 0]],
+  [8, [0, 1]],
+  [11, [1, 1]],
+]);
+const cells = Array.from({ length: 12 }, (_, i) => ({
+  col: i % 4,
+  row: Math.floor(i / 4),
+  to: keep.get(i),
+}));
+---
+
+<div class="versus panel" data-versus data-state="generic">
+  <div class="versus__screen" aria-hidden="true">
+    <span class="versus__bar"><i></i><i></i><i></i></span>
+    <div class="versus__grid">
+      {
+        cells.map((cell) => (
+          <span
+            class:list={["cell", { "cell--keep": cell.to }]}
+            style={`--c: ${cell.col}; --r: ${cell.row}; --kc: ${cell.to?.[0] ?? 0}; --kr: ${cell.to?.[1] ?? 0};`}
+          >
+            <b>
+              <i />
+              <i />
+            </b>
+          </span>
+        ))
+      }
+    </div>
+  </div>
+
+  <div class="versus__side">
+    <div class="versus__switch" role="group" aria-label="Comparación">
+      <span class="versus__thumb" aria-hidden="true"></span>
+      {
+        sides.map((side, i) => (
+          <button type="button" data-set={side.id} aria-pressed={i === 0 ? "true" : "false"}>
+            {side.label}
+          </button>
+        ))
+      }
+    </div>
+    {
+      sides.map((side) => (
+        <ul class="versus__list" data-list={side.id} aria-label={side.label}>
+          {side.lines.map((line) => (
+            <li>
+              <span class="versus__mark">
+                <Icon name={side.icon} />
+              </span>
+              {line}
+            </li>
+          ))}
+        </ul>
+      ))
+    }
+  </div>
+</div>
+
+<script>
+  const root = document.querySelector<HTMLElement>("[data-versus]");
+  if (root) {
+    const calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const buttons = Array.from(root.querySelectorAll<HTMLButtonElement>("[data-set]"));
+    const lists = Array.from(root.querySelectorAll<HTMLElement>("[data-list]"));
+    let timer = 0;
+
+    const show = (state: string): void => {
+      root.dataset["state"] = state;
+      for (const button of buttons) {
+        button.setAttribute("aria-pressed", String(button.dataset["set"] === state));
+      }
+      for (const list of lists) {
+        const shown = list.dataset["list"] === state;
+        list.hidden = !shown;
+        if (!shown || calm) continue;
+        list.querySelectorAll("li").forEach((line, i) => {
+          line.animate(
+            [
+              { opacity: 0, translate: "0.625rem 0" },
+              { opacity: 1, translate: "0 0" },
+            ],
+            { duration: 420, delay: i * 55, easing: "cubic-bezier(0.22, 1.1, 0.36, 1)", fill: "backwards" },
+          );
+        });
+      }
+    };
+
+    const flip = (): void => show(root.dataset["state"] === "generic" ? "custom" : "generic");
+    const stop = (): void => window.clearInterval(timer);
+
+    root.classList.add("is-ready");
+    show("generic");
+    for (const button of buttons) {
+      button.addEventListener("click", () => {
+        stop();
+        show(button.dataset["set"] ?? "generic");
+      });
+    }
+
+    // Plays by itself only until someone takes over, and only while in view.
+    if (!calm) {
+      let touched = false;
+      root.addEventListener("pointerdown", () => (touched = true));
+      new IntersectionObserver(([entry]) => {
+        stop();
+        if (entry?.isIntersecting && !touched) timer = window.setInterval(flip, 4200);
+      }, { threshold: 0.4 }).observe(root);
+    }
+  }
+</script>
+
+<style>
+  .versus {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+    gap: clamp(var(--space-5), 4vw, var(--space-7));
+    padding: clamp(var(--space-4), 3vw, var(--space-6));
+  }
+  @media (width <= 56rem) {
+    .versus {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  /* --- la pantalla --------------------------------------------------------- */
+  .versus__screen {
+    display: flex;
+    flex-direction: column;
+    min-height: 20rem;
+    padding: var(--space-3);
+    background: var(--night-950);
+    border-radius: var(--radius-l);
+    box-shadow: var(--shadow-key);
+  }
+  .versus__bar {
+    display: flex;
+    gap: 0.3125rem;
+    margin-block-end: var(--space-3);
+  }
+  .versus__bar i {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: var(--night-700);
+  }
+  .versus__grid {
+    position: relative;
+    flex: 1;
+  }
+  .cell {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    width: 25%;
+    height: 33.333%;
+    padding: 0.1875rem;
+    transform-origin: 0 0;
+    translate: calc(var(--c) * 100%) calc(var(--r) * 100%);
+    transition: translate var(--dur-4) var(--ease-out), scale var(--dur-4) var(--ease-out),
+      opacity var(--dur-3) var(--ease-out);
+  }
+  .cell b {
+    display: grid;
+    align-content: end;
+    gap: 0.25rem;
+    height: 100%;
+    padding: 0.5rem;
+    border-radius: var(--radius-m);
+    background: rgb(var(--rgb-light) / 0.05);
+    box-shadow: inset 0 0 0 1px rgb(var(--rgb-light) / 0.06);
+    transition: background-color var(--dur-4) var(--ease-out), box-shadow var(--dur-4) var(--ease-out);
+  }
+  .cell i {
+    display: block;
+    height: 0.25rem;
+    border-radius: 1px;
+    background: rgb(var(--rgb-light) / 0.16);
+  }
+  .cell i:last-child {
+    width: 60%;
+  }
+  [data-state="custom"] .cell:not(.cell--keep) {
+    opacity: 0;
+    scale: 0.82;
+  }
+  [data-state="custom"] .cell--keep {
+    translate: calc(var(--kc) * 200%) calc(var(--kr) * 150%);
+    scale: 2 1.5;
+  }
+  [data-state="custom"] .cell--keep b {
+    background: rgb(var(--rgb-blue) / 0.2);
+    box-shadow: inset 0 0 0 1px rgb(var(--rgb-blue) / 0.65), 0 0 18px rgb(var(--rgb-blue) / 0.2);
+  }
+
+  /* --- el interruptor y la lista ------------------------------------------ */
+  .versus__side {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--space-5);
+    min-width: 0;
+  }
+  .versus__switch {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding: 3px;
+    background: var(--night-950);
+    border-radius: var(--radius-m);
+    box-shadow: var(--shadow-key);
+  }
+  .versus__thumb {
+    position: absolute;
+    inset-block: 3px;
+    inset-inline-start: 3px;
+    width: calc(50% - 3px);
+    background: var(--action-bg);
+    border-radius: var(--radius-s);
+    transition: translate var(--dur-3) var(--ease-spring);
+  }
+  [data-state="custom"] .versus__thumb {
+    translate: 100% 0;
+  }
+  .versus__switch button {
+    position: relative;
+    z-index: 1;
+    min-height: 44px;
+    padding: var(--space-1) var(--space-2);
+    border: 0;
+    background: none;
+    font: inherit;
+    font-size: var(--text-small);
+    font-weight: var(--weight-medium);
+    color: var(--fg-secondary);
+    cursor: pointer;
+    transition: color var(--dur-2) var(--ease-out);
+  }
+  .versus__switch button[aria-pressed="true"] {
+    color: var(--action-fg);
+  }
+  .versus__switch button:focus-visible {
+    outline-offset: -2px;
+  }
+  .versus__list {
+    display: grid;
+    gap: var(--space-3);
+    min-height: 13.5rem;
+    align-content: start;
+  }
+  .versus__list li {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    font-size: var(--text-lead);
+    line-height: var(--leading-lead);
+    letter-spacing: var(--tracking-lead);
+    text-wrap: pretty;
+  }
+  .versus__mark {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 1.75rem;
+    height: 1.75rem;
+    margin-block-start: 0.0625rem;
+    border-radius: 50%;
+    background: rgb(var(--rgb-light) / 0.07);
+    color: var(--fg-muted);
+  }
+  [data-list="custom"] .versus__mark {
+    background: rgb(var(--rgb-blue) / 0.22);
+    color: var(--sky);
+  }
+  .versus__mark :global(.icon) {
+    width: 0.9375rem;
+    height: 0.9375rem;
+  }
+
+  /* Without JavaScript both sides stay readable, one after the other. */
+  .versus:not(.is-ready) .versus__switch {
+    display: none;
+  }
+  .versus:not(.is-ready) .versus__list {
+    min-height: 0;
+  }
+  .versus:not(.is-ready) .versus__list::before {
+    content: attr(aria-label);
+    font-size: var(--text-small);
+    font-weight: var(--weight-medium);
+    color: var(--fg-secondary);
+  }
+</style>
