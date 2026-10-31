@@ -1,0 +1,491 @@
+---
+/**
+ * El acompañamiento como una sola línea: cruza la entrega, sigue subiendo y se
+ * sale del panel. Se lee una parada a la vez; la luz avanza sola mientras está
+ * a la vista y se queda en la última hasta que alguien toca otra. Sin JS se
+ * leen las cuatro.
+ */
+import Icon from "./Icon.astro";
+import type { IconName } from "./Icon.astro";
+
+// `x` places each stop along the panel, in percent. The curve is computed here
+// so the nodes, which are HTML, land exactly on the line, which is SVG.
+const rise = (x: number): number => 84 - 66 * (x / 100) ** 2.6;
+const curve = Array.from({ length: 101 }, (_, x) => `${x} ${rise(x).toFixed(2)}`).join("L");
+
+const handoff = 66;
+
+const stops: { icon: IconName; title: string; text: string; x: number }[] = [
+  {
+    icon: "chat",
+    title: "Hablas con quien lo construye",
+    text: "Un canal directo, sin intermediarios ni tickets.",
+    x: 9,
+  },
+  {
+    icon: "eye",
+    title: "Ves el avance mientras se hace",
+    text: "Pruebas el software desde temprano y lo corregimos contigo.",
+    x: 30,
+  },
+  {
+    icon: "cap",
+    title: "Tu equipo aprende a usarlo",
+    text: "Capacitamos a quienes lo van a usar todos los días.",
+    x: 50,
+  },
+  {
+    icon: "life",
+    title: "Seguimos después de entregar",
+    text: "Si algo falla o tu operación cambia, aquí estamos.",
+    x: 84,
+  },
+];
+---
+
+<div class="journey" data-journey data-at="0">
+  <ol class="journey__says">
+    {
+      stops.map((stop) => (
+        <li class="journey__say" data-say>
+          <span class="journey__glyph">
+            <Icon name={stop.icon} />
+          </span>
+          <h3 class="h3">{stop.title}</h3>
+          <p>{stop.text}</p>
+        </li>
+      ))
+    }
+  </ol>
+
+  <div class="journey__stage">
+    <div class="journey__mark" style={`--x: ${handoff}%; --y: ${rise(handoff).toFixed(2)}%;`} aria-hidden="true">
+      <i></i>
+      <span>Entrega</span>
+    </div>
+
+    <svg class="journey__road" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+      <path d={`M${curve}`} />
+    </svg>
+
+    <div class="journey__lit" aria-hidden="true">
+      <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="journey-ink" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#5B19F1"></stop>
+            <stop offset="0.55" stop-color="#1B7FFC"></stop>
+            <stop offset="1" stop-color="#00C7F8"></stop>
+          </linearGradient>
+          <linearGradient id="journey-wash" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#1B7FFC" stop-opacity="0.26"></stop>
+            <stop offset="1" stop-color="#5B19F1" stop-opacity="0"></stop>
+          </linearGradient>
+        </defs>
+        <path class="journey__area" d={`M${curve}L100 100L0 100Z`} />
+        <path class="journey__halo journey__halo--wide" d={`M${curve}`} />
+        <path class="journey__halo" d={`M${curve}`} />
+        <path class="journey__line" d={`M${curve}`} />
+      </svg>
+      <svg class="journey__comet" viewBox="0 0 100 100" preserveAspectRatio="none">
+        <path d={`M${curve}`} />
+      </svg>
+    </div>
+
+    <div class="journey__stops" role="group" aria-label="Acompañamiento">
+      {
+        stops.map((stop, i) => (
+          <button
+            type="button"
+            class:list={["journey__stop", { "is-passed": i === 0 }]}
+            style={`--x: ${stop.x}%; --y: ${rise(stop.x).toFixed(2)}%;`}
+            data-stop
+            data-reach={`${i === stops.length - 1 ? 100 : stop.x}%`}
+            aria-label={stop.title}
+            aria-pressed={i === 0 ? "true" : "false"}
+          >
+            <Icon name={stop.icon} />
+          </button>
+        ))
+      }
+    </div>
+  </div>
+</div>
+
+<script>
+  const root = document.querySelector<HTMLElement>("[data-journey]");
+  if (root) {
+    const calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const stops = Array.from(root.querySelectorAll<HTMLButtonElement>("[data-stop]"));
+    const says = Array.from(root.querySelectorAll<HTMLElement>("[data-say]"));
+    let at = 0;
+    let timer = 0;
+    let touched = false;
+    let started = false;
+
+    const show = (index: number): void => {
+      at = index;
+      root.dataset["at"] = String(index);
+      root.style.setProperty("--reach", stops[index]?.dataset["reach"] ?? "100%");
+      stops.forEach((stop, i) => {
+        stop.setAttribute("aria-pressed", String(i === index));
+        stop.classList.toggle("is-passed", i <= index);
+      });
+      says.forEach((say, i) => say.classList.toggle("is-off", i !== index));
+    };
+
+    const halt = (): void => window.clearTimeout(timer);
+    // It stops at the last one on purpose: that promise has no end.
+    const play = (): void => {
+      if (at === stops.length - 1) return;
+      timer = window.setTimeout(() => {
+        show(at + 1);
+        play();
+      }, 3800);
+    };
+
+    show(0);
+    root.classList.add("is-ready");
+    stops.forEach((stop, i) => {
+      const take = (): void => {
+        touched = true;
+        halt();
+        show(i);
+      };
+      stop.addEventListener("click", take);
+      stop.addEventListener("focus", take);
+      stop.addEventListener("pointerenter", take);
+    });
+
+    if (!calm) {
+      // The line stays dark until it is on screen, so it can be seen drawing.
+      root.style.setProperty("--reach", "0%");
+      new IntersectionObserver(([entry]) => {
+        const seen = entry?.isIntersecting ?? false;
+        halt();
+        root.classList.toggle("is-live", seen);
+        if (!seen || touched) return;
+        if (!started) {
+          started = true;
+          show(0);
+        }
+        play();
+      }, { threshold: 0.4 }).observe(root);
+    }
+  }
+</script>
+
+<style>
+  .journey {
+    --reach: 100%;
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    min-height: clamp(27rem, 36vw, 32rem);
+    background: rgb(var(--rgb-ink) / 0.6);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-glass);
+    overflow: hidden;
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+  }
+  /* the blueprint under the line */
+  .journey::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    background-image: linear-gradient(rgb(var(--rgb-frost) / 0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(var(--rgb-frost) / 0.06) 1px, transparent 1px);
+    background-size: 4rem 4rem;
+    background-position: center;
+    -webkit-mask-image: radial-gradient(75% 85% at 62% 62%, black 20%, transparent 100%);
+    mask-image: radial-gradient(75% 85% at 62% 62%, black 20%, transparent 100%);
+  }
+  /* the light waiting where the line leaves the panel */
+  .journey::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: radial-gradient(
+        46rem 34rem at 100% 12%,
+        rgb(var(--rgb-violet) / 0.36),
+        rgb(var(--rgb-violet) / 0.16) 34%,
+        rgb(var(--rgb-violet) / 0.04) 68%,
+        transparent
+      ),
+      radial-gradient(
+        26rem 18rem at 100% 16%,
+        rgb(var(--rgb-blue) / 0.3),
+        rgb(var(--rgb-blue) / 0.1) 50%,
+        transparent
+      );
+    opacity: 0.2;
+    transition: opacity var(--dur-5) var(--ease-out);
+  }
+  [data-at="3"]::after {
+    opacity: 1;
+  }
+
+  /* --- la frase ------------------------------------------------------------- */
+  .journey__says {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: var(--space-5);
+    align-self: start;
+    width: min(100%, 27rem);
+    margin: var(--space-5);
+    padding: var(--space-5);
+    background: rgb(var(--rgb-ink) / 0.72);
+    border-radius: var(--radius-l);
+    box-shadow: var(--shadow-glass);
+  }
+  .journey__say {
+    display: grid;
+    justify-items: start;
+    align-content: start;
+    gap: var(--space-2);
+    transition: opacity var(--dur-3) var(--ease-out), translate var(--dur-3) var(--ease-out),
+      filter var(--dur-3) var(--ease-out), visibility var(--dur-3);
+  }
+  /* All four share one cell, so the longest sets the height and nothing jumps. */
+  .is-ready .journey__say {
+    grid-area: 1 / 1;
+  }
+  .is-off {
+    visibility: hidden;
+    opacity: 0;
+    translate: 0 0.5rem;
+    filter: blur(6px);
+  }
+  .journey__say p {
+    color: var(--fg-secondary);
+    text-wrap: pretty;
+  }
+  .journey__glyph {
+    display: grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    margin-block-end: var(--space-1);
+    border-radius: 50%;
+    background: var(--gradient-lit);
+    color: var(--white);
+    box-shadow: 0 0 20px rgb(var(--rgb-violet) / 0.6);
+  }
+
+  /* --- la línea ------------------------------------------------------------- */
+  .journey__stage {
+    position: absolute;
+    inset: 0;
+  }
+  .journey__stage svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    overflow: visible;
+    fill: none;
+  }
+  .journey__stage path {
+    vector-effect: non-scaling-stroke;
+    stroke-linecap: round;
+  }
+  .journey__road path {
+    stroke: rgb(var(--rgb-frost) / 0.24);
+    stroke-width: 1.5;
+  }
+  /* A line stretched by its box keeps an even stroke, which rules out dashes:
+     it is uncovered from the left instead. */
+  .journey__lit {
+    position: absolute;
+    inset: 0;
+    clip-path: inset(-20% calc(100% - var(--reach)) -20% -1%);
+    transition: clip-path var(--dur-5) var(--ease-in-out);
+  }
+  .journey__area {
+    fill: url(#journey-wash);
+  }
+  .journey__line,
+  .journey__halo {
+    stroke: url(#journey-ink);
+  }
+  .journey__line {
+    stroke-width: 2.5;
+  }
+  .journey__halo {
+    stroke-width: 8;
+    opacity: 0.28;
+  }
+  .journey__halo--wide {
+    stroke-width: 18;
+    opacity: 0.12;
+  }
+  /* a brighter stretch that keeps traveling inside the part already lit */
+  .journey__comet {
+    display: none;
+    -webkit-mask: linear-gradient(90deg, transparent, black 60%, transparent) 0 0 / 20% 100% no-repeat;
+    mask: linear-gradient(90deg, transparent, black 60%, transparent) 0 0 / 20% 100% no-repeat;
+  }
+  .journey__comet path {
+    stroke: var(--white);
+    stroke-width: 2.5;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .journey__comet {
+      display: block;
+      animation: journey-comet 5s linear infinite paused;
+    }
+    .is-live .journey__comet {
+      animation-play-state: running;
+    }
+  }
+  @keyframes journey-comet {
+    from {
+      -webkit-mask-position: -35% 0;
+      mask-position: -35% 0;
+    }
+    to {
+      -webkit-mask-position: 135% 0;
+      mask-position: 135% 0;
+    }
+  }
+
+  /* --- la entrega: un punto de la línea, no su final ------------------------ */
+  .journey__mark {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: var(--x);
+    width: 1px;
+    background: linear-gradient(180deg, transparent 12%, rgb(var(--rgb-frost) / 0.34) 55%, rgb(var(--rgb-frost) / 0.34));
+  }
+  .journey__mark i {
+    position: absolute;
+    inset-block-start: var(--y);
+    inset-inline-start: 0;
+    z-index: 1;
+    width: 0.625rem;
+    height: 0.625rem;
+    border-radius: 50%;
+    background: var(--night-500);
+    translate: -50% -50%;
+    transition: background-color var(--dur-3) var(--ease-out), box-shadow var(--dur-3) var(--ease-out);
+  }
+  [data-at="3"] .journey__mark i {
+    background: var(--white);
+    box-shadow: 0 0 16px rgb(var(--rgb-blue));
+  }
+  .journey__mark span {
+    position: absolute;
+    inset-block-end: var(--space-4);
+    inset-inline-start: 0;
+    padding: var(--space-1) var(--space-2);
+    font-size: var(--text-caption);
+    font-weight: var(--weight-medium);
+    line-height: var(--leading-caption);
+    color: var(--fg);
+    background: var(--night-800);
+    border-radius: var(--radius-s);
+    box-shadow: var(--shadow-glass);
+    translate: -50% 0;
+  }
+
+  /* --- las paradas ---------------------------------------------------------- */
+  .journey__stops {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  .journey__stop {
+    position: absolute;
+    inset-block-start: var(--y);
+    inset-inline-start: var(--x);
+    display: grid;
+    place-items: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: var(--night-800);
+    color: var(--fg-muted);
+    box-shadow: var(--shadow-glass);
+    cursor: pointer;
+    pointer-events: auto;
+    translate: -50% -50%;
+    transition: color var(--dur-3) var(--ease-out) var(--dur-2),
+      box-shadow var(--dur-3) var(--ease-out) var(--dur-2), scale var(--dur-3) var(--ease-spring);
+  }
+  .journey__stop :global(.icon) {
+    width: 1.375rem;
+    height: 1.375rem;
+  }
+  .journey__stop.is-passed {
+    color: var(--white);
+  }
+  .journey__stop:hover {
+    color: var(--white);
+  }
+  .journey__stop[aria-pressed="true"] {
+    scale: 1.14;
+    color: var(--white);
+    box-shadow: var(--shadow-glass), 0 0 0 1px rgb(var(--rgb-blue)), 0 0 34px rgb(var(--rgb-blue) / 0.7);
+  }
+  .journey__stop:focus-visible {
+    border-radius: 50%;
+  }
+
+  /* --- teléfono: la frase arriba, la línea completa abajo ------------------- */
+  @media (width <= 56rem) {
+    .journey {
+      min-height: 0;
+    }
+    .journey__says {
+      width: auto;
+      margin: var(--space-3);
+      padding: var(--space-4);
+    }
+    .journey__stage {
+      position: relative;
+      inset: auto;
+      height: 17rem;
+    }
+    .journey__stop {
+      width: 2.75rem;
+      height: 2.75rem;
+    }
+    .journey__stop :global(.icon) {
+      width: 1.125rem;
+      height: 1.125rem;
+    }
+    .journey::after {
+      background: radial-gradient(
+          24rem 18rem at 100% 62%,
+          rgb(var(--rgb-violet) / 0.36),
+          rgb(var(--rgb-violet) / 0.14) 40%,
+          transparent
+        ),
+        radial-gradient(
+          13rem 10rem at 100% 66%,
+          rgb(var(--rgb-blue) / 0.3),
+          rgb(var(--rgb-blue) / 0.1) 50%,
+          transparent
+        );
+    }
+  }
+
+  /* Without JavaScript the four read one after the other, above the line. */
+  .journey:not(.is-ready) {
+    min-height: 0;
+  }
+  .journey:not(.is-ready) .journey__says {
+    width: auto;
+  }
+  .journey:not(.is-ready) .journey__stage {
+    position: relative;
+    inset: auto;
+    height: 17rem;
+  }
+</style>

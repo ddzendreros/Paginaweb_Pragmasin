@@ -105,7 +105,7 @@ const organizationSchema = {
       // here, so a page without JavaScript never hides anything.
       const calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       const blocks =
-        ".sec__name, .head > .lead, .spec__row, .qa, .track__row, .closing__aside, .closing-prompt > .lead, .closing-prompt > form, .not, .line, .rule, .notice__section, .build__more, .versus, .flow, .own-grid__pass, .method__tabs";
+        ".sec__name, .head > .lead, .spec__row, .qa, .journey, .closing__aside, .closing-prompt > .lead, .closing-prompt > form, .not, .line, .rule, .notice__section, .build__more, .versus, .flow, .own-grid__pass, .method__tabs";
       const titles = "main > section:not(:first-child) :is(.h2, .display)";
 
       const splitWords = (title: Element): void => {

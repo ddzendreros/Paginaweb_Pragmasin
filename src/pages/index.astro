@@ -1,8 +1,7 @@
 ---
 import BuildTiles from "../components/BuildTiles.astro";
 import Configurator from "../components/Configurator.astro";
-import Icon from "../components/Icon.astro";
-import type { IconName } from "../components/Icon.astro";
+import Journey from "../components/Journey.astro";
 import Marquee from "../components/Marquee.astro";
 import OwnPass from "../components/OwnPass.astro";
 import Prompt from "../components/Prompt.astro";
@@ -11,45 +10,6 @@ import Versus from "../components/Versus.astro";
 import Strands from "../components/Strands.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { waMessages, whatsappUrl } from "../site";
-
-// `from` and `to` place each bar on the project's timeline, in percent. Bars
-// that reach 100 run off the edge of the page: that support has no end date.
-const accompaniment: {
-  icon: IconName;
-  title: string;
-  text: string;
-  from: number;
-  to: number;
-}[] = [
-  {
-    icon: "chat",
-    title: "Hablas con quien lo construye",
-    text: "Un canal directo, sin intermediarios ni tickets.",
-    from: 0,
-    to: 100,
-  },
-  {
-    icon: "eye",
-    title: "Ves el avance mientras se hace",
-    text: "Pruebas el software desde temprano y lo corregimos contigo.",
-    from: 22,
-    to: 62,
-  },
-  {
-    icon: "cap",
-    title: "Tu equipo aprende a usarlo",
-    text: "Capacitamos a quienes lo van a usar todos los días.",
-    from: 46,
-    to: 78,
-  },
-  {
-    icon: "life",
-    title: "Seguimos después de entregar",
-    text: "Si algo falla o tu operación cambia, aquí estamos.",
-    from: 62,
-    to: 100,
-  },
-];
 
 // Cases need the client's permission (D7). None are approved, so none ship:
 // with the list empty the section does not exist in the HTML.
@@ -169,38 +129,15 @@ const waHref = whatsappUrl(waMessages.flotante);
   </section>
 
   <section class="act company" aria-labelledby="acomp-title">
-    <div class="act__inner grid-12">
-      <p class="sec__name">Acompañamiento</p>
-      <div class="sec__body head">
-        <h2 id="acomp-title" class="h2">No desaparecemos después de entregar.</h2>
-        <p class="lead">Lo importante no es el software. Es que tu día a día se sienta mejor.</p>
+    <div class="act__inner">
+      <div class="company__head">
+        <p class="sec__name">Acompañamiento</p>
+        <div class="head">
+          <h2 id="acomp-title" class="h2">No desaparecemos después de entregar.</h2>
+          <p class="lead">Lo importante no es el software. Es que tu día a día se sienta mejor.</p>
+        </div>
       </div>
-      <div class="track-wrap">
-        <ol>
-          {
-            accompaniment.map((a, i) => (
-              <li class="track__row">
-                <div class="track__text">
-                  <span class="track__icon">
-                    <Icon name={a.icon} />
-                  </span>
-                  <div>
-                    <h3 class="h3">{a.title}</h3>
-                    <p class="small">{a.text}</p>
-                  </div>
-                </div>
-                <div class="track__lane" aria-hidden="true">
-                  {i === 0 && <span class="track__mark">Entrega</span>}
-                  <span
-                    class:list={["track__bar", { "track__bar--open": a.to === 100 }]}
-                    style={`--from: ${a.from}; --to: ${a.to};`}
-                  />
-                </div>
-              </li>
-            ))
-          }
-        </ol>
-      </div>
+      <Journey />
     </div>
   </section>
 
@@ -458,114 +395,41 @@ const waHref = whatsappUrl(waMessages.flotante);
     margin-block-start: var(--space-4);
   }
 
-  /* --- Acompañamiento: un cronograma, no una lista ------------------------ */
-  .company {
-    --handoff: 62%;
-    --panel-pad: clamp(var(--space-4), 3vw, var(--space-6));
-  }
-  .company .sec__body {
-    margin-block-end: var(--space-5);
-  }
-  .track-wrap {
-    padding: var(--space-7) var(--panel-pad) var(--space-2);
-    background: var(--bg-chrome);
-    border-radius: var(--radius-xl);
-    box-shadow: var(--shadow-key);
-    overflow: hidden;
-  }
-  .track__row {
+  /* --- Acompañamiento: centrado, como una ceremonia ----------------------- */
+  .company__head {
     display: grid;
-    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-    column-gap: var(--gutter);
-    border-block-start: var(--hairline) solid var(--hairline-color);
+    justify-items: center;
+    margin-block-end: clamp(var(--space-6), 4vw, var(--space-7));
+    text-align: center;
   }
-  .track__text {
+  .company__head .sec__name {
     display: flex;
-    align-items: flex-start;
-    gap: var(--space-3);
-    padding-block: var(--space-4);
+    align-items: center;
+    gap: var(--space-4);
+    margin-block-end: var(--space-4);
   }
-  .track__icon {
-    display: grid;
-    place-items: center;
-    flex: none;
-    width: 2.5rem;
-    height: 2.5rem;
-    border-radius: 50%;
-    background: var(--night-800);
-    color: var(--sky);
-    box-shadow: var(--shadow-key);
-  }
-  .track__text .small {
-    max-width: 44ch;
-    text-wrap: pretty;
-  }
-  /* the lane runs to the edge of the panel so an open bar has no end */
-  .track__lane {
-    position: relative;
-    margin-inline-end: calc(-1 * var(--panel-pad));
-  }
-  .track__lane::before {
+  .company__head .sec__name::before,
+  .company__head .sec__name::after {
     content: "";
-    position: absolute;
-    inset-block: 0;
-    inset-inline-start: var(--handoff);
-    border-inline-start: var(--hairline) solid var(--control-border);
+    width: clamp(2.5rem, 10vw, 7rem);
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgb(var(--rgb-frost) / 0.36));
   }
-  .track__bar {
-    position: absolute;
-    inset-block-start: calc(var(--space-4) + 0.9rem);
-    inset-inline-start: calc(var(--from) * 1%);
-    width: calc((var(--to) - var(--from)) * 1%);
-    height: 0.625rem;
-    background: var(--strand);
-    border-radius: var(--radius-s);
-    box-shadow: 0 0 24px rgb(var(--rgb-blue) / 0.55);
-    transform-origin: left;
+  .company__head .sec__name::after {
+    rotate: 180deg;
   }
-  /* the plan draws itself as it scrolls in */
-  :global(.reveal) .track__bar {
-    scale: 0 1;
-    transition: scale 1400ms var(--ease-out) 150ms;
+  .company__head .head {
+    justify-items: center;
+    margin-block-end: 0;
   }
-  :global(.reveal.is-in) .track__bar {
-    scale: 1 1;
+  .company__head .h2 {
+    text-wrap: balance;
   }
-  .track__bar--open {
-    border-start-end-radius: 0;
-    border-end-end-radius: 0;
-  }
-  .track__mark {
-    position: absolute;
-    inset-block-end: calc(100% + var(--space-1));
-    inset-inline-start: var(--handoff);
-    font-size: var(--text-caption);
-    font-weight: var(--weight-medium);
-    color: var(--fg-secondary);
-    translate: -50% 0;
-  }
-  @media (width <= 56rem) {
-    .track__row {
-      grid-template-columns: minmax(0, 1fr);
-      padding-block-end: var(--space-4);
-    }
-    .track__text {
-      padding-block-end: var(--space-3);
-    }
-    .track__lane {
-      height: 1rem;
-    }
-    .track__bar {
-      inset-block-start: 0;
-    }
-    /* on a phone the text sits above the bar, so the label goes under it */
-    .track__mark {
-      inset-block-end: auto;
-      inset-block-start: calc(100% + var(--space-1));
-    }
-    .track__row:first-child {
-      padding-block-end: var(--space-6);
-    }
+  .company__head :global(.w) {
+    background: linear-gradient(180deg, var(--white) 35%, var(--mist-300));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
 
   /* --- Propiedad ----------------------------------------------------------- */
