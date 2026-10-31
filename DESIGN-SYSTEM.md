@@ -39,8 +39,9 @@ cliente, no a Pragmasyn.
 
 **Hoja de papel.** «El problema» es el único momento claro y editorial de la página, inspirado en
 Steep: casi acromático, con `--blush` y `--sienna` como único color, y solo en la respuesta «a tu
-medida». Mientras el encabezado pasa sobre la hoja se vuelve casi sólido (`--glass-alpha`), porque
-el vidrio sobre blanco baja el contraste del menú.
+medida». Es una tarjeta del ancho del encabezado, nunca una banda de lado a lado: la constelación
+debe seguir a la vista alrededor. Mientras el encabezado pasa sobre la hoja se vuelve casi sólido
+(`--glass-alpha`), porque el vidrio sobre blanco baja el contraste del menú.
 
 ## Tipografía
 

@@ -122,15 +122,17 @@ const waHref = whatsappUrl(waMessages.flotante);
 
   <Marquee />
 
-  <section class="act problema ground-paper" aria-labelledby="contraste-title">
+  <section class="act" aria-labelledby="contraste-title">
     <div class="act__inner">
-      <div class="problema__head">
-        <p class="sec__name">El problema</p>
-        <h2 id="contraste-title" class="h2 problema__title">
-          Un SaaS te pide que cambies.<br /> Nosotros no.
-        </h2>
+      <div class="problema ground-paper">
+        <div class="problema__head">
+          <p class="sec__name">El problema</p>
+          <h2 id="contraste-title" class="h2 problema__title">
+            Un SaaS te pide que cambies.<br /> Nosotros no.
+          </h2>
+        </div>
+        <Versus />
       </div>
-      <Versus />
     </div>
   </section>
 
@@ -420,17 +422,19 @@ const waHref = whatsappUrl(waMessages.flotante);
   }
 
 
-  /* --- El problema: una hoja de papel dentro de la página oscura ------------ */
+  /* --- El problema: una hoja de papel dentro de la página oscura ------------
+     As wide as the header, so the art stays in view on both sides of it. */
   .problema {
-    margin-block-start: clamp(var(--space-5), 4vw, var(--space-8));
-    margin-inline: clamp(var(--space-2), 1.4vw, var(--space-4));
+    max-width: 68rem;
+    margin-inline: auto;
+    padding: clamp(var(--space-6), 3.4vw, var(--space-7)) clamp(var(--space-3), 2.8vw, var(--space-6));
     border-radius: var(--radius-2xl);
   }
   .problema__head {
     display: grid;
     justify-items: center;
-    gap: var(--space-4);
-    margin-block-end: clamp(var(--space-6), 4vw, var(--space-7));
+    gap: var(--space-2);
+    margin-block-end: clamp(var(--space-5), 2.4vw, var(--space-6));
     text-align: center;
   }
   .problema .sec__name {

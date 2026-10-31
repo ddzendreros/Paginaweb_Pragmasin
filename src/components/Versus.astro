@@ -183,19 +183,17 @@ const cells = Array.from({ length: 12 }, (_, i) => ({
   .versus {
     display: grid;
     justify-items: center;
-    gap: clamp(var(--space-5), 3vw, var(--space-6));
+    gap: clamp(var(--space-4), 2.2vw, var(--space-5));
   }
   .versus__stage {
     display: grid;
-    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
-    gap: var(--space-5);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--space-3);
     width: 100%;
-    max-width: 75rem;
   }
   @media (width <= 56rem) {
     .versus__stage {
       grid-template-columns: minmax(0, 1fr);
-      gap: var(--space-3);
     }
   }
 
@@ -204,7 +202,7 @@ const cells = Array.from({ length: 12 }, (_, i) => ({
     position: relative;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    width: min(100%, 30rem);
+    width: min(100%, 28rem);
     padding: var(--space-1);
     background: var(--paper-mist);
     border-radius: var(--radius-pill);
@@ -247,14 +245,14 @@ const cells = Array.from({ length: 12 }, (_, i) => ({
   /* --- la pantalla, flotando sobre su tarjeta ------------------------------ */
   .versus__desk {
     display: grid;
-    padding: clamp(var(--space-4), 3vw, var(--space-7));
+    padding: clamp(var(--space-3), 2vw, var(--space-5));
     background: var(--paper-mist);
-    border-radius: var(--radius-2xl);
+    border-radius: var(--radius-xl);
   }
   .versus__screen {
     display: flex;
     flex-direction: column;
-    min-height: clamp(17rem, 28vw, 23rem);
+    min-height: clamp(13rem, 20vw, 16rem);
     padding: var(--space-3);
     background: var(--white);
     border-radius: var(--radius-xl);
@@ -334,9 +332,9 @@ const cells = Array.from({ length: 12 }, (_, i) => ({
   /* cada módulo que se queda dibuja su pieza al crecer */
   .cell__art {
     position: absolute;
-    inset: var(--space-3) var(--space-3) calc(var(--space-5) + 0.25rem);
+    inset: var(--space-2) var(--space-3) calc(var(--space-5) + 0.25rem);
     width: calc(100% - var(--space-5));
-    height: calc(100% - var(--space-7) - 0.25rem);
+    height: calc(100% - var(--space-6) - 0.25rem);
     max-width: none;
     fill: none;
     stroke: var(--sienna);
@@ -383,7 +381,7 @@ const cells = Array.from({ length: 12 }, (_, i) => ({
   }
   .cell__bars {
     position: absolute;
-    inset: var(--space-3) var(--space-3) calc(var(--space-5) + 0.25rem);
+    inset: var(--space-2) var(--space-3) calc(var(--space-5) + 0.25rem);
     display: flex;
     align-items: flex-end;
     gap: 12%;
@@ -408,9 +406,9 @@ const cells = Array.from({ length: 12 }, (_, i) => ({
     display: grid;
     align-items: center;
     min-width: 0;
-    padding: clamp(var(--space-5), 3vw, var(--space-7));
+    padding: clamp(var(--space-4), 2.2vw, var(--space-5));
     background: var(--paper-mist);
-    border-radius: var(--radius-2xl);
+    border-radius: var(--radius-xl);
     transition: background-color var(--dur-4) var(--ease-out), color var(--dur-4) var(--ease-out);
   }
   [data-state="custom"] .versus__side {
@@ -432,8 +430,8 @@ const cells = Array.from({ length: 12 }, (_, i) => ({
     display: flex;
     align-items: flex-start;
     gap: var(--space-3);
-    padding-block: var(--space-4);
-    font-size: var(--text-lead);
+    padding-block: var(--space-3);
+    font-size: var(--text-body);
     font-weight: var(--weight-paper);
     line-height: var(--leading-lead);
     letter-spacing: var(--tracking-lead);
