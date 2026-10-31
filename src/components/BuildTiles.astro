@@ -437,11 +437,13 @@ const fieldNotes: [string, string][] = [
   }
 
   /* The pieces only run in view, and never when motion is unwelcome. */
-  .tile:not(.is-live) * {
+  .tile:not(.is-live) *,
+  .tile:not(.is-live) *::after {
     animation-play-state: paused !important;
   }
   @media (prefers-reduced-motion: reduce) {
-    .tiles * {
+    .tiles *,
+    .tiles *::after {
       animation: none !important;
     }
   }

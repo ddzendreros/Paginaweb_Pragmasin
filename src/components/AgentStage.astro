@@ -810,11 +810,13 @@ const notes: Note[] = [
   }
 
   .agent:not(.is-live) *,
+  .agent:not(.is-live) *::before,
   .agent:not(.is-live)::before {
     animation-play-state: paused !important;
   }
   @media (prefers-reduced-motion: reduce) {
     .agent *,
+    .agent *::before,
     .agent::before {
       animation: none !important;
     }
