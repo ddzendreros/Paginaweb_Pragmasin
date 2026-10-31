@@ -1,9 +1,9 @@
 ---
 /**
  * El acompañamiento como una sola línea: cruza la entrega, sigue subiendo y se
- * sale del panel. Se lee una parada a la vez y nadie tiene que tocar nada: la
- * luz recorre las cuatro en ciclo mientras está a la vista. Sin JS o con
- * movimiento reducido se leen las cuatro juntas.
+ * sale del panel. El panel se queda fijo y la luz avanza con el scroll: cada
+ * parada se enciende cuando la línea llega a ella, y al subir se regresa. Sin JS
+ * o con movimiento reducido se leen las cuatro juntas.
  */
 import Icon from "./Icon.astro";
 import type { IconName } from "./Icon.astro";
@@ -43,86 +43,88 @@ const stops: { icon: IconName; title: string; text: string; x: number }[] = [
 ];
 ---
 
-<div class="journey" data-journey data-at="0">
-  <ol class="journey__says">
-    {
-      stops.map((stop) => (
-        <li class="journey__say" data-say>
-          <span class="journey__glyph">
-            <Icon name={stop.icon} />
-          </span>
-          <h3 class="h3">{stop.title}</h3>
-          <p>{stop.text}</p>
-        </li>
-      ))
-    }
-  </ol>
-
-  <div class="journey__stage">
-    <div class="journey__mark" style={`--x: ${handoff}%; --y: ${rise(handoff).toFixed(2)}%;`} aria-hidden="true">
-      <i></i>
-      <span>Entrega</span>
-    </div>
-
-    <svg class="journey__road" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-      <path d={`M${curve}`} />
-    </svg>
-
-    <div class="journey__lit" aria-hidden="true">
-      <svg viewBox="0 0 100 100" preserveAspectRatio="none">
-        <defs>
-          <linearGradient id="journey-ink" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0" stop-color="#5B19F1"></stop>
-            <stop offset="0.55" stop-color="#1B7FFC"></stop>
-            <stop offset="1" stop-color="#00C7F8"></stop>
-          </linearGradient>
-          <linearGradient id="journey-wash" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#1B7FFC" stop-opacity="0.26"></stop>
-            <stop offset="1" stop-color="#5B19F1" stop-opacity="0"></stop>
-          </linearGradient>
-        </defs>
-        <path class="journey__area" d={`M${curve}L100 100L0 100Z`} />
-        <path class="journey__halo journey__halo--wide" d={`M${curve}`} />
-        <path class="journey__halo" d={`M${curve}`} />
-        <path class="journey__line" d={`M${curve}`} />
-      </svg>
-      <svg class="journey__comet" viewBox="0 0 100 100" preserveAspectRatio="none">
-        <path d={`M${curve}`} />
-      </svg>
-    </div>
-
-    <div class="journey__stops" aria-hidden="true">
+<div class="journey__run" data-journey-run>
+  <div class="journey" data-journey data-at="0" data-handoff={handoff}>
+    <ol class="journey__says">
       {
-        stops.map((stop, i) => (
-          <span
-            class="journey__stop"
-            style={`--x: ${stop.x}%; --y: ${rise(stop.x).toFixed(2)}%;`}
-            data-stop
-            data-reach={`${i === stops.length - 1 ? 100 : stop.x}%`}
-          >
-            <Icon name={stop.icon} />
-          </span>
+        stops.map((stop) => (
+          <li class="journey__say" data-say>
+            <span class="journey__glyph">
+              <Icon name={stop.icon} />
+            </span>
+            <h3 class="h3">{stop.title}</h3>
+            <p>{stop.text}</p>
+          </li>
         ))
       }
+    </ol>
+
+    <div class="journey__stage">
+      <div class="journey__mark" style={`--x: ${handoff}%; --y: ${rise(handoff).toFixed(2)}%;`} aria-hidden="true">
+        <i></i>
+        <span>Entrega</span>
+      </div>
+
+      <svg class="journey__road" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+        <path d={`M${curve}`} />
+      </svg>
+
+      <div class="journey__lit" aria-hidden="true">
+        <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="journey-ink" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stop-color="#5B19F1"></stop>
+              <stop offset="0.55" stop-color="#1B7FFC"></stop>
+              <stop offset="1" stop-color="#00C7F8"></stop>
+            </linearGradient>
+            <linearGradient id="journey-wash" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#1B7FFC" stop-opacity="0.26"></stop>
+              <stop offset="1" stop-color="#5B19F1" stop-opacity="0"></stop>
+            </linearGradient>
+          </defs>
+          <path class="journey__area" d={`M${curve}L100 100L0 100Z`} />
+          <path class="journey__halo journey__halo--wide" d={`M${curve}`} />
+          <path class="journey__halo" d={`M${curve}`} />
+          <path class="journey__line" d={`M${curve}`} />
+        </svg>
+        <svg class="journey__comet" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <path d={`M${curve}`} />
+        </svg>
+      </div>
+
+      <div class="journey__stops" aria-hidden="true">
+        {
+          stops.map((stop) => (
+            <span
+              class="journey__stop"
+              style={`--x: ${stop.x}%; --y: ${rise(stop.x).toFixed(2)}%;`}
+              data-stop={stop.x}
+            >
+              <Icon name={stop.icon} />
+            </span>
+          ))
+        }
+      </div>
     </div>
   </div>
 </div>
 
 <script>
+  const run = document.querySelector<HTMLElement>("[data-journey-run]");
   const root = document.querySelector<HTMLElement>("[data-journey]");
   // With reduced motion nothing takes over: the four stay on the page, together.
-  if (root && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  if (run && root && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
     const stops = Array.from(root.querySelectorAll<HTMLElement>("[data-stop]"));
     const says = Array.from(root.querySelectorAll<HTMLElement>("[data-say]"));
-    const last = stops.length - 1;
-    let at = 0;
-    let timer = 0;
-    let started = false;
+    const places = stops.map((stop) => Number(stop.dataset["stop"]));
+    const start = places[0] ?? 0;
+    const handoff = Number(root.dataset["handoff"]);
+    let at = -1;
+    let queued = false;
 
     const show = (index: number): void => {
       at = index;
       root.dataset["at"] = String(index);
-      root.style.setProperty("--reach", stops[index]?.dataset["reach"] ?? "100%");
       stops.forEach((stop, i) => {
         stop.classList.toggle("is-at", i === index);
         stop.classList.toggle("is-passed", i <= index);
@@ -130,52 +132,58 @@ const stops: { icon: IconName; title: string; text: string; x: number }[] = [
       says.forEach((say, i) => say.classList.toggle("is-off", i !== index));
     };
 
-    const halt = (): void => window.clearTimeout(timer);
-    // The light fades out and starts again: seen running backwards, it would
-    // say the opposite of what the section promises.
-    const restart = (): void => {
-      root.classList.add("is-rewind");
-      timer = window.setTimeout(() => {
-        show(0);
-        void root.offsetWidth;
-        root.classList.remove("is-rewind");
-        play();
-      }, 420);
+    // The light sits on the first stop when the panel pins and leaves through
+    // the edge when it lets go. A stop lights up the moment the line gets there.
+    const read = (): void => {
+      queued = false;
+      const pin = parseFloat(getComputedStyle(root).top);
+      const travel = run.offsetHeight - root.offsetHeight;
+      const progress = Math.min(1, Math.max(0, (pin - run.getBoundingClientRect().top) / travel));
+      const reach = start + (100 - start) * progress;
+      root.style.setProperty("--reach", reach.toFixed(2) + "%");
+      root.classList.toggle("is-past", reach >= handoff);
+      const index = places.reduce((found, place, i) => (reach >= place ? i : found), 0);
+      if (index !== at) show(index);
     };
-    // The last stop stays on screen for longer: it is the point of the section.
-    const play = (): void => {
-      timer = window.setTimeout(() => {
-        if (at === last) {
-          restart();
-          return;
-        }
-        show(at + 1);
-        play();
-      }, at === last ? 5000 : 3000);
+    const queue = (): void => {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(read);
+    };
+    const measure = (): void => {
+      run.style.setProperty("--plate", root.offsetHeight + "px");
+      queue();
     };
 
-    show(0);
-    // The line stays dark until it is on screen, so it can be seen drawing.
-    root.style.setProperty("--reach", "0%");
     root.classList.add("is-ready");
+    run.classList.add("is-running");
+    measure();
+    new ResizeObserver(measure).observe(root);
+    window.addEventListener("scroll", queue, { passive: true });
+    window.addEventListener("resize", measure, { passive: true });
 
-    // Runs only while in view.
+    // The comet only runs while it can be seen.
     new IntersectionObserver(([entry]) => {
-      const seen = entry?.isIntersecting ?? false;
-      halt();
-      root.classList.remove("is-rewind");
-      root.classList.toggle("is-live", seen);
-      if (!seen) return;
-      if (!started) {
-        started = true;
-        show(0);
-      }
-      play();
-    }, { threshold: 0.4 }).observe(root);
+      root.classList.toggle("is-live", entry?.isIntersecting ?? false);
+    }).observe(root);
   }
 </script>
 
 <style>
+  /* The run is as tall as the panel plus the scroll it takes to walk the line. */
+  .journey__run.is-running {
+    --walk: 220svh;
+    height: calc(var(--plate) + var(--walk));
+  }
+  /* Centered in the window, clear of the header. On a very short screen the
+     bottom of the panel wins, so the line never stays out of sight. */
+  .is-running .journey {
+    position: sticky;
+    inset-block-start: min(
+      max(var(--header-space), (100svh - var(--plate)) / 2),
+      100svh - var(--plate) - var(--space-4)
+    );
+  }
   .journey {
     --reach: 100%;
     position: relative;
@@ -304,11 +312,7 @@ const stops: { icon: IconName; title: string; text: string; x: number }[] = [
     position: absolute;
     inset: 0;
     clip-path: inset(-20% calc(100% - var(--reach)) -20% -1%);
-    transition: clip-path var(--dur-5) var(--ease-in-out), opacity var(--dur-3) var(--ease-out);
-  }
-  .is-rewind .journey__lit {
-    opacity: 0;
-    transition: opacity var(--dur-3) var(--ease-out);
+    transition: clip-path var(--dur-1) linear;
   }
   .journey__area {
     fill: url(#journey-wash);
@@ -378,7 +382,7 @@ const stops: { icon: IconName; title: string; text: string; x: number }[] = [
     translate: -50% -50%;
     transition: background-color var(--dur-3) var(--ease-out), box-shadow var(--dur-3) var(--ease-out);
   }
-  [data-at="3"] .journey__mark i {
+  .is-past .journey__mark i {
     background: var(--white);
     box-shadow: 0 0 16px rgb(var(--rgb-blue));
   }
@@ -415,8 +419,8 @@ const stops: { icon: IconName; title: string; text: string; x: number }[] = [
     color: var(--fg-muted);
     box-shadow: var(--shadow-glass);
     translate: -50% -50%;
-    transition: color var(--dur-3) var(--ease-out) var(--dur-2),
-      box-shadow var(--dur-3) var(--ease-out) var(--dur-2), scale var(--dur-3) var(--ease-spring);
+    transition: color var(--dur-2) var(--ease-out), box-shadow var(--dur-2) var(--ease-out),
+      scale var(--dur-3) var(--ease-spring);
   }
   .journey__stop :global(.icon) {
     width: 1.375rem;

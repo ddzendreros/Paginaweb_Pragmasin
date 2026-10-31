@@ -114,7 +114,7 @@ muestra menos a la vez.
 | Hero | Las partículas forman el logo, huyen del cursor y la app se endereza al subir. |
 | App | Las tarjetas viajan de columna, los números cambian con desenfoque, la app se arma al cambiar de negocio. |
 | Comparación | Los módulos sobrantes se van, los tuyos crecen y dibujan su pieza, y la lista se enciende en morado. «A tu medida» dura el doble en pantalla. Cambia solo hasta que lo tocas. |
-| Acompañamiento | La luz avanza sola por la línea y enciende cada parada, en ciclo y sin que nadie toque nada. La última dura más, con el resplandor en la salida; luego la luz se apaga y empieza de nuevo. Con movimiento reducido se leen las cuatro juntas. |
+| Acompañamiento | El panel se queda fijo y la luz avanza con el scroll: cada parada se enciende cuando la línea llega a ella y al subir se regresa. Al final sale por el borde con el resplandor. Con movimiento reducido se leen las cuatro juntas. |
 | Servicios | Las piezas corren solo mientras están a la vista. |
 | `/servicios` | El bloque se arma con las estrellas al llegar. El scroll lo talla: pantalla por capas, módulos que se apagan, conexiones con luz y cinco hojas de las que sale la regla que se lee. El texto cambia de una idea a la vez, sin clic ni temporizador, y la línea punteada se enciende con el avance. Sin JavaScript o con movimiento reducido no hay pieza y todo se lee de corrido. |
 | `/metodo` | La ruta del pase se traza al llegar y una luz la recorre. Al bajar, cada pase se queda fijo y el siguiente lo cubre: las letras del sello entran una por una, el código de barras se imprime y la línea avanza hasta su parada. La pila solo se forma si el último pase cabe en la pantalla; si no, o sin JavaScript, se leen de corrido. |
