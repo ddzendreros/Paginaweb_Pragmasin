@@ -1,306 +1,366 @@
 ---
 /**
- * El método como un recorrido: cuatro nodos y un paso abierto a la vez, en vez
- * de una tabla con todo a la vista. Sin JS se muestran todos los pasos.
+ * El método como cuatro pases que se apilan al bajar: cada uno se queda donde
+ * llegó y el siguiente lo cubre, dejando a la vista el borde con su avance en la
+ * ruta. Nada depende de un clic. Sin JS, o si la pantalla no alcanza para la
+ * pila, los pases se leen de corrido.
  */
 import Icon from "./Icon.astro";
 import type { IconName } from "./Icon.astro";
 
-interface Step {
-  num: string;
-  icon: IconName;
-  name: string;
-  rows: [string, string][];
+interface Props {
+  steps: {
+    num: string;
+    slug: string;
+    icon: IconName;
+    name: string;
+    rows: [string, string][];
+  }[];
 }
 
-const steps: Step[] = [
-  {
-    num: "01",
-    icon: "wave",
-    name: "Escuchar",
-    rows: [
-      [
-        "Qué hacemos",
-        "Hablamos contigo y con quien hace el trabajo. Queremos ver cómo opera tu negocio hoy, no cómo se supone que opera.",
-      ],
-      ["Qué recibes", "El problema y lo que vamos a construir, en una página."],
-      [
-        "Qué necesitamos de ti",
-        "Acceso a quien hace el trabajo. No a quien lo describe: a quien lo hace.",
-      ],
-    ],
-  },
-  {
-    num: "02",
-    icon: "pen",
-    name: "Diseñar",
-    rows: [
-      [
-        "Qué hacemos",
-        "Dibujamos las pantallas y el flujo antes de programar. Cambiar un dibujo no cuesta nada.",
-      ],
-      ["Qué recibes", "Las pantallas, el alcance y el costo, por escrito."],
-      ["Qué necesitamos de ti", "Una decisión. Para eso está hecho."],
-    ],
-  },
-  {
-    num: "03",
-    icon: "code",
-    name: "Construir",
-    rows: [
-      [
-        "Qué hacemos",
-        "Programamos por partes. Ves y pruebas cada avance, y lo ajustamos contigo.",
-      ],
-      ["Qué recibes", "Software funcionando en tu operación, no una presentación."],
-      ["Qué necesitamos de ti", "Una persona de tu lado que pueda decidir."],
-    ],
-  },
-  {
-    num: "04",
-    icon: "people",
-    name: "Acompañar",
-    rows: [
-      ["Qué hacemos", "Capacitamos a tu equipo y seguimos cerca después de entregar."],
-      ["Qué recibes", "Tu equipo usando el sistema y un canal directo con nosotros."],
-      ["Qué necesitamos de ti", "Que nos digas qué no está funcionando."],
-    ],
-  },
-];
+const { steps } = Astro.props;
 
-const rowIcons: IconName[] = ["play", "receipt", "chat"];
+// Each pass gets its own stretch of the same drawing.
+const bars = [3, 1, 2, 1, 4, 1, 1, 3, 2, 1, 3, 1, 1, 2, 4, 1, 2, 1, 3, 1, 1, 2, 3, 1, 2, 4, 1, 1, 2, 3];
+const glows = ["--rgb-violet", "--rgb-violet", "--rgb-blue", "--rgb-cyan"];
 ---
 
-<div class="method" data-method>
-  <div class="method__tabs" role="tablist" aria-label="Cuatro pasos">
-    <span class="method__rail" aria-hidden="true"><i></i></span>
-    {
-      steps.map((s, i) => (
-        <button
-          type="button"
-          class="method__tab"
-          role="tab"
-          id={`step-tab-${i}`}
-          aria-controls={`step-panel-${i}`}
-          aria-selected={i === 0 ? "true" : "false"}
-          tabindex={i === 0 ? 0 : -1}
-        >
-          <span class="method__icon">
-            <Icon name={s.icon} />
-          </span>
-          <span class="caption numeral">{s.num}</span>
-          <span class="method__name">{s.name}</span>
-        </button>
-      ))
-    }
-  </div>
-
+<ol class="legs" data-legs>
   {
-    steps.map((s, i) => (
-      <div
-        class="method__panel"
-        role="tabpanel"
-        id={`step-panel-${i}`}
-        aria-labelledby={`step-tab-${i}`}
-        data-panel-step
+    steps.map((step, i) => (
+      <li
+        class="leg"
+        id={step.slug}
+        style={`--i: ${i}; --done: ${i / (steps.length - 1)}; --glow: var(${glows[i]});`}
+        data-leg
       >
-        <h2 class="method__heading">{s.name}</h2>
-        <dl class="method__cards">
-          {s.rows.map(([label, text], r) => (
-            <div class="method__card panel">
-              <dt>
-                <Icon name={rowIcons[r] ?? "check"} />
-                {label}
-              </dt>
-              <dd>{text}</dd>
-            </div>
-          ))}
-        </dl>
-      </div>
+        <div class="leg__main">
+          <div class="leg__strip" aria-hidden="true">
+            <span class="caption numeral">{step.num}</span>
+            <span class="leg__track">
+              <i />
+              {steps.map((_, stop) => <b class:list={{ "is-lit": stop <= i }} />)}
+            </span>
+          </div>
+
+          <h2 class="stamp">
+            <span class="stamp__name">{step.name}</span>
+            <span class="stamp__letters" aria-hidden="true">
+              {[...step.name].map((letter, l) => <span style={`--l: ${l};`}>{letter}</span>)}
+            </span>
+          </h2>
+
+          <dl class="leg__rows">
+            {step.rows.map(([label, text]) => (
+              <div class="leg__row">
+                <dt>{label}</dt>
+                <dd>{text}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+
+        <div class="leg__stub" aria-hidden="true">
+          <span class="leg__glyph">
+            <Icon name={step.icon} />
+          </span>
+          <span class="leg__bars">
+            {[...bars.slice(i * 7), ...bars.slice(0, i * 7)].map((bar, b) => (
+              <i style={`--b: ${bar}; --n: ${b};`} />
+            ))}
+          </span>
+        </div>
+      </li>
     ))
   }
-</div>
+</ol>
 
 <script>
-  const root = document.querySelector<HTMLElement>("[data-method]");
+  const root = document.querySelector<HTMLElement>("[data-legs]");
   if (root) {
-    const calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const tabs = Array.from(root.querySelectorAll<HTMLButtonElement>('[role="tab"]'));
-    const panels = Array.from(root.querySelectorAll<HTMLElement>("[data-panel-step]"));
+    const legs = Array.from(root.querySelectorAll<HTMLElement>("[data-leg]"));
 
-    const open = (index: number, focus = false): void => {
-      tabs.forEach((tab, i) => {
-        const on = i === index;
-        tab.setAttribute("aria-selected", String(on));
-        tab.tabIndex = on ? 0 : -1;
-      });
-      panels.forEach((panel, i) => {
-        panel.hidden = i !== index;
-      });
-      root.style.setProperty("--done", String(index / (tabs.length - 1)));
-      if (focus) tabs[index]?.focus();
-      if (calm) return;
-      panels[index]?.querySelectorAll(".method__card").forEach((card, i) => {
-        card.animate(
-          [
-            { opacity: 0, translate: "0 0.875rem" },
-            { opacity: 1, translate: "0 0" },
-          ],
-          { duration: 480, delay: i * 70, easing: "cubic-bezier(0.22, 1.1, 0.36, 1)", fill: "backwards" },
-        );
-      });
+    // All the passes measure the same, so none shows under the one that covers
+    // it, and the pile only forms if the last one fits on this screen.
+    const fit = (): void => {
+      root.classList.remove("is-stacked");
+      root.style.removeProperty("--leg");
+      const tallest = Math.max(...legs.map((leg) => leg.offsetHeight));
+      root.style.setProperty("--leg", `${tallest}px`);
+      root.classList.add("is-stacked");
+      const last = legs[legs.length - 1];
+      const top = last ? Number.parseFloat(getComputedStyle(last).top) : 0;
+      root.classList.toggle("is-stacked", top + tallest <= window.innerHeight);
     };
 
-    root.classList.add("is-ready");
-    open(0);
-    tabs.forEach((tab, i) => {
-      tab.addEventListener("click", () => open(i));
-      tab.addEventListener("keydown", (event) => {
-        const step = event.key === "ArrowRight" ? 1 : event.key === "ArrowLeft" ? -1 : 0;
-        if (!step) return;
-        event.preventDefault();
-        open((i + step + tabs.length) % tabs.length, true);
-      });
-    });
+    let wide = window.innerWidth;
+    fit();
+    void document.fonts.ready.then(fit);
+    // A phone's address bar changes the height while scrolling: only width counts.
+    window.addEventListener(
+      "resize",
+      () => {
+        if (window.innerWidth === wide) return;
+        wide = window.innerWidth;
+        fit();
+      },
+      { passive: true },
+    );
+
+    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      root.classList.add("is-ready");
+      const arrive = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (!entry.isIntersecting) continue;
+            entry.target.classList.add("is-at");
+            arrive.unobserve(entry.target);
+          }
+        },
+        { threshold: 0.3 },
+      );
+      legs.forEach((leg) => arrive.observe(leg));
+    }
   }
 </script>
 
 <style>
-  .method__tabs {
-    position: relative;
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+  .legs {
+    --peek: 3.25rem;
+    --stub: 6.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-7);
   }
-  .method__rail {
+  .leg {
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) var(--stub);
+    min-height: var(--leg, 0);
+    overflow: hidden;
+    scroll-margin-block-start: calc(var(--header-space) + var(--i) * var(--peek) - var(--space-9));
+    border-radius: var(--radius-xl);
+    /* solid: the pass underneath must not read through this one */
+    background: var(--night-950);
+    box-shadow: var(--shadow-glass);
+    /* the two bites of the perforation */
+    -webkit-mask:
+      radial-gradient(0.75rem at calc(100% - var(--stub)) 0, transparent 98%, black) top / 100% 51% no-repeat,
+      radial-gradient(0.75rem at calc(100% - var(--stub)) 100%, transparent 98%, black) bottom / 100% 51% no-repeat;
+    mask:
+      radial-gradient(0.75rem at calc(100% - var(--stub)) 0, transparent 98%, black) top / 100% 51% no-repeat,
+      radial-gradient(0.75rem at calc(100% - var(--stub)) 100%, transparent 98%, black) bottom / 100% 51% no-repeat;
+  }
+  .leg::before {
+    content: "";
     position: absolute;
-    inset-block-start: 1.75rem;
-    inset-inline: 12.5%;
-    height: 2px;
-    background: var(--night-700);
+    inset: 0;
+    z-index: -1;
+    background: radial-gradient(
+      44rem 26rem at 100% 0%,
+      rgb(var(--glow) / 0.3),
+      rgb(var(--glow) / 0.08) 58%,
+      transparent
+    );
   }
-  .method__rail i {
-    display: block;
-    height: 100%;
-    background: var(--strand);
-    box-shadow: 0 0 14px rgb(var(--rgb-blue));
-    transform-origin: left;
-    transform: scaleX(var(--done, 0));
-    transition: transform var(--dur-4) var(--ease-out);
-  }
-  .method__tab {
-    position: relative;
-    display: grid;
-    justify-items: center;
-    gap: var(--space-1);
-    padding: 0 var(--space-1) var(--space-2);
-    border: 0;
-    background: none;
-    color: inherit;
-    font: inherit;
-    cursor: pointer;
-  }
-  .method__tab:focus-visible {
-    border-radius: var(--radius-m);
-  }
-  .method__icon {
-    display: grid;
-    place-items: center;
-    width: 3.5rem;
-    height: 3.5rem;
-    margin-block-end: var(--space-2);
-    border-radius: 50%;
-    background: var(--night-800);
-    color: var(--fg-secondary);
-    box-shadow: var(--shadow-key);
-    transition: color var(--dur-2) var(--ease-out), box-shadow var(--dur-3) var(--ease-out),
-      scale var(--dur-3) var(--ease-spring);
-  }
-  .method__tab:hover .method__icon {
-    color: var(--fg);
-  }
-  .method__tab[aria-selected="true"] .method__icon {
-    color: var(--white);
-    scale: 1.08;
-    box-shadow: var(--shadow-key), 0 0 0 1px rgb(var(--rgb-blue)), 0 0 34px rgb(var(--rgb-blue) / 0.7);
-  }
-  .method__name {
-    font-size: var(--text-h3);
-    line-height: var(--leading-h3);
-    letter-spacing: var(--tracking-h3);
-    font-weight: var(--weight-medium);
-    color: var(--fg-secondary);
-    transition: color var(--dur-2) var(--ease-out);
-  }
-  .method__tab[aria-selected="true"] .method__name {
-    color: var(--fg);
+  .is-stacked .leg {
+    position: sticky;
+    inset-block-start: calc(var(--header-space) + var(--i) * var(--peek));
   }
 
-  .method__panel {
-    margin-block-start: var(--space-6);
+  .leg__main {
+    container-type: inline-size;
+    min-width: 0;
+    padding: 0 var(--space-7) var(--space-5);
   }
-  .method__panel + .method__panel {
-    margin-block-start: var(--space-6);
+
+  /* --- el borde que queda a la vista: dónde va la ruta ----------------------- */
+  .leg__strip {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: var(--space-4);
+    height: var(--peek);
   }
-  /* The name is already on the node once the tabs work. */
-  .is-ready .method__heading {
+  .leg__strip .caption {
+    color: var(--fg-secondary);
+  }
+  .leg__track {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 0.5rem;
+  }
+  .leg__track::before {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    inset-block-start: calc(50% - 0.5px);
+    height: 1px;
+    background: rgb(var(--rgb-frost) / 0.2);
+  }
+  .leg__track i {
+    position: absolute;
+    inset-inline: 0;
+    inset-block-start: calc(50% - 0.5px);
+    height: 1px;
+    background: var(--strand);
+    transform: scaleX(var(--done));
+    transform-origin: left center;
+    transition: transform var(--dur-5) var(--ease-in-out) var(--dur-2);
+  }
+  .leg__track b {
+    position: relative;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: var(--night-700);
+    transition: background-color var(--dur-3) var(--ease-out), box-shadow var(--dur-3) var(--ease-out);
+    transition-delay: var(--dur-5);
+  }
+  .leg__track b.is-lit {
+    background: var(--white);
+    box-shadow: 0 0 10px rgb(var(--rgb-blue));
+  }
+
+  /* --- el sello: la palabra llena el pase, letra por letra ------------------- */
+  .stamp {
+    margin-block: var(--space-4) var(--space-6);
+    font-size: var(--text-stamp);
+    line-height: 1.04;
+    font-weight: var(--weight-text);
+    font-stretch: var(--width-stamp);
+    text-transform: uppercase;
+  }
+  .stamp__name {
     position: absolute;
     width: 1px;
     height: 1px;
     overflow: hidden;
     clip-path: inset(50%);
   }
-  .method__heading {
-    margin-block-end: var(--space-3);
-    font-size: var(--text-h3);
-    font-weight: var(--weight-medium);
-  }
-  .method:not(.is-ready) .method__tabs {
-    display: none;
-  }
-  .method__cards {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: var(--space-3);
-  }
-  .method__card {
-    display: grid;
-    align-content: start;
-    gap: var(--space-3);
-    padding: var(--space-5);
-    min-height: 13rem;
-  }
-  .method__card dt {
+  .stamp__letters {
     display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    font-size: var(--text-small);
-    font-weight: var(--weight-medium);
-    color: var(--sky);
+    justify-content: space-between;
   }
-  .method__card dd {
+  .stamp__letters span {
+    transition: opacity var(--dur-4) var(--ease-out), translate var(--dur-4) var(--ease-out),
+      filter var(--dur-4) var(--ease-out);
+    transition-delay: calc(var(--l) * 42ms);
+  }
+
+  .leg__rows {
+    display: grid;
+  }
+  .leg__row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2.4fr);
+    gap: var(--space-1) var(--gutter);
+    padding-block: var(--space-4);
+    border-block-start: var(--hairline) solid rgb(var(--rgb-frost) / 0.14);
+  }
+  .leg__row dt {
+    padding-block-start: 0.125rem;
+    font-size: var(--text-small);
+    line-height: var(--leading-small);
+    font-weight: var(--weight-medium);
+    color: var(--fg-secondary);
+  }
+  .leg__row dd {
+    max-width: var(--measure);
     font-size: var(--text-lead);
-    line-height: var(--leading-lead);
+    line-height: 1.4;
     letter-spacing: var(--tracking-lead);
+    color: var(--fg-secondary);
     text-wrap: pretty;
   }
+  /* what you walk away with is the line that matters on every pass */
+  .leg__row:nth-child(2) dd {
+    color: var(--white);
+  }
+
+  /* --- el talón -------------------------------------------------------------- */
+  .leg__stub {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    justify-items: stretch;
+    gap: var(--space-4);
+    padding: var(--space-4);
+    border-inline-start: 2px dashed rgb(var(--rgb-frost) / 0.22);
+  }
+  .leg__glyph {
+    display: grid;
+    place-items: center;
+    color: var(--white);
+  }
+  .leg__bars {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1875rem;
+    min-height: 0;
+  }
+  .leg__bars i {
+    display: block;
+    flex: var(--b) 0 0;
+    background: rgb(var(--rgb-frost) / 0.56);
+    transform-origin: left center;
+    transition: transform var(--dur-4) var(--ease-out);
+    transition-delay: calc(var(--n) * 18ms);
+  }
+
+  /* --- llegada: el pase se imprime al entrar --------------------------------- */
+  .is-ready .leg:not(.is-at) .stamp__letters span {
+    opacity: 0;
+    translate: 0 0.3em;
+    filter: blur(8px);
+  }
+  .is-ready .leg:not(.is-at) .leg__bars i {
+    transform: scaleX(0);
+  }
+  .is-ready .leg:not(.is-at) .leg__track i {
+    transform: scaleX(0);
+  }
+  .is-ready .leg:not(.is-at) .leg__track b {
+    background: var(--night-700);
+    box-shadow: none;
+  }
+
   @media (width <= 56rem) {
-    .method__cards {
-      grid-template-columns: minmax(0, 1fr);
+    .legs {
+      --stub: 4.5rem;
     }
-    .method__card {
-      min-height: 0;
+    .leg__main {
+      padding-inline: var(--space-5);
+    }
+    .leg__row {
+      grid-template-columns: minmax(0, 1fr);
     }
   }
   @media (width <= 40rem) {
-    .method__icon {
-      width: 2.75rem;
-      height: 2.75rem;
+    .legs {
+      --peek: 2.75rem;
     }
-    .method__rail {
-      inset-block-start: 1.375rem;
+    .leg {
+      grid-template-columns: minmax(0, 1fr);
+      -webkit-mask: none;
+      mask: none;
     }
-    .method__name {
-      font-size: var(--text-small);
+    .leg__stub {
+      display: none;
+    }
+    .leg__main {
+      padding-block-end: var(--space-3);
+    }
+    .stamp {
+      margin-block: var(--space-2) var(--space-4);
+    }
+    .leg__row {
+      padding-block: var(--space-3);
+    }
+    .leg__row dd {
+      font-size: var(--text-body);
     }
   }
 </style>

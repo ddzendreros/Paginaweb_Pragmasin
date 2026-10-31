@@ -1,0 +1,221 @@
+---
+/**
+ * El pase de la apertura: el recorrido completo en vidrio, de la primera parada
+ * a la última. Cada parada lleva a su paso, y una luz sigue la línea mientras
+ * la página está en reposo.
+ */
+interface Props {
+  lead: string;
+  steps: { num: string; slug: string; name: string }[];
+}
+
+const { lead, steps } = Astro.props;
+
+// Barras fijas: es un dibujo, no un código que alguien deba poder leer.
+const bars = [3, 1, 2, 1, 4, 1, 1, 3, 2, 1, 3, 1, 1, 2, 4, 1, 2, 1, 3, 1, 1, 2, 3, 1, 2, 4, 1];
+---
+
+<div class="ticket">
+  <div class="ticket__main">
+    <p class="ticket__lead">{lead}</p>
+    <nav class="ticket__route" aria-label="Cuatro pasos">
+      <span class="ticket__line" aria-hidden="true"><i></i><b></b></span>
+      <ol>
+        {
+          steps.map((step, i) => (
+            <li class="ticket__stop" style={`--i: ${i};`}>
+              <a href={`#${step.slug}`}>
+                <span class="ticket__node" aria-hidden="true" />
+                <span class="ticket__name">{step.name}</span>
+                <span class="caption numeral">{step.num}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ol>
+    </nav>
+  </div>
+  <div class="ticket__stub" aria-hidden="true">
+    {bars.map((bar) => <i style={`--b: ${bar};`} />)}
+  </div>
+</div>
+
+<style>
+  .ticket {
+    --stub: 5rem;
+    --stop: 3.25rem;
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) var(--stub);
+    overflow: hidden;
+    border-radius: var(--radius-xl);
+    background: rgb(var(--rgb-ink) / 0.56);
+    box-shadow: var(--shadow-glass);
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+    /* the two bites of the perforation */
+    -webkit-mask:
+      radial-gradient(0.625rem at calc(100% - var(--stub)) 0, transparent 98%, black) top / 100% 51% no-repeat,
+      radial-gradient(0.625rem at calc(100% - var(--stub)) 100%, transparent 98%, black) bottom / 100% 51% no-repeat;
+    mask:
+      radial-gradient(0.625rem at calc(100% - var(--stub)) 0, transparent 98%, black) top / 100% 51% no-repeat,
+      radial-gradient(0.625rem at calc(100% - var(--stub)) 100%, transparent 98%, black) bottom / 100% 51% no-repeat;
+  }
+  .ticket::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: radial-gradient(
+      28rem 22rem at 100% 0%,
+      rgb(var(--rgb-violet) / 0.42),
+      rgb(var(--rgb-violet) / 0.1) 56%,
+      transparent
+    );
+  }
+  .ticket__main {
+    display: grid;
+    gap: var(--space-5);
+    min-width: 0;
+    padding: var(--space-6);
+  }
+  .ticket__lead {
+    font-size: var(--text-h3);
+    line-height: var(--leading-h3);
+    letter-spacing: var(--tracking-h3);
+    font-weight: var(--weight-text);
+    text-wrap: pretty;
+  }
+
+  /* --- la ruta -------------------------------------------------------------- */
+  .ticket__route {
+    position: relative;
+  }
+  .ticket__line {
+    position: absolute;
+    inset-block: calc(var(--stop) / 2);
+    inset-inline-start: 0.3125rem;
+    width: 1px;
+    background: rgb(var(--rgb-frost) / 0.24);
+  }
+  .ticket__line i {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, #5b19f1, #1b7ffc 55%, #00c7f8);
+    transform-origin: top;
+  }
+  .ticket__line b {
+    display: none;
+  }
+  .ticket__stop a {
+    position: relative;
+    display: grid;
+    grid-template-columns: 0.625rem minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--space-4);
+    min-height: var(--stop);
+    color: var(--fg);
+    text-decoration: none;
+  }
+  .ticket__stop + .ticket__stop a {
+    border-block-start: var(--hairline) solid rgb(var(--rgb-frost) / 0.12);
+  }
+  .ticket__node {
+    width: 0.625rem;
+    height: 0.625rem;
+    border-radius: 50%;
+    background: var(--white);
+    box-shadow: 0 0 12px rgb(var(--rgb-blue));
+    transition: scale var(--dur-2) var(--ease-spring);
+  }
+  .ticket__name {
+    font-size: var(--text-lead);
+    letter-spacing: var(--tracking-lead);
+    font-weight: var(--weight-medium);
+  }
+  .ticket__stop a:hover .ticket__node {
+    scale: 1.5;
+  }
+  .ticket__stop a:hover .caption {
+    color: var(--fg);
+  }
+
+  .ticket__stub {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1875rem;
+    padding: var(--space-5) var(--space-4);
+    border-inline-start: 2px dashed rgb(var(--rgb-frost) / 0.22);
+  }
+  .ticket__stub i {
+    display: block;
+    flex: var(--b) 0 0;
+    background: rgb(var(--rgb-frost) / 0.72);
+  }
+
+  /* --- llegada: la ruta se traza y luego la luz la sigue --------------------- */
+  @media (prefers-reduced-motion: no-preference) {
+    .ticket__line i {
+      animation: ticket-draw 1.4s var(--ease-in-out) 0.35s backwards;
+    }
+    .ticket__node {
+      animation: ticket-node var(--dur-3) var(--ease-spring) backwards;
+      animation-delay: calc(0.35s + var(--i) * 0.42s);
+    }
+    .ticket__line b {
+      display: block;
+      position: absolute;
+      inset-inline-start: 50%;
+      width: 3px;
+      height: 3.5rem;
+      margin-inline-start: -1.5px;
+      border-radius: var(--radius-pill);
+      background: linear-gradient(180deg, transparent, var(--white));
+      box-shadow: 0 0 14px rgb(var(--rgb-cyan));
+      opacity: 0;
+      animation: ticket-spark 6s var(--ease-in-out) 2.2s infinite;
+    }
+  }
+  @keyframes ticket-draw {
+    from {
+      transform: scaleY(0);
+    }
+  }
+  @keyframes ticket-node {
+    from {
+      scale: 0;
+    }
+  }
+  @keyframes ticket-spark {
+    0% {
+      inset-block-start: -3.5rem;
+      opacity: 0;
+    }
+    10% {
+      opacity: 1;
+    }
+    46% {
+      opacity: 1;
+    }
+    56%,
+    100% {
+      inset-block-start: 100%;
+      opacity: 0;
+    }
+  }
+
+  @media (width <= 40rem) {
+    .ticket {
+      grid-template-columns: minmax(0, 1fr);
+      -webkit-mask: none;
+      mask: none;
+    }
+    .ticket__main {
+      padding: var(--space-5);
+    }
+    .ticket__stub {
+      display: none;
+    }
+  }
+</style>

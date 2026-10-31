@@ -84,6 +84,7 @@
   --rgb-light: 255 255 255;
   --rgb-violet: 91 25 241;
   --rgb-blue: 27 127 252;
+  --rgb-cyan: 0 199 248;
   --rgb-frost: 186 215 247;
 
   /* --- Typography --------------------------------------------------------
@@ -103,6 +104,9 @@
   --text-block: clamp(2.125rem, min(5.6vw, 12svh), 6rem);
   --text-block-first: clamp(2.75rem, min(7.2vw, 15svh), 7.5rem);
   --text-statement: clamp(1.1875rem, 1.05rem + 0.6vw, 1.75rem); /* 19 -> 28 */
+  /* /metodo: the promise at full scale, and the step names stamped across a pass */
+  --text-hero: clamp(3.25rem, 9.2vw, 8rem);
+  --text-stamp: clamp(2rem, 9cqi, 6rem);
 
   --leading-display: 1;
   --leading-h2: 1.06;
@@ -115,6 +119,7 @@
   --leading-small: 1.45;
   --leading-caption: 1.4;
 
+  --tracking-hero: -0.04em;
   --tracking-display: -0.034em;
   --tracking-h2: -0.028em;
   --tracking-paper: -0.015em;
@@ -122,6 +127,7 @@
   --tracking-h3: -0.016em;
   --tracking-lead: -0.006em;
 
+  --weight-light: 320;
   --weight-text: 400;
   --weight-paper: 430;
   --weight-display: 440;
@@ -129,6 +135,7 @@
   --weight-strong: 600;
   --width-heading: 104%;
   --width-block: 88%;
+  --width-stamp: 125%;
 
   /* --- Spacing — 4/8 base ------------------------------------------------ */
   --space-1: 0.25rem;   /*   4 */
