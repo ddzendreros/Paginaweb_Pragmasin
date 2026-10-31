@@ -24,7 +24,6 @@ Requiere Node ≥ 22.12.
 | `ENTORNO.md` → `RESEARCH.md` → `DESIGN-SYSTEM.md` → `CONTENIDO.md` → `ARQUITECTURA.md` → `CRITICA.md` | Entregables por fase (0→6) |
 | `TODO-CONTENIDO.md` | Todo lo que falta del cliente (`[[PENDIENTE]]`); **el sitio no lanza hasta vaciarlo** |
 | `public/styles/tokens.css` | Design tokens — el único lugar donde viven valores de diseño |
-| `public/design/specimen.html` | Specimen tipográfico vivo (mismos tokens): `/design/specimen.html` |
 | `branding/logo/` | Sistema de logo: SVG master (trazado del original, IoU 0.9917), mono, favicons, OG |
 | `src/` | Layout, 4 componentes y 6 páginas |
 

@@ -14,7 +14,7 @@
 | Cliente JS | ~2KB inline total (validación de formulario + observer del gesto) | Presupuesto <100KB gzip: cumplido ~50×; cero frameworks de cliente, cero islands. |
 | Integraciones | Solo `@astrojs/sitemap@3.7.3` | SEO técnico exigido en Fase 5; paga su renta generando el sitemap desde las rutas reales. |
 | Fuentes | Estáticas en `public/fonts` (3 woff2 variable, subset latin) | Autohospedadas con `font-display: swap` + preload; latin cubre es-MX completo. |
-| Tokens | `public/styles/tokens.css` como asset estático | Un solo archivo consumido por el sitio Y el specimen; sin build-step no hay deriva entre ambos. |
+| Tokens | `public/styles/tokens.css` como asset estático | Un solo archivo como fuente de color, tipografía y espacio; sin build-step. |
 | Dominio | Placeholder `https://pragmasyn.example` vía `SITE_URL` | No se inventa un dominio real; `.example` es TLD reservado y canonical/sitemap/robots se regeneran solos al fijarlo. |
 | Formulario | POST JSON a `/api/contacto` | `vercel.json` lo reenvía al Worker `workers/contacto`, que lo manda por Email Routing de Cloudflare. Sin proveedor de formularios ni base de datos; si falla, se ofrece el mismo mensaje por WhatsApp. |
 
@@ -26,7 +26,6 @@
 ├── public/
 │   ├── fonts/                # 3 × woff2 variable, subset latin
 │   ├── styles/tokens.css     # LA fuente de verdad visual (Fase 2)
-│   ├── design/specimen.html  # specimen vivo, consume los mismos tokens
 │   ├── favicon.svg/.ico, apple-touch-icon.png, og-image.png
 ├── src/
 │   ├── styles/base.css       # lengua visual compartida (solo tokens)
