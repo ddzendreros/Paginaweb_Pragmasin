@@ -1,6 +1,6 @@
 <!doctype html>
 <!-- Fuente del og-image. Para regenerarlo: copia este archivo y
-     branding/logo/logo-mono.svg a public/, corre el sitio, abre /og-source.html
+     branding/logo/logo.svg a public/, corre el sitio, abre /og-source.html
      en un viewport de 1200x630 exactos y captura la pantalla sobre
      public/og-image.png. Después borra las copias de public/: esta página no
      se publica. -->
@@ -18,14 +18,35 @@
       .og {
         width: 1200px;
         height: 630px;
-        background: var(--cobalt);
+        position: relative;
+        overflow: hidden;
+        background: var(--night-950);
         color: var(--white);
         font-family: var(--font-sans);
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        padding: 80px;
+        padding: 72px 80px;
         box-sizing: border-box;
+      }
+      .og__art {
+        position: absolute;
+        top: 40px;
+        right: -170px;
+        width: 620px;
+      }
+      .og__art svg {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+      .og__art--glow {
+        filter: blur(70px) saturate(135%);
+        opacity: 0.8;
+      }
+      .og__brand,
+      .og__title {
+        position: relative;
       }
       .og__brand {
         display: flex;
@@ -43,9 +64,9 @@
       }
       .og__title {
         margin: 0;
-        font-size: 112px;
+        font-size: 100px;
         line-height: 1;
-        font-weight: var(--weight-strong);
+        font-weight: var(--weight-display);
         font-stretch: var(--width-heading);
         letter-spacing: var(--tracking-display);
       }
@@ -53,17 +74,21 @@
   </head>
   <body>
     <div class="og">
+      <span class="og__art og__art--glow" data-logo></span>
+      <span class="og__art" data-logo></span>
       <div class="og__brand">
-        <span class="og__mark" id="mark"></span>
+        <span class="og__mark" data-logo></span>
         <span>Pragmasyn</span>
       </div>
       <p class="og__title">Deja de adaptarte<br />a tu software.</p>
     </div>
     <script>
-      fetch("/logo-mono.svg")
+      fetch("/logo.svg")
         .then((r) => r.text())
         .then((svg) => {
-          document.getElementById("mark").innerHTML = svg;
+          document.querySelectorAll("[data-logo]").forEach((el) => {
+            el.innerHTML = svg;
+          });
         });
     </script>
   </body>
