@@ -27,8 +27,8 @@ decisiones; los valores viven allá.
 |---|---|---|---|
 | `.ground-dark` | Toda la página | `--night-950` | `--mist-100` |
 | `.ground-light` | La app del hero y avisos | `--white` | `--ink-900` |
-| `.ground-paper` | La hoja de «El problema» en el inicio | `--white` | `--paper-ink` |
-| `.ground-cobalt` | La tarjeta de WhatsApp en `/contacto` | `--cobalt` | `--white` |
+| `.ground-paper` | La hoja de «El problema» en el inicio y la hoja de `/contacto` | `--white` | `--paper-ink` |
+| `.ground-cobalt` | Sin uso desde el rediseño de `/contacto` | `--cobalt` | `--white` |
 
 `--night-950` nunca es negro puro: el azul del logo lo sostiene. Las superficies suben un paso cada
 vez (`--night-900`, `--night-800`). Los componentes solo leen tokens contextuales, y todos los pares
@@ -42,6 +42,12 @@ Steep: casi acromático, con el morado del logo (`--lit-a`, `--surface-lit`) com
 medida». Es una tarjeta del ancho del encabezado, nunca una banda de lado a lado: la constelación
 debe seguir a la vista alrededor. Mientras el encabezado pasa sobre la hoja se vuelve casi sólido
 (`--glass-alpha`), porque el vidrio sobre blanco baja el contraste del menú.
+
+`/contacto` usa la misma hoja, con la referencia Extract: una galería de papel. El título monumental
+queda sobre la noche y todo lo demás vive en una hoja del ancho del encabezado. Dentro hay una sola
+superficie oscura (la placa de WhatsApp, `--surface-lit`), una sola zona de color (`--violet-mist`
+en «Qué sigue», como el menta de la referencia) y líneas finas de tinta. No se adoptaron sus fuentes
+de pago ni el menta: se conserva Mona Sans y la gama del logo.
 
 ## Tipografía
 
@@ -112,6 +118,7 @@ muestra menos a la vez.
 | Servicios | Las piezas corren solo mientras están a la vista. |
 | `/servicios` | El bloque se arma con las estrellas al llegar. El scroll lo talla: pantalla por capas, módulos que se apagan, conexiones con luz y cinco hojas de las que sale la regla que se lee. El texto cambia de una idea a la vez, sin clic ni temporizador, y la línea punteada se enciende con el avance. Sin JavaScript o con movimiento reducido no hay pieza y todo se lee de corrido. |
 | `/metodo` | La ruta del pase se traza al llegar y una luz la recorre. Al bajar, cada pase se queda fijo y el siguiente lo cubre: las letras del sello entran una por una, el código de barras se imprime y la línea avanza hasta su parada. La pila solo se forma si el último pase cabe en la pantalla; si no, o sin JavaScript, se leen de corrido. |
+| `/contacto` | El título llega palabra por palabra y la hoja sube. En la placa, el mensaje de WhatsApp se escribe solo, se envía y alguien empieza a contestar, en ciclo y solo mientras está a la vista. Las líneas de «Qué sigue» se trazan una tras otra. Sin JavaScript o con movimiento reducido el mensaje queda escrito. |
 | Páginas | Transición entre páginas; el encabezado no se mueve. |
 
 Duraciones de 120 a 900 ms (`--dur-1` a `--dur-5`). Con `prefers-reduced-motion` todo se detiene, y
