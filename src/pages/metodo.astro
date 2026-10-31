@@ -1,4 +1,5 @@
 ---
+import Strands from "../components/Strands.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 
 const steps = [
@@ -113,7 +114,7 @@ const nots = [
     </div>
   </section>
 
-  <section class="ground-dark act" aria-labelledby="nots-title">
+  <section class="act nots-act" aria-labelledby="nots-title">
     <div class="act__inner grid-12">
       <p class="sec__name">Qué no hacemos</p>
       <div class="sec__body">
@@ -125,7 +126,8 @@ const nots = [
     </div>
   </section>
 
-  <section class="ground-cobalt act" aria-labelledby="cierre-title">
+  <section class="act closing-act" aria-labelledby="cierre-title">
+    <Strands class="closing__art" />
     <div class="act__inner grid-12 closing">
       <h2 id="cierre-title" class="display closing__title">El primer paso es hablar.</h2>
       <div class="closing__aside">
@@ -219,6 +221,10 @@ const nots = [
     }
   }
 
+  .nots-act {
+    background: var(--bg-chrome);
+    border-block-start: var(--hairline) solid var(--hairline-color);
+  }
   .nots {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));

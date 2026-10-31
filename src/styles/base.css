@@ -9,7 +9,7 @@
 }
 
 html {
-  scrollbar-color: var(--fog-400) var(--fog-100);
+  scrollbar-color: var(--night-500) var(--night-950);
   scroll-behavior: smooth;
   /* anchors (the QR points at #diagnostico) must clear the sticky header */
   scroll-padding-top: var(--space-9);
@@ -121,13 +121,22 @@ ol {
   gap: var(--space-4);
   margin-block-end: clamp(var(--space-6), 4vw, var(--space-7));
 }
+/* a title can be its own head; it must stay a line of text, not a grid */
+.h2.head {
+  display: block;
+}
+/* a section's first block can hold both the name of the section and its head */
+.sec__body.head {
+  margin-block-end: clamp(var(--space-6), 4vw, var(--space-7));
+}
 .head .lead {
   max-width: var(--measure);
 }
 
 /* Page openings: title on the left, what it means on the right */
 .opening {
-  padding-block: clamp(var(--space-6), 5vw, var(--space-8)) clamp(var(--space-6), 4vw, var(--space-7));
+  padding-block: calc(var(--header-space) + clamp(var(--space-6), 5vw, var(--space-8)))
+    clamp(var(--space-6), 4vw, var(--space-7));
 }
 .opening__top {
   align-items: end;
@@ -153,7 +162,7 @@ ol {
 .display,
 .h2,
 .h3 {
-  font-weight: var(--weight-strong);
+  font-weight: var(--weight-display);
   text-wrap: balance;
 }
 .display,
@@ -214,11 +223,12 @@ ol {
   text-decoration: underline;
   text-underline-offset: 0.2em;
   text-decoration-thickness: var(--hairline);
-  transition: color var(--dur-1) var(--ease-out);
+  transition: color var(--dur-2) var(--ease-out),
+    text-underline-offset var(--dur-2) var(--ease-out);
 }
 .link:hover {
   color: var(--interactive-strong);
-  text-decoration-thickness: var(--hairline-strong);
+  text-underline-offset: 0.32em;
 }
 .link--plain {
   display: inline-flex;
@@ -242,12 +252,14 @@ ol {
   text-decoration: none;
   white-space: nowrap;
   cursor: pointer;
-  transition: background-color var(--dur-1) var(--ease-out),
-    border-color var(--dur-1) var(--ease-out),
-    color var(--dur-1) var(--ease-out);
+  transition: background-color var(--dur-2) var(--ease-out),
+    border-color var(--dur-2) var(--ease-out),
+    box-shadow var(--dur-3) var(--ease-out),
+    color var(--dur-2) var(--ease-out),
+    scale var(--dur-1) var(--ease-out);
 }
 .btn:active {
-  translate: 0 1px;
+  scale: 0.97;
 }
 .btn--sm {
   font-size: var(--text-small);
@@ -260,11 +272,12 @@ ol {
 }
 .btn--primary:hover {
   background: var(--action-bg-strong);
+  box-shadow: 0 0 0 4px rgb(var(--rgb-light) / 0.12), 0 0 32px rgb(var(--rgb-blue) / 0.45);
 }
 .btn--secondary {
-  background: transparent;
+  background: rgb(var(--rgb-light) / 0.05);
   color: var(--fg);
-  border-color: var(--control-border);
+  border-color: rgb(var(--rgb-light) / 0.14);
 }
 .btn--secondary:hover {
   border-color: var(--fg);
@@ -430,6 +443,19 @@ ol {
 }
 
 /* --- closing: the last thing a page says, built like its opening --- */
+.closing-act {
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+  border-block-start: var(--hairline) solid var(--hairline-color);
+}
+.closing__art {
+  inset-block-start: 50%;
+  inset-inline-end: -8%;
+  width: min(44rem, 90vw);
+  margin-block-start: calc(min(44rem, 90vw) * -0.44);
+  opacity: 0.55;
+}
 .closing {
   align-items: end;
   row-gap: var(--space-5);
@@ -442,4 +468,44 @@ ol {
   display: grid;
   gap: var(--space-5);
   justify-items: start;
+}
+.closing__aside .lead {
+  color: var(--fg);
+  text-shadow: 0 0 20px rgb(var(--rgb-ink));
+}
+
+/* --- movement -------------------------------------------------------------
+   JavaScript adds these classes, so without it everything is simply there.
+   Blocks settle in place; headings arrive a word at a time. */
+.reveal {
+  opacity: 0;
+  translate: 0 1rem;
+  transition: opacity var(--dur-5) var(--ease-out), translate var(--dur-5) var(--ease-out);
+}
+.reveal.is-in {
+  opacity: 1;
+  translate: 0 0;
+}
+.w {
+  display: inline-block;
+  opacity: 0;
+  translate: 0 0.35em;
+  filter: blur(8px);
+  transition: opacity var(--dur-5) var(--ease-out), translate var(--dur-5) var(--ease-out),
+    filter var(--dur-5) var(--ease-out);
+  transition-delay: calc(var(--w, 0) * 38ms);
+}
+.is-in .w {
+  opacity: 1;
+  translate: 0 0;
+  filter: blur(0);
+}
+@media print, (prefers-reduced-motion: reduce) {
+  .reveal,
+  .w {
+    opacity: 1;
+    translate: 0 0;
+    filter: none;
+    transition: none;
+  }
 }

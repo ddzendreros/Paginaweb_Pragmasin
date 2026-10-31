@@ -1,0 +1,93 @@
+---
+/**
+ * El arte de la marca: las tres cintas del logo a gran escala, iluminadas y en
+ * giro lento. Una capa desenfocada da la luz y otra define la forma. 120 grados
+ * es la simetría propia del logo. Es decoración: se oculta a los lectores de
+ * pantalla y no recibe clics.
+ */
+import logoSvg from "../../branding/logo/logo.svg?raw";
+
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<div class:list={["strands", className]} aria-hidden="true" data-strands>
+  <span class="strands__layer strands__glow" set:html={logoSvg} />
+  <span class="strands__layer strands__form" set:html={logoSvg} />
+</div>
+
+<script>
+  // The art leans toward the pointer. One listener, and only where there is a
+  // pointer to follow and motion is welcome.
+  const fine = window.matchMedia("(hover: hover) and (prefers-reduced-motion: no-preference)");
+  if (fine.matches) {
+    const fields = document.querySelectorAll<HTMLElement>("[data-strands]");
+    let frame = 0;
+    window.addEventListener(
+      "pointermove",
+      (event) => {
+        if (frame) return;
+        frame = requestAnimationFrame(() => {
+          frame = 0;
+          const x = (event.clientX / window.innerWidth - 0.5) * 2;
+          const y = (event.clientY / window.innerHeight - 0.5) * 2;
+          for (const field of fields) {
+            field.style.setProperty("--lean-x", x.toFixed(3));
+            field.style.setProperty("--lean-y", y.toFixed(3));
+          }
+        });
+      },
+      { passive: true },
+    );
+  }
+</script>
+
+<style>
+  .strands {
+    --lean-x: 0;
+    --lean-y: 0;
+    position: absolute;
+    z-index: -1;
+    display: grid;
+    place-items: center;
+    pointer-events: none;
+    translate: calc(var(--lean-x) * 14px) calc(var(--lean-y) * 10px);
+    transition: translate var(--dur-5) var(--ease-out);
+  }
+  .strands__layer {
+    grid-area: 1 / 1;
+    display: block;
+    width: 100%;
+    /* the turning point is the center of the mark, not of its box */
+    transform-origin: 50% 57%;
+    /* the blur is painted once; after that the GPU only turns the layer */
+    will-change: rotate;
+    animation: strands-turn 140s linear infinite;
+  }
+  .strands__layer :global(svg) {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-width: none;
+  }
+  .strands__glow {
+    filter: blur(clamp(36px, 6vw, 84px)) saturate(135%);
+    opacity: 0.8;
+  }
+  .strands__form {
+    opacity: 0.92;
+  }
+  @keyframes strands-turn {
+    to {
+      rotate: 360deg;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .strands__layer {
+      animation: none;
+    }
+  }
+</style>

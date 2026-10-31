@@ -181,7 +181,7 @@ const emptyMessage = "Sin esto no podemos ayudarte: cuéntanos aunque sea en una
     </div>
   </section>
 
-  <div class="toast ground-dark" role="status" aria-live="polite" data-toast></div>
+  <div class="toast ground-light" role="status" aria-live="polite" data-toast></div>
 </BaseLayout>
 
 <script>
@@ -321,9 +321,9 @@ const emptyMessage = "Sin esto no podemos ayudarte: cuéntanos aunque sea en una
   .contact__form {
     --col: 6 / -1;
     padding: clamp(var(--space-4), 3vw, var(--space-6));
-    background: var(--bg-raised);
-    border: var(--hairline) solid var(--fog-400);
-    border-radius: var(--radius-l);
+    background: var(--bg-chrome);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-key);
   }
   /* On a phone the order is: WhatsApp, form, Directo, Qué sigue. */
   @media (width <= 56rem) {

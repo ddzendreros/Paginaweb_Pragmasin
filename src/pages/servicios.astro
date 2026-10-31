@@ -1,4 +1,5 @@
 ---
+import Strands from "../components/Strands.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 
 const lines = [
@@ -118,7 +119,8 @@ const rules: [string, string][] = [
     </div>
   </section>
 
-  <section class="ground-cobalt act" aria-labelledby="cierre-title">
+  <section class="act closing-act" aria-labelledby="cierre-title">
+    <Strands class="closing__art" />
     <div class="act__inner grid-12 closing">
       <h2 id="cierre-title" class="display closing__title">Empecemos por lo que te estorba.</h2>
       <div class="closing__aside">

@@ -13,7 +13,7 @@ const onContact = Astro.url.pathname.replace(/\/$/, "") === "/contacto";
 {
   hasWhatsapp && href && !onContact && (
     <a
-      class="wa-fab ground-dark"
+      class="wa-fab"
       href={href}
       target="_blank"
       rel="noopener"
@@ -47,13 +47,17 @@ const onContact = Astro.url.pathname.replace(/\/$/, "") === "/contacto";
     width: 48px;
     height: 48px;
     border-radius: var(--radius-l);
-    border: var(--hairline) solid var(--hairline-color);
+    background: rgb(var(--rgb-ink) / 0.7);
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+    box-shadow: var(--shadow-key);
     color: var(--fg);
     text-decoration: none;
-    transition: background-color var(--dur-1) var(--ease-out);
+    transition: background-color var(--dur-2) var(--ease-out), scale var(--dur-3) var(--ease-spring);
   }
   .wa-fab:hover {
     background-color: var(--bg-raised);
+    scale: 1.08;
   }
   /* the ring sits inside the button, where it lands on ink on every ground */
   .wa-fab:focus-visible {

@@ -24,7 +24,7 @@ const socialDescription = ogDescription ?? description;
 
 // theme-color follows the canvas token, so the browser chrome never drifts
 // from tokens.css (the single source of color).
-const themeColor = /--white:\s*(#[0-9a-f]{6})/i.exec(tokensCss)?.[1];
+const themeColor = /--night-950:\s*(#[0-9a-f]{6})/i.exec(tokensCss)?.[1];
 
 const organizationSchema = {
   "@context": "https://schema.org",
@@ -89,7 +89,7 @@ const organizationSchema = {
 
     <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
   </head>
-  <body class="ground-light">
+  <body class="ground-dark">
     <a class="skip-link" href="#contenido">Saltar al contenido</a>
     <SiteHeader />
     <main id="contenido">
@@ -97,5 +97,62 @@ const organizationSchema = {
     </main>
     <SiteFooter />
     <WhatsAppButton />
+
+    <script>
+      // Entrances for everything below the first section. The classes are added
+      // here, so a page without JavaScript never hides anything.
+      const calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const blocks =
+        ".sec__name, .head > .lead, .spec__row, .qa, .track__row, .own__cell, .contrast tr, .closing__aside, .not, .line__body, .steps tr, .notice__section, .build__more";
+      const titles = "main > section:not(:first-child) :is(.h2, .display)";
+
+      const splitWords = (title: Element): void => {
+        let index = 0;
+        for (const node of Array.from(title.childNodes)) {
+          if (node.nodeType !== Node.TEXT_NODE) continue;
+          const fragment = document.createDocumentFragment();
+          for (const part of (node.textContent ?? "").split(/(\s+)/)) {
+            if (!part) continue;
+            if (/^\s+$/.test(part)) {
+              fragment.append(part);
+              continue;
+            }
+            const word = document.createElement("span");
+            word.className = "w";
+            word.style.setProperty("--w", String(index++));
+            word.textContent = part;
+            fragment.append(word);
+          }
+          node.replaceWith(fragment);
+        }
+      };
+
+      if (!calm) {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            const arriving = entries.filter((entry) => entry.isIntersecting);
+            arriving.forEach((entry, i) => {
+              const target = entry.target as HTMLElement;
+              if (target.classList.contains("reveal")) {
+                target.style.transitionDelay = String(Math.min(i, 6) * 70) + "ms";
+              }
+              target.classList.add("is-in");
+              observer.unobserve(target);
+            });
+          },
+          { threshold: 0.12, rootMargin: "0px 0px -6% 0px" },
+        );
+        document.querySelectorAll(titles).forEach((title) => {
+          splitWords(title);
+          observer.observe(title);
+        });
+        document.querySelectorAll("main > section:not(:first-child)").forEach((section) => {
+          section.querySelectorAll(blocks).forEach((block) => {
+            block.classList.add("reveal");
+            observer.observe(block);
+          });
+        });
+      }
+    </script>
   </body>
 </html>

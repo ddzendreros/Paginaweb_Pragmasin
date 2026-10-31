@@ -110,20 +110,27 @@ const current = Astro.url.pathname.replace(/\/$/, "");
 <style>
   .site-header {
     position: sticky;
-    inset-block-start: 0;
+    inset-block-start: var(--space-3);
     z-index: var(--z-nav);
-    background: var(--bg);
-    border-block-end: var(--hairline) solid var(--hairline-color);
+    height: 0;
+    padding-inline: var(--margin);
   }
   .site-header__inner {
-    max-width: var(--content-max);
+    max-width: 68rem;
     margin-inline: auto;
-    padding-inline: var(--margin);
+    padding-inline: var(--space-4) var(--space-2);
+    translate: 0 var(--space-3);
     display: grid;
     grid-template-columns: auto 1fr auto;
     align-items: center;
-    gap: var(--space-7);
-    min-height: var(--space-8);
+    gap: var(--space-6);
+    min-height: 3.5rem;
+    background: rgb(var(--rgb-ink) / 0.62);
+    -webkit-backdrop-filter: blur(18px) saturate(170%);
+    backdrop-filter: blur(18px) saturate(170%);
+    border-radius: var(--radius-l);
+    box-shadow: var(--shadow-key);
+    view-transition-name: site-header;
   }
   .site-header__brand {
     display: inline-flex;
@@ -141,33 +148,35 @@ const current = Astro.url.pathname.replace(/\/$/, "");
     display: block;
     height: 1.5rem;
     width: auto;
+    transition: rotate var(--dur-4) var(--ease-spring);
+  }
+  /* 120 degrees is the mark's own symmetry */
+  .site-header__brand:hover .site-header__mark :global(svg) {
+    rotate: 120deg;
   }
   .site-header__nav {
     display: flex;
-    gap: var(--space-5);
+    gap: var(--space-1);
   }
-  /* the current page sits on the header's own hairline, like a tab */
   .site-header__link {
-    position: relative;
     display: inline-flex;
     align-items: center;
-    min-height: var(--space-8);
+    min-height: 2.25rem;
+    padding-inline: var(--space-3);
+    border-radius: var(--radius-m);
     color: var(--fg-secondary);
     text-decoration: none;
     font-size: var(--text-small);
     font-weight: var(--weight-medium);
-    transition: color var(--dur-1) var(--ease-out);
+    transition: color var(--dur-2) var(--ease-out), background-color var(--dur-2) var(--ease-out);
   }
   .site-header__link:hover,
   .site-header__link[aria-current="page"] {
     color: var(--fg);
+    background: rgb(var(--rgb-light) / 0.08);
   }
-  .site-header__link[aria-current="page"]::after {
-    content: "";
-    position: absolute;
-    inset-inline: 0;
-    inset-block-end: calc(-1 * var(--hairline));
-    border-block-end: var(--hairline-strong) solid var(--interactive);
+  .site-header__link:focus-visible {
+    border-radius: var(--radius-m);
   }
   .site-header__actions {
     justify-self: end;
@@ -179,8 +188,7 @@ const current = Astro.url.pathname.replace(/\/$/, "");
   @media (width <= 56rem) {
     .site-header__inner {
       grid-template-columns: 1fr auto;
-      min-height: var(--space-7);
-      padding-block: var(--space-1);
+      min-height: 3.25rem;
     }
     .site-header__panel,
     .site-header__cta {
@@ -191,7 +199,6 @@ const current = Astro.url.pathname.replace(/\/$/, "");
       place-items: center;
       width: 44px;
       height: 44px;
-      margin-inline-end: calc(-1 * var(--space-2));
       padding: 0;
       border: 0;
       border-radius: var(--radius-m);
@@ -227,6 +234,7 @@ const current = Astro.url.pathname.replace(/\/$/, "");
   .sheet {
     position: fixed;
     inset: 0 0 auto 0;
+    box-shadow: 0 1px 0 var(--hairline-color);
     margin: 0;
     width: 100%;
     max-width: none;

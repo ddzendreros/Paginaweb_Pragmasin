@@ -1,10 +1,11 @@
 /* ==========================================================================
    PRAGMASYN — DESIGN TOKENS (single source of truth)
-   Direction "Oficio": the work is the proof. Cool neutrals, the logo's cobalt
-   as a full field instead of a sprinkled accent, one typeface. Every component
-   reads contextual tokens from its ground (.ground-light / .ground-dark /
-   .ground-cobalt), never raw primitives. No hardcoded values outside this
-   file, except the sample-brand colors scoped inside the Configurator.
+   Direction "Luz": a dark page lit by the logo. Near black with the logo's
+   blue in it, weightless headings, and color reserved for the brand art. The
+   software shows up as a lit object. Every component reads contextual tokens
+   from its ground (.ground-dark / .ground-light / .ground-cobalt), never raw
+   primitives. No hardcoded values outside this file, except the sample-brand
+   colors scoped inside the Configurator.
    ========================================================================== */
 
 /* --- Self-hosted variable font (latin subset covers es-MX) ----------------- */
@@ -18,40 +19,47 @@
 }
 
 :root {
-  /* --- Color primitives. Contrast measured against the ground named. ----- */
-  --white: #FFFFFF;          /* canvas and surfaces */
+  interpolate-size: allow-keywords;
+
+  /* --- Color primitives. ------------------------------------------------- */
+  --night-950: #06070E;      /* the page: never pure black, the blue carries it */
+  --night-900: #0B0D18;      /* bands, one step up */
+  --night-800: #12152A;      /* raised surfaces */
+  --night-700: #1F2340;      /* hairlines */
+  --night-500: #666C8E;      /* control borders */
+  --mist-400: #9095B0;       /* muted text */
+  --mist-300: #BABECF;       /* secondary text */
+  --mist-100: #ECEDF5;       /* text: softer than white at reading sizes */
+
+  --white: #FFFFFF;          /* surfaces of the lit app */
   --fog-50: #F6F7FA;         /* app chrome */
-  --fog-100: #EDEFF5;        /* sunken bands */
-  --fog-200: #DDE0EA;        /* hairlines on light */
-  --fog-400: #7C829B;        /* control borders: 3+ on every light ground */
-  --slate-600: #565C75;      /* muted text: 5.7+ on every light ground */
-  --slate-700: #434962;      /* secondary text: 7.7+ on every light ground */
-  --ink-900: #0F1236;        /* text on light: 15.7+ */
+  --fog-100: #EDEFF5;        /* sunken inside the app */
+  --fog-200: #DDE0EA;        /* hairlines inside the app */
+  --fog-400: #7C829B;        /* control borders inside the app */
+  --slate-600: #565C75;      /* muted text inside the app */
+  --slate-700: #434962;      /* secondary text inside the app */
+  --ink-900: #0F1236;        /* text inside the app */
 
-  --deep-950: #090B26;       /* sunken on deep */
-  --deep-900: #0F1236;       /* dark canvas, same ink as the text */
-  --deep-800: #1A1E4D;       /* raised on deep */
-  --deep-700: #30356E;       /* hairlines on deep */
-  --deep-400: #9196C4;       /* muted text: 5.5+ on deep */
-  --deep-300: #BEC1E0;       /* secondary text: 8.9+ on deep */
-  --deep-100: #F3F4FB;       /* text on deep: 14+ */
+  --cobalt: #2123EA;         /* from the logo */
+  --cobalt-strong: #1718B4;
+  --cobalt-tint: #E8E8FD;
+  --cobalt-line: #5A5CF2;
+  --cobalt-300: #D9DAFF;
+  --sky: #A9C1FF;            /* links on night */
 
-  --cobalt: #2123EA;         /* from the logo. White on it: 8.4 */
-  --cobalt-strong: #1718B4;  /* hover and active on light */
-  --cobalt-tint: #E8E8FD;    /* selected states on light */
-  --cobalt-line: #5A5CF2;    /* hairlines on cobalt */
-  --cobalt-300: #D9DAFF;     /* secondary text on cobalt: 6.1 */
-  --cobalt-on-deep: #B4B6FF; /* links on deep: 8.2+ */
+  --strand: linear-gradient(100deg, #5B19F1, #1B7FFC 55%, #00C7F8);
 
-  --error: #B3261E;          /* 6.5 on white */
-  --error-on-dark: #FFB4A9;  /* 10 on deep */
+  --error: #B3261E;
+  --error-on-dark: #FFB4A9;
 
-  /* Channel triple for alpha composition. */
-  --rgb-ink: 15 18 54;
+  /* Channel triples for alpha composition. */
+  --rgb-ink: 6 7 14;
+  --rgb-light: 255 255 255;
+  --rgb-violet: 91 25 241;
+  --rgb-blue: 27 127 252;
 
   /* --- Typography --------------------------------------------------------
-     One family. Width and weight do the work a second typeface would do:
-     headings run slightly wide and tight, text sits at normal width.      */
+     One family. Large type stays light and lets the scale do the talking.  */
   --font-sans: "Mona Sans", "Segoe UI", system-ui, sans-serif;
 
   --text-caption: 0.8125rem;                                    /* 13 */
@@ -59,26 +67,27 @@
   --text-body: clamp(1rem, 0.97rem + 0.15vw, 1.0625rem);        /* 16 -> 17 */
   --text-lead: clamp(1.0625rem, 1rem + 0.3vw, 1.25rem);         /* 17 -> 20 */
   --text-h3: clamp(1.25rem, 1.16rem + 0.4vw, 1.5rem);           /* 20 -> 24 */
-  --text-h2: clamp(1.875rem, 1.3rem + 2.4vw, 3.25rem);          /* 30 -> 52 */
-  --text-display: clamp(2.625rem, 1.6rem + 4.4vw, 5.5rem);      /* 42 -> 88 */
+  --text-h2: clamp(2rem, 1.3rem + 2.8vw, 3.75rem);              /* 32 -> 60 */
+  --text-display: clamp(2.875rem, 1.6rem + 5.4vw, 6.5rem);      /* 46 -> 104 */
 
   --leading-display: 1;
-  --leading-h2: 1.08;
+  --leading-h2: 1.06;
   --leading-h3: 1.25;
-  --leading-lead: 1.45;
-  --leading-body: 1.55;
+  --leading-lead: 1.5;
+  --leading-body: 1.6;
   --leading-small: 1.45;
   --leading-caption: 1.4;
 
-  --tracking-display: -0.032em;
-  --tracking-h2: -0.026em;
+  --tracking-display: -0.034em;
+  --tracking-h2: -0.028em;
   --tracking-h3: -0.016em;
   --tracking-lead: -0.006em;
 
   --weight-text: 400;
+  --weight-display: 440;
   --weight-medium: 500;
   --weight-strong: 600;
-  --width-heading: 106%;
+  --width-heading: 104%;
 
   /* --- Spacing — 4/8 base ------------------------------------------------ */
   --space-1: 0.25rem;   /*   4 */
@@ -97,20 +106,36 @@
   --margin: clamp(1rem, 4vw, 3rem);
   --content-max: 82.5rem;   /* 1320 */
   --measure: 38rem;
+  --header-space: 5.25rem;  /* what the floating header takes from the page */
 
-  /* --- Geometry: radius follows hierarchy, small things stay small -------- */
+  /* --- Geometry ------------------------------------------------------------ */
   --hairline: 1px;
   --hairline-strong: 2px;
-  --radius-s: 0.25rem;     /*  4: statuses, cards inside the app */
-  --radius-m: 0.375rem;    /*  6: controls */
-  --radius-l: 0.625rem;    /* 10: the app frame */
+  --radius-s: 0.25rem;     /*  4 */
+  --radius-m: 0.5rem;      /*  8: controls */
+  --radius-l: 0.875rem;    /* 14: the header, the app frame */
+  --radius-xl: 1.25rem;    /* 20: panels */
 
-  /* --- Motion: answers a person's action, nothing else -------------------- */
-  --dur-1: 90ms;            /* hover, focus */
-  --dur-2: 140ms;           /* control state */
-  --dur-3: 220ms;           /* sheets, the app changing business */
-  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  /* --- Depth: light from inside the surface, never a drop shadow ---------- */
+  --shadow-key:
+    inset 0 1px 0 rgb(var(--rgb-light) / 0.07),
+    0 0 0 1px rgb(var(--rgb-light) / 0.09),
+    inset 0 -1px 0 rgb(var(--rgb-ink) / 0.4);
+  --glow-app:
+    0 0 0 1px rgb(var(--rgb-light) / 0.14),
+    0 32px 120px -24px rgb(var(--rgb-violet) / 0.6),
+    0 0 180px -30px rgb(var(--rgb-blue) / 0.5);
+
+  /* --- Motion ---------------------------------------------------------------
+     Fast on what you touch, slow on what you read.                         */
+  --dur-1: 120ms;           /* hover, focus */
+  --dur-2: 200ms;           /* control state */
+  --dur-3: 320ms;           /* sheets, indicators, panels */
+  --dur-4: 520ms;           /* things that travel */
+  --dur-5: 900ms;           /* entrances */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
 
   /* --- Focus ---------------------------------------------------------------- */
   --focus-width: 2px;
@@ -125,6 +150,28 @@
 /* --- Ground contexts ------------------------------------------------------
    Components consume ONLY these contextual tokens. Switching ground never
    touches a component. Buttons read --action-*, links read --interactive. */
+.ground-dark {
+  --bg: var(--night-950);
+  --bg-raised: var(--night-800);
+  --bg-sunken: var(--night-800);
+  --bg-chrome: var(--night-900);
+  --fg: var(--mist-100);
+  --fg-secondary: var(--mist-300);
+  --fg-muted: var(--mist-400);
+  --hairline-color: var(--night-700);
+  --control-border: var(--night-500);
+  --interactive: var(--sky);
+  --interactive-strong: var(--white);
+  --action-bg: var(--mist-100);
+  --action-bg-strong: var(--white);
+  --action-fg: var(--night-950);
+  --error-color: var(--error-on-dark);
+  --focus-ring: var(--sky);
+  --selection-bg: var(--sky);
+  --selection-fg: var(--night-950);
+  background-color: var(--bg);
+  color: var(--fg);
+}
 .ground-light {
   --bg: var(--white);
   --bg-raised: var(--white);
@@ -144,28 +191,6 @@
   --focus-ring: var(--cobalt);
   --selection-bg: var(--cobalt);
   --selection-fg: var(--white);
-  background-color: var(--bg);
-  color: var(--fg);
-}
-.ground-dark {
-  --bg: var(--deep-900);
-  --bg-raised: var(--deep-800);
-  --bg-sunken: var(--deep-950);
-  --bg-chrome: var(--deep-800);
-  --fg: var(--deep-100);
-  --fg-secondary: var(--deep-300);
-  --fg-muted: var(--deep-400);
-  --hairline-color: var(--deep-700);
-  --control-border: var(--deep-400);
-  --interactive: var(--cobalt-on-deep);
-  --interactive-strong: var(--white);
-  --action-bg: var(--white);
-  --action-bg-strong: var(--cobalt-tint);
-  --action-fg: var(--ink-900);
-  --error-color: var(--error-on-dark);
-  --focus-ring: var(--cobalt-on-deep);
-  --selection-bg: var(--cobalt-on-deep);
-  --selection-fg: var(--ink-900);
   background-color: var(--bg);
   color: var(--fg);
 }
@@ -200,9 +225,32 @@
 }
 
 :focus-visible {
-  outline: var(--focus-width) solid var(--focus-ring, var(--cobalt));
+  outline: var(--focus-width) solid var(--focus-ring, var(--sky));
   outline-offset: var(--focus-offset);
   border-radius: var(--radius-s);
+}
+
+/* Pages hand over to each other; the header stays where it is. Browsers
+   without support just navigate. */
+@view-transition {
+  navigation: auto;
+}
+::view-transition-old(root) {
+  animation: page-out var(--dur-2) ease-out both;
+}
+::view-transition-new(root) {
+  animation: page-in var(--dur-3) var(--ease-out) both;
+}
+@keyframes page-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes page-in {
+  from {
+    opacity: 0;
+    translate: 0 0.625rem;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -210,10 +258,15 @@
     --dur-1: 0.01ms;
     --dur-2: 0.01ms;
     --dur-3: 0.01ms;
+    --dur-4: 0.01ms;
+    --dur-5: 0.01ms;
+  }
+  @view-transition {
+    navigation: none;
   }
 }
 
-/* White text on a stripped background would print as nothing. */
+/* A dark page should not print as a dark page. */
 @media print {
   .ground-dark,
   .ground-cobalt {
