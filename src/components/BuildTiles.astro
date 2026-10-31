@@ -243,8 +243,30 @@ const sources: [string, number][] = [
     opacity: 0;
     transition: opacity var(--dur-3) var(--ease-out);
   }
+  /* the border lights up under the pointer, like a flashlight along the edge */
+  .tile::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    padding: var(--hairline);
+    border-radius: inherit;
+    background: radial-gradient(
+      18rem circle at var(--x, 50%) var(--y, 0%),
+      rgb(var(--rgb-blue)),
+      transparent 70%
+    );
+    -webkit-mask:
+      linear-gradient(black 0 0) content-box,
+      linear-gradient(black 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--dur-3) var(--ease-out);
+  }
   @media (hover: hover) {
-    .tile:hover::before {
+    .tile:hover::before,
+    .tile:hover::after {
       opacity: 1;
     }
   }
