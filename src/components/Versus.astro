@@ -63,7 +63,23 @@ const cells = Array.from({ length: 12 }, (_, i) => ({
   <div class="versus__stage">
     <div class="versus__desk" aria-hidden="true">
       <div class="versus__screen">
-        <span class="versus__bar"><i></i><i></i><i></i></span>
+        <svg class="versus__defs" width="0" height="0">
+          <defs>
+            <linearGradient id="versus-ink" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" style="stop-color: var(--lit-a)"></stop>
+              <stop offset="1" style="stop-color: var(--lit-b)"></stop>
+            </linearGradient>
+            <linearGradient id="versus-fill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" style="stop-color: var(--lit-a); stop-opacity: 0.28"></stop>
+              <stop offset="1" style="stop-color: var(--lit-b); stop-opacity: 0"></stop>
+            </linearGradient>
+          </defs>
+        </svg>
+        <span class="versus__bar">
+          <i></i><i></i><i></i>
+          <span class="versus__tools"><u></u><u></u><u></u><u></u><u></u><u></u></span>
+          <span class="versus__brand"></span>
+        </span>
         <div class="versus__grid">
           {
             cells.map((cell) => (
@@ -74,27 +90,32 @@ const cells = Array.from({ length: 12 }, (_, i) => ({
                 <b>
                   {cell.art === "rise" && (
                     <svg class="cell__art cell__art--line" viewBox="0 0 120 48" preserveAspectRatio="none">
-                      <path d="M2 42C22 40 30 30 48 29S78 21 92 15 110 7 118 6" />
+                      <path class="cell__area" fill="url(#versus-fill)" d="M2 42C22 40 30 30 48 29S78 21 92 15 110 7 118 6V48H2Z" />
+                      <path stroke="url(#versus-ink)" d="M2 42C22 40 30 30 48 29S78 21 92 15 110 7 118 6" />
                     </svg>
                   )}
+                  {cell.art === "rise" && <em class="cell__pulse" />}
                   {cell.art === "fall" && (
                     <svg class="cell__art cell__art--line" viewBox="0 0 120 48" preserveAspectRatio="none">
-                      <path d="M2 10C18 8 30 20 46 20S72 13 86 25 108 38 118 40" />
+                      <path class="cell__area" fill="url(#versus-fill)" d="M2 10C18 8 30 20 46 20S72 13 86 25 108 38 118 40V48H2Z" />
+                      <path stroke="url(#versus-ink)" d="M2 10C18 8 30 20 46 20S72 13 86 25 108 38 118 40" />
                     </svg>
                   )}
                   {cell.art === "ring" && (
                     <svg class="cell__art cell__art--ring" viewBox="0 0 48 48">
-                      <circle class="cell__track" cx="24" cy="24" r="19" />
-                      <circle class="cell__arc" pathLength="1" cx="24" cy="24" r="19" />
+                      <circle class="cell__track" cx="24" cy="24" r="20" />
+                      <circle class="cell__track" cx="24" cy="24" r="13" />
+                      <circle class="cell__arc" stroke="url(#versus-ink)" pathLength="1" cx="24" cy="24" r="20" />
+                      <circle class="cell__arc cell__arc--in" stroke="url(#versus-ink)" pathLength="1" cx="24" cy="24" r="13" />
                     </svg>
                   )}
                   {cell.art === "bars" && (
                     <span class="cell__bars">
-                      <u style="--h: 44%" />
-                      <u style="--h: 72%" />
-                      <u style="--h: 56%" />
-                      <u style="--h: 100%" />
-                      <u style="--h: 80%" />
+                      <u style="--h: 44%; --i: 0" />
+                      <u style="--h: 72%; --i: 1" />
+                      <u style="--h: 56%; --i: 2" />
+                      <u style="--h: 100%; --i: 3" />
+                      <u style="--h: 80%; --i: 4" />
                     </span>
                   )}
                   <i />
@@ -156,7 +177,15 @@ const cells = Array.from({ length: 12 }, (_, i) => ({
     };
 
     const flip = (): void => show(root.dataset["state"] === "generic" ? "custom" : "generic");
-    const stop = (): void => window.clearInterval(timer);
+    const stop = (): void => window.clearTimeout(timer);
+    // The answer stays on screen for twice as long as the problem.
+    const play = (): void => {
+      const wait = root.dataset["state"] === "custom" ? 6500 : 3200;
+      timer = window.setTimeout(() => {
+        flip();
+        play();
+      }, wait);
+    };
 
     root.classList.add("is-ready");
     show("generic");
@@ -173,7 +202,7 @@ const cells = Array.from({ length: 12 }, (_, i) => ({
       root.addEventListener("pointerdown", () => (touched = true));
       new IntersectionObserver(([entry]) => {
         stop();
-        if (entry?.isIntersecting && !touched) timer = window.setInterval(flip, 4200);
+        if (entry?.isIntersecting && !touched) play();
       }, { threshold: 0.4 }).observe(root);
     }
   }
@@ -216,8 +245,20 @@ const cells = Array.from({ length: 12 }, (_, i) => ({
     border-radius: var(--radius-pill);
     transition: translate var(--dur-3) var(--ease-spring);
   }
+  .versus__thumb::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: var(--gradient-lit);
+    opacity: 0;
+    transition: opacity var(--dur-3) var(--ease-out);
+  }
   [data-state="custom"] .versus__thumb {
     translate: 100% 0;
+  }
+  [data-state="custom"] .versus__thumb::after {
+    opacity: 1;
   }
   .versus__switch button {
     position: relative;
@@ -248,6 +289,10 @@ const cells = Array.from({ length: 12 }, (_, i) => ({
     padding: clamp(var(--space-3), 2vw, var(--space-5));
     background: var(--paper-mist);
     border-radius: var(--radius-xl);
+    transition: background-color var(--dur-4) var(--ease-out);
+  }
+  [data-state="custom"] .versus__desk {
+    background: var(--violet-mist);
   }
   .versus__screen {
     display: flex;
@@ -257,18 +302,65 @@ const cells = Array.from({ length: 12 }, (_, i) => ({
     background: var(--white);
     border-radius: var(--radius-xl);
     box-shadow: var(--shadow-float);
+    transition: box-shadow var(--dur-4) var(--ease-out);
+  }
+  [data-state="custom"] .versus__screen {
+    box-shadow: var(--shadow-lit);
+  }
+  .versus__defs {
+    position: absolute;
   }
   .versus__bar {
     display: flex;
+    align-items: center;
     gap: 0.3125rem;
     margin-block-end: var(--space-3);
     padding-inline-start: 0.1875rem;
   }
   .versus__bar i {
+    flex: none;
     width: 0.5rem;
     height: 0.5rem;
     border-radius: 50%;
     background: var(--paper-rule);
+  }
+  /* the toolbar: a row of things you don't use, and then only yours */
+  .versus__tools {
+    display: flex;
+    flex: 1;
+    gap: 0.3125rem;
+    margin-inline: var(--space-2);
+  }
+  .versus__tools u {
+    flex: 1;
+    height: 0.5rem;
+    border-radius: var(--radius-pill);
+    background: var(--paper-mist);
+    transition: opacity var(--dur-3) var(--ease-out), background-color var(--dur-4) var(--ease-out);
+  }
+  [data-state="custom"] .versus__tools u:nth-child(n + 3) {
+    opacity: 0;
+  }
+  [data-state="custom"] .versus__tools u:nth-child(-n + 2) {
+    background: var(--violet-mist);
+  }
+  [data-state="custom"] .versus__tools u:first-child {
+    background: var(--gradient-lit);
+  }
+  .versus__brand {
+    flex: none;
+    width: 1rem;
+    height: 1rem;
+    border-radius: 50%;
+    background: var(--gradient-lit);
+    opacity: 0;
+    scale: 0.4;
+    transition: opacity var(--dur-3) var(--ease-out), scale var(--dur-4) var(--ease-spring);
+  }
+  [data-state="custom"] .versus__brand {
+    opacity: 1;
+    scale: 1;
+    transition-delay: var(--dur-2);
   }
   .versus__grid {
     position: relative;
@@ -297,7 +389,7 @@ const cells = Array.from({ length: 12 }, (_, i) => ({
     background: var(--paper-mist);
     overflow: hidden;
     transition: background-color var(--dur-4) var(--ease-out),
-      border-radius var(--dur-4) var(--ease-out);
+      border-radius var(--dur-4) var(--ease-out), box-shadow var(--dur-4) var(--ease-out);
   }
   .cell > b > i {
     display: block;
@@ -322,11 +414,12 @@ const cells = Array.from({ length: 12 }, (_, i) => ({
   }
   [data-state="custom"] .cell--keep b {
     border-radius: var(--radius-l);
-    background: var(--blush);
+    background: var(--violet-wash);
+    box-shadow: inset 0 0 0 1px rgb(var(--rgb-violet) / 0.12);
   }
   [data-state="custom"] .cell--keep > b > i {
-    background: var(--sienna);
-    opacity: 0.32;
+    background: var(--violet-ink);
+    opacity: 0.22;
   }
 
   /* cada módulo que se queda dibuja su pieza al crecer */
@@ -337,8 +430,8 @@ const cells = Array.from({ length: 12 }, (_, i) => ({
     height: calc(100% - var(--space-6) - 0.25rem);
     max-width: none;
     fill: none;
-    stroke: var(--sienna);
-    stroke-width: 2;
+    stroke: var(--violet-ink);
+    stroke-width: 2.5;
     stroke-linecap: round;
     overflow: visible;
     opacity: 0;
@@ -356,17 +449,55 @@ const cells = Array.from({ length: 12 }, (_, i) => ({
   .cell__art--line path {
     vector-effect: non-scaling-stroke;
   }
+  .cell__art--line .cell__area {
+    stroke: none;
+  }
   [data-state="custom"] .cell__art--line {
     clip-path: inset(-0.25rem);
   }
+  /* the line ends in the present: a dot that is still alive */
+  .cell__pulse {
+    position: absolute;
+    inset-block-start: calc(var(--space-2) + (100% - var(--space-6) - 0.25rem) * 0.125);
+    inset-inline-end: calc(var(--space-3) + 0.0625rem);
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: var(--lit-b);
+    opacity: 0;
+    translate: 50% -50%;
+    transition: opacity var(--dur-3) var(--ease-out);
+  }
+  [data-state="custom"] .cell__pulse {
+    opacity: 1;
+    transition-delay: var(--dur-5);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    [data-state="custom"] .cell__pulse {
+      animation: pulse 2200ms var(--ease-out) var(--dur-5) infinite;
+    }
+  }
+  @keyframes pulse {
+    from {
+      box-shadow: 0 0 0 0 rgb(var(--rgb-blue) / 0.5);
+    }
+    to {
+      box-shadow: 0 0 0 0.625rem rgb(var(--rgb-blue) / 0);
+    }
+  }
   .cell__art--ring {
     rotate: -90deg;
-    stroke-width: 1.5;
+    stroke-width: 3.5;
   }
   .cell__arc {
     stroke-dasharray: 0.72 1;
     stroke-dashoffset: 0.72;
     transition: stroke-dashoffset var(--dur-5) var(--ease-out);
+  }
+  .cell__arc--in {
+    stroke-dasharray: 0.48 1;
+    stroke-dashoffset: 0.48;
+    transition-delay: 90ms;
   }
   [data-state="custom"] .cell__arc {
     stroke-dashoffset: 0;
@@ -377,7 +508,7 @@ const cells = Array.from({ length: 12 }, (_, i) => ({
     transition: opacity var(--dur-4) var(--ease-out);
   }
   [data-state="custom"] .cell__track {
-    opacity: 0.14;
+    opacity: 0.1;
   }
   .cell__bars {
     position: absolute;
@@ -391,29 +522,47 @@ const cells = Array.from({ length: 12 }, (_, i) => ({
     height: var(--h);
     border-start-start-radius: var(--radius-s);
     border-start-end-radius: var(--radius-s);
-    background: var(--sienna);
+    background: linear-gradient(0deg, var(--lit-b), var(--lit-a));
     transform-origin: bottom;
     scale: 1 0;
     transition: scale var(--dur-4) var(--ease-out);
   }
   [data-state="custom"] .cell__bars u {
     scale: 1 1;
-    transition-delay: var(--dur-2);
+    transition-delay: calc(var(--dur-2) + var(--i) * 60ms);
   }
 
-  /* --- la lista: gris en el problema, durazno en la respuesta -------------- */
+  /* --- la lista: gris en el problema, iluminada en la respuesta ------------ */
   .versus__side {
+    position: relative;
+    isolation: isolate;
     display: grid;
     align-items: center;
     min-width: 0;
     padding: clamp(var(--space-4), 2.2vw, var(--space-5));
     background: var(--paper-mist);
     border-radius: var(--radius-xl);
-    transition: background-color var(--dur-4) var(--ease-out), color var(--dur-4) var(--ease-out);
+    transition: color var(--dur-4) var(--ease-out), box-shadow var(--dur-4) var(--ease-out);
+  }
+  /* A gradient cannot fade into a flat color, so the light is its own layer. */
+  .versus__side::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background: var(--surface-lit);
+    box-shadow: inset 0 1px 0 rgb(var(--rgb-light) / 0.16),
+      inset 0 0 0 1px rgb(var(--rgb-light) / 0.08);
+    opacity: 0;
+    transition: opacity var(--dur-4) var(--ease-out);
   }
   [data-state="custom"] .versus__side {
-    background: var(--blush);
-    color: var(--sienna);
+    color: var(--white);
+    box-shadow: 0 24px 48px -16px rgb(var(--rgb-violet) / 0.45);
+  }
+  [data-state="custom"] .versus__side::before {
+    opacity: 1;
   }
   /* Both lists share one cell, so the longer one sets the height and the page
      never jumps when they swap. */
@@ -436,7 +585,7 @@ const cells = Array.from({ length: 12 }, (_, i) => ({
     line-height: var(--leading-lead);
     letter-spacing: var(--tracking-lead);
     text-wrap: pretty;
-    border-block-start: var(--hairline) solid color-mix(in srgb, currentColor 10%, transparent);
+    border-block-start: var(--hairline) solid color-mix(in srgb, currentColor 12%, transparent);
   }
   .versus__list li:first-child {
     padding-block-start: 0;
@@ -457,8 +606,9 @@ const cells = Array.from({ length: 12 }, (_, i) => ({
     color: var(--fg-secondary);
   }
   [data-list="custom"] .versus__mark {
-    background: var(--sienna);
-    color: var(--blush);
+    background: var(--gradient-lit);
+    box-shadow: 0 0 16px rgb(var(--rgb-violet) / 0.7);
+    color: var(--white);
   }
   .versus__mark :global(.icon) {
     width: 0.9375rem;

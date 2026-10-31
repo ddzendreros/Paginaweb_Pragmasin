@@ -62,8 +62,17 @@
   --paper-slate: #636772;    /* muted text: passes 4.5:1 on white and on mist */
   --paper-mist: #F2F2F3;     /* quiet cards */
   --paper-rule: #ECECEC;     /* hairlines */
-  --blush: #FBE1D1;          /* the single warm surface */
-  --sienna: #5D2A1A;         /* ink for blush and for chart strokes */
+  --lit-a: #5B19F1;          /* the logo's violet */
+  --lit-b: #2A5BE8;          /* its blue, deep enough for white text */
+  --violet-ink: #2B1A78;     /* strokes on the washes */
+  --violet-wash: #F3F0FF;    /* modules that stayed */
+  --violet-mist: #E9E4FC;    /* the desk under them */
+  --violet-night: #150D47;   /* the lit answer */
+  --gradient-lit: linear-gradient(100deg, var(--lit-a), var(--lit-b));
+  --surface-lit:
+    radial-gradient(130% 120% at 100% 0%, rgb(var(--rgb-violet) / 0.62), transparent 62%),
+    radial-gradient(90% 90% at 0% 100%, rgb(var(--rgb-blue) / 0.24), transparent 70%),
+    var(--violet-night);
 
   --strand: linear-gradient(100deg, #5B19F1, #1B7FFC 55%, #00C7F8);
 
@@ -155,6 +164,11 @@
     0 0 0 1px rgb(4 23 43 / 0.05),
     0 20px 25px -5px rgb(0 0 0 / 0.1),
     0 8px 10px -6px rgb(0 0 0 / 0.1);
+  /* the same object once it is yours: the shadow takes the logo's light */
+  --shadow-lit:
+    0 0 0 1px rgb(var(--rgb-violet) / 0.16),
+    0 24px 48px -12px rgb(var(--rgb-violet) / 0.38),
+    0 8px 24px -8px rgb(var(--rgb-blue) / 0.26);
 
   /* --- Motion ---------------------------------------------------------------
      Fast on what you touch, slow on what you read.                         */

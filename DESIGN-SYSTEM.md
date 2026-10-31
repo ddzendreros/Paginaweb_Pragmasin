@@ -38,7 +38,7 @@ Los colores de marca del Configurador son la excepción a los tokens: representa
 cliente, no a Pragmasyn.
 
 **Hoja de papel.** «El problema» es el único momento claro y editorial de la página, inspirado en
-Steep: casi acromático, con `--blush` y `--sienna` como único color, y solo en la respuesta «a tu
+Steep: casi acromático, con el morado del logo (`--lit-a`, `--surface-lit`) como único color, y solo en la respuesta «a tu
 medida». Es una tarjeta del ancho del encabezado, nunca una banda de lado a lado: la constelación
 debe seguir a la vista alrededor. Mientras el encabezado pasa sobre la hoja se vuelve casi sólido
 (`--glass-alpha`), porque el vidrio sobre blanco baja el contraste del menú.
@@ -94,7 +94,7 @@ muestra menos a la vez.
 | Scroll | Los títulos llegan palabra por palabra y los bloques se asientan. |
 | Hero | Las partículas forman el logo, huyen del cursor y la app se endereza al subir. |
 | App | Las tarjetas viajan de columna, los números cambian con desenfoque, la app se arma al cambiar de negocio. |
-| Comparación | Los módulos sobrantes se van, los tuyos crecen y dibujan su pieza, y la lista se vuelve durazno. Cambia solo hasta que lo tocas. |
+| Comparación | Los módulos sobrantes se van, los tuyos crecen y dibujan su pieza, y la lista se enciende en morado. «A tu medida» dura el doble en pantalla. Cambia solo hasta que lo tocas. |
 | Cronograma | Las barras se dibujan. |
 | Servicios | Las piezas corren solo mientras están a la vista. |
 | Páginas | Transición entre páginas; el encabezado no se mueve. |
