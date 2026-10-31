@@ -15,7 +15,8 @@ decisiones; los valores viven allá.
 2. **El software se demuestra.** La app del hero funciona de verdad y los servicios
    (`src/components/BuildTiles.astro`) son piezas vivas, no filas de texto.
 3. **Profundidad con luz.** Nada de sombras proyectadas: brillo interno (`--shadow-key`) y halos
-   detrás de lo importante (`--glow-app`).
+   detrás de lo importante (`--glow-app`). La única excepción es la pantalla flotante de la hoja de
+   papel (`--shadow-float`).
 4. **El color es de la marca.** Los botones son neutros. El degradado de las cintas se reserva para
    el arte, el cronograma y las piezas vivas.
 5. **El movimiento tiene oficio.** Rápido en lo que se toca, lento en lo que se lee.
@@ -26,6 +27,7 @@ decisiones; los valores viven allá.
 |---|---|---|---|
 | `.ground-dark` | Toda la página | `--night-950` | `--mist-100` |
 | `.ground-light` | La app del hero y avisos | `--white` | `--ink-900` |
+| `.ground-paper` | La hoja de «El problema» en el inicio | `--white` | `--paper-ink` |
 | `.ground-cobalt` | La tarjeta de WhatsApp en `/contacto` | `--cobalt` | `--white` |
 
 `--night-950` nunca es negro puro: el azul del logo lo sostiene. Las superficies suben un paso cada
@@ -35,10 +37,18 @@ de texto pasan 4.5:1.
 Los colores de marca del Configurador son la excepción a los tokens: representan el software del
 cliente, no a Pragmasyn.
 
+**Hoja de papel.** «El problema» es el único momento claro y editorial de la página, inspirado en
+Steep: casi acromático, con `--blush` y `--sienna` como único color, y solo en la respuesta «a tu
+medida». Mientras el encabezado pasa sobre la hoja se vuelve casi sólido (`--glass-alpha`), porque
+el vidrio sobre blanco baja el contraste del menú.
+
 ## Tipografía
 
 Una familia: **Mona Sans**, variable en peso y ancho, en `public/fonts/mona-sans-latin-var.woff2`.
 Los títulos grandes van ligeros (`--weight-display`, 440): la escala hace el trabajo, no el peso.
+La excepción es el título de la hoja de papel, en **Newsreader** (`--font-serif`, peso 400, sin
+cursiva), en `public/fonts/newsreader-latin-var.woff2`. Ningún otro elemento la usa, así que el
+resto de las páginas no la descarga.
 
 | Clase | Tamaño | Uso |
 |---|---|---|
@@ -66,7 +76,7 @@ muestra menos a la vez.
 |---|---|---|
 | `Constellation` | Partículas que forman el logo; se apartan del cursor | Dala |
 | `Marquee` | Franja de compromisos en movimiento continuo | n8n, Social Proof Row |
-| `Versus` | Pantalla saturada contra pantalla a tu medida, con interruptor | dope.security, Comparison Card |
+| `Versus` | Pantalla saturada contra pantalla a tu medida, con interruptor, sobre la hoja de papel | Steep, dope.security |
 | `BuildTiles` | Servicios con pieza viva y borde tipo linterna | Mercury, Eraser, uimotion |
 | `StepFlow` | Cuatro pasos como nodos con luz recorriendo la línea | n8n, Workflow Node |
 | `OwnPass` | La propiedad como pase perforado que se inclina | dope.security, Boarding Pass |
@@ -83,7 +93,7 @@ muestra menos a la vez.
 | Scroll | Los títulos llegan palabra por palabra y los bloques se asientan. |
 | Hero | Las partículas forman el logo, huyen del cursor y la app se endereza al subir. |
 | App | Las tarjetas viajan de columna, los números cambian con desenfoque, la app se arma al cambiar de negocio. |
-| Comparación | Los módulos sobrantes se van y los tuyos crecen. Cambia solo hasta que lo tocas. |
+| Comparación | Los módulos sobrantes se van, los tuyos crecen y dibujan su pieza, y la lista se vuelve durazno. Cambia solo hasta que lo tocas. |
 | Cronograma | Las barras se dibujan. |
 | Servicios | Las piezas corren solo mientras están a la vista. |
 | Páginas | Transición entre páginas; el encabezado no se mueve. |
