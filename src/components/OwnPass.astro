@@ -1,0 +1,167 @@
+---
+/**
+ * La propiedad como documento: un pase con tu nombre, perforado y con código de
+ * barras, que se inclina hacia el cursor. Las cuatro cifras del copy viven aquí.
+ */
+import logoMono from "../../branding/logo/logo-mono.svg?raw";
+
+const ownership: [string, string][] = [
+  ["Pago", "Único"],
+  ["Dueño del software", "Tu empresa"],
+  ["Renta por usuario", "No hay"],
+  ["Funciones que no usas", "Ninguna"],
+];
+
+// Barras fijas: es un dibujo, no un código que alguien deba poder leer.
+const bars = [3, 1, 2, 1, 4, 1, 1, 3, 2, 1, 3, 1, 1, 2, 4, 1, 2, 1, 3, 1, 1, 2, 3, 1, 2, 4, 1, 1, 2];
+---
+
+<div class="pass-stage" data-pass>
+  <div class="pass">
+    <span class="pass__sheen" aria-hidden="true"></span>
+    <div class="pass__main">
+      <p class="pass__brand">
+        <span class="pass__mark" aria-hidden="true" set:html={logoMono} />
+        Pragmasyn
+      </p>
+      <dl class="pass__facts">
+        {
+          ownership.map(([concept, value]) => (
+            <div>
+              <dt>{concept}</dt>
+              <dd>{value}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+    <div class="pass__stub" aria-hidden="true">
+      {bars.map((bar) => <i style={`--b: ${bar};`} />)}
+    </div>
+  </div>
+</div>
+
+<script>
+  const stage = document.querySelector<HTMLElement>("[data-pass]");
+  const fine = window.matchMedia("(hover: hover) and (prefers-reduced-motion: no-preference)");
+  if (stage && fine.matches) {
+    stage.addEventListener("pointermove", (event) => {
+      const box = stage.getBoundingClientRect();
+      const x = (event.clientX - box.left) / box.width - 0.5;
+      const y = (event.clientY - box.top) / box.height - 0.5;
+      stage.style.setProperty("--tilt-x", `${(-y * 9).toFixed(2)}deg`);
+      stage.style.setProperty("--tilt-y", `${(x * 11).toFixed(2)}deg`);
+      stage.style.setProperty("--sheen", `${((x + 0.5) * 100).toFixed(1)}%`);
+    });
+    stage.addEventListener("pointerleave", () => {
+      stage.style.setProperty("--tilt-x", "0deg");
+      stage.style.setProperty("--tilt-y", "0deg");
+    });
+  }
+</script>
+
+<style>
+  .pass-stage {
+    --tilt-x: 0deg;
+    --tilt-y: 0deg;
+    --sheen: 30%;
+    perspective: 1100px;
+  }
+  .pass {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 6.5rem;
+    color: var(--ink-900);
+    border-radius: var(--radius-xl);
+    background: linear-gradient(135deg, var(--white), #e7ebf8 55%, #d7e2fb);
+    box-shadow: 0 0 0 1px rgb(var(--rgb-light) / 0.3), 0 30px 110px -24px rgb(var(--rgb-violet) / 0.7),
+      0 0 150px -30px rgb(var(--rgb-blue) / 0.55);
+    overflow: hidden;
+    transform: rotateX(var(--tilt-x)) rotateY(var(--tilt-y));
+    transition: transform var(--dur-3) var(--ease-out);
+    /* the two bites of the perforation */
+    -webkit-mask:
+      radial-gradient(0.75rem at calc(100% - 6.5rem) 0, transparent 98%, black) top / 100% 51% no-repeat,
+      radial-gradient(0.75rem at calc(100% - 6.5rem) 100%, transparent 98%, black) bottom / 100% 51% no-repeat;
+    mask:
+      radial-gradient(0.75rem at calc(100% - 6.5rem) 0, transparent 98%, black) top / 100% 51% no-repeat,
+      radial-gradient(0.75rem at calc(100% - 6.5rem) 100%, transparent 98%, black) bottom / 100% 51% no-repeat;
+  }
+  .pass__sheen {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      105deg,
+      transparent calc(var(--sheen) - 22%),
+      rgb(var(--rgb-light) / 0.75) var(--sheen),
+      transparent calc(var(--sheen) + 22%)
+    );
+    mix-blend-mode: soft-light;
+    pointer-events: none;
+  }
+  .pass__main {
+    padding: var(--space-5);
+    min-width: 0;
+  }
+  .pass__brand {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: 1.0625rem;
+    font-weight: var(--weight-strong);
+    font-stretch: var(--width-heading);
+    letter-spacing: var(--tracking-h3);
+  }
+  .pass__mark {
+    color: var(--cobalt);
+  }
+  .pass__mark :global(svg) {
+    display: block;
+    width: 1.625rem;
+    height: auto;
+  }
+  .pass__facts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-5) var(--space-4);
+    margin-block-start: var(--space-6);
+  }
+  .pass__facts dt {
+    font-size: var(--text-caption);
+    color: var(--slate-600);
+  }
+  .pass__facts dd {
+    margin-block-start: 0.125rem;
+    font-size: var(--text-h3);
+    line-height: var(--leading-h3);
+    letter-spacing: var(--tracking-h3);
+    font-weight: var(--weight-medium);
+  }
+  .pass__stub {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.1875rem;
+    padding: var(--space-4) var(--space-4);
+    border-inline-start: 2px dashed rgb(var(--rgb-ink) / 0.22);
+  }
+  .pass__stub i {
+    display: block;
+    height: calc(var(--b) * 0.1875rem);
+    background: var(--ink-900);
+  }
+  @media (width <= 28rem) {
+    .pass {
+      grid-template-columns: minmax(0, 1fr) 4rem;
+      -webkit-mask:
+        radial-gradient(0.75rem at calc(100% - 4rem) 0, transparent 98%, black) top / 100% 51% no-repeat,
+        radial-gradient(0.75rem at calc(100% - 4rem) 100%, transparent 98%, black) bottom / 100% 51% no-repeat;
+      mask:
+        radial-gradient(0.75rem at calc(100% - 4rem) 0, transparent 98%, black) top / 100% 51% no-repeat,
+        radial-gradient(0.75rem at calc(100% - 4rem) 100%, transparent 98%, black) bottom / 100% 51% no-repeat;
+    }
+    .pass__stub {
+      padding: var(--space-3);
+    }
+  }
+</style>

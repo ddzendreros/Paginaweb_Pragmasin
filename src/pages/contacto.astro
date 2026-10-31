@@ -204,6 +204,16 @@ const emptyMessage = "Sin esto no podemos ayudarte: cuéntanos aunque sea en una
   // A reload or a trip back can restore the checked box without a change event.
   window.addEventListener("pageshow", syncSubmit);
 
+  // Lo que se escribió en la barra del cierre llega aquí ya puesto.
+  try {
+    const idea = sessionStorage.getItem("pragmasyn:idea");
+    const field = form?.querySelector<HTMLTextAreaElement>("#cf-message");
+    if (idea && field && !field.value) field.value = idea;
+    sessionStorage.removeItem("pragmasyn:idea");
+  } catch {
+    // Storage can be blocked; the form simply starts empty.
+  }
+
   function setFieldError(name: string, on: boolean): void {
     const wrap = form?.querySelector<HTMLElement>(`[data-field="${name}"]`);
     const msg = wrap?.querySelector<HTMLElement>(".field__msg");

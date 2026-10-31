@@ -421,6 +421,13 @@ ol {
   cursor: pointer;
 }
 
+/* --- panels: a surface lit from its own edge --- */
+.panel {
+  background: rgb(11 13 24 / 0.88);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-key);
+}
+
 /* --- spec rows: a thing on the left, what it means on the right --- */
 .spec__row {
   display: grid;
@@ -452,8 +459,8 @@ ol {
 .closing__art {
   inset-block-start: 50%;
   inset-inline-end: -8%;
-  width: min(44rem, 90vw);
-  margin-block-start: calc(min(44rem, 90vw) * -0.44);
+  width: min(40rem, 90vw);
+  margin-block-start: calc(min(40rem, 90vw) * -0.44);
   opacity: 0.55;
 }
 .closing {

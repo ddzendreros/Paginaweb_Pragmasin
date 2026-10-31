@@ -1,5 +1,6 @@
 ---
 import logoMono from "../../branding/logo/logo-mono.svg?raw";
+import Clock from "./Clock.astro";
 import { hasWhatsapp, site, waMessages, whatsappUrl } from "../site";
 
 const year = new Date().getFullYear();
@@ -48,6 +49,7 @@ const waHref = whatsappUrl(waMessages.pie);
         <span lang="grc">πρᾶγμα</span> — hecho realizado · <span lang="grc">σύν</span> — junto
         con
       </p>
+      <Clock />
       <p class="caption">© {year} Pragmasyn · Pragmasyn es parte de Grupo Zendreros.</p>
     </div>
   </div>

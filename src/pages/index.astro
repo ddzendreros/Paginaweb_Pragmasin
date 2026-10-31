@@ -1,57 +1,54 @@
 ---
 import BuildTiles from "../components/BuildTiles.astro";
 import Configurator from "../components/Configurator.astro";
+import Icon from "../components/Icon.astro";
+import type { IconName } from "../components/Icon.astro";
+import Marquee from "../components/Marquee.astro";
+import OwnPass from "../components/OwnPass.astro";
+import Prompt from "../components/Prompt.astro";
+import StepFlow from "../components/StepFlow.astro";
+import Versus from "../components/Versus.astro";
 import Strands from "../components/Strands.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { waMessages, whatsappUrl } from "../site";
 
-const contrast: [string, string][] = [
-  [
-    "Cambias tu proceso para que quepa en sus pantallas.",
-    "El sistema sigue tu proceso, con tus nombres y tus pasos.",
-  ],
-  ["Pagas cada mes por usuario, aunque uses la mitad.", "Pagas una sola vez por construirlo."],
-  [
-    "Lo que le falta se queda en un Excel aparte.",
-    "Lo que hoy vive en tres Excels queda en un solo lugar.",
-  ],
-  ["Si dejas de pagar, pierdes el acceso.", "El software es tuyo."],
-];
-
 // `from` and `to` place each bar on the project's timeline, in percent. Bars
 // that reach 100 run off the edge of the page: that support has no end date.
-const accompaniment = [
+const accompaniment: {
+  icon: IconName;
+  title: string;
+  text: string;
+  from: number;
+  to: number;
+}[] = [
   {
+    icon: "chat",
     title: "Hablas con quien lo construye",
     text: "Un canal directo, sin intermediarios ni tickets.",
     from: 0,
     to: 100,
   },
   {
+    icon: "eye",
     title: "Ves el avance mientras se hace",
     text: "Pruebas el software desde temprano y lo corregimos contigo.",
     from: 22,
     to: 62,
   },
   {
+    icon: "cap",
     title: "Tu equipo aprende a usarlo",
     text: "Capacitamos a quienes lo van a usar todos los días.",
     from: 46,
     to: 78,
   },
   {
+    icon: "life",
     title: "Seguimos después de entregar",
     text: "Si algo falla o tu operación cambia, aquí estamos.",
     from: 62,
     to: 100,
   },
-];
-
-const ownership: [string, string][] = [
-  ["Pago", "Único"],
-  ["Dueño del software", "Tu empresa"],
-  ["Renta por usuario", "No hay"],
-  ["Funciones que no usas", "Ninguna"],
 ];
 
 // Cases need the client's permission (D7). None are approved, so none ship:
@@ -123,29 +120,14 @@ const waHref = whatsappUrl(waMessages.flotante);
     </div>
   </section>
 
-  <section class="act band" aria-labelledby="contraste-title">
+  <Marquee />
+
+  <section class="act" aria-labelledby="contraste-title">
     <div class="act__inner grid-12">
       <p class="sec__name">El problema</p>
       <div class="sec__body">
         <h2 id="contraste-title" class="h2 head">Un SaaS te pide que cambies. Nosotros no.</h2>
-        <table class="contrast">
-          <thead>
-            <tr>
-              <th scope="col">Con software genérico</th>
-              <th scope="col">Con software a tu medida</th>
-            </tr>
-          </thead>
-          <tbody>
-            {
-              contrast.map(([generic, custom]) => (
-                <tr>
-                  <td data-label="Con software genérico">{generic}</td>
-                  <td data-label="Con software a tu medida">{custom}</td>
-                </tr>
-              ))
-            }
-          </tbody>
-        </table>
+        <Versus />
       </div>
     </div>
   </section>
@@ -168,6 +150,20 @@ const waHref = whatsappUrl(waMessages.flotante);
     </div>
   </section>
 
+  <section class="act" aria-labelledby="flujo-title">
+    <div class="act__inner grid-12">
+      <p class="sec__name">Cómo trabajamos</p>
+      <div class="sec__body head">
+        <h2 id="flujo-title" class="h2">Lo que se decide, se entrega.</h2>
+        <p class="lead">Cuatro pasos, contigo en todos. Sin pasos secretos.</p>
+      </div>
+      <StepFlow />
+      <p class="build__more">
+        <a class="link link--plain" href="/metodo">Cómo trabajamos</a>
+      </p>
+    </div>
+  </section>
+
   <section class="act company" aria-labelledby="acomp-title">
     <div class="act__inner grid-12">
       <p class="sec__name">Acompañamiento</p>
@@ -181,8 +177,13 @@ const waHref = whatsappUrl(waMessages.flotante);
             accompaniment.map((a, i) => (
               <li class="track__row">
                 <div class="track__text">
-                  <h3 class="h3">{a.title}</h3>
-                  <p class="small">{a.text}</p>
+                  <span class="track__icon">
+                    <Icon name={a.icon} />
+                  </span>
+                  <div>
+                    <h3 class="h3">{a.title}</h3>
+                    <p class="small">{a.text}</p>
+                  </div>
                 </div>
                 <div class="track__lane" aria-hidden="true">
                   {i === 0 && <span class="track__mark">Entrega</span>}
@@ -200,26 +201,19 @@ const waHref = whatsappUrl(waMessages.flotante);
   </section>
 
   <section class="act own-act" aria-labelledby="tuyo-title">
-    <div class="act__inner grid-12">
-      <p class="sec__name">Propiedad</p>
-      <div class="sec__body">
+    <div class="act__inner grid-12 own-grid">
+      <div class="own-grid__head">
+        <p class="sec__name">Propiedad</p>
         <div class="head">
-          <h2 id="tuyo-title" class="display">Se paga una vez.<br /> Y es tuyo.</h2>
+          <h2 id="tuyo-title" class="display own-title">Se paga una vez.<br /> Y es tuyo.</h2>
           <p class="lead">
             Sin renta mensual por usuario. Sin contratos que te amarren. Lo que construimos para tu
             empresa es de tu empresa.
           </p>
         </div>
-        <dl class="own">
-          {
-            ownership.map(([concept, value]) => (
-              <div class="own__cell">
-                <dt class="small">{concept}</dt>
-                <dd class="h3">{value}</dd>
-              </div>
-            ))
-          }
-        </dl>
+      </div>
+      <div class="own-grid__pass">
+        <OwnPass />
       </div>
     </div>
   </section>
@@ -290,24 +284,20 @@ const waHref = whatsappUrl(waMessages.flotante);
 
   <section class="act closing-act" aria-labelledby="cierre-title">
     <Strands class="closing__art" />
-    <div class="act__inner grid-12 closing">
+    <div class="act__inner closing-prompt">
       <h2 id="cierre-title" class="display closing__title">¿Qué te gustaría dejar de hacer?</h2>
-      <div class="closing__aside">
-        <p class="lead">
-          Cuéntanoslo como te salga. Te contesta una persona y te decimos con honestidad si te
-          podemos ayudar.
-        </p>
-        <div class="actions">
-          <a class="btn btn--primary" href="/contacto">Cuéntanos tu idea</a>
-          {
-            waHref && (
-              <a class="btn btn--secondary" href={waHref} target="_blank" rel="noopener">
-                Escribir por WhatsApp
-              </a>
-            )
-          }
-        </div>
-      </div>
+      <p class="lead">
+        Cuéntanoslo como te salga. Te contesta una persona y te decimos con honestidad si te podemos
+        ayudar.
+      </p>
+      <Prompt />
+      {
+        waHref && (
+          <a class="link link--plain" href={waHref} target="_blank" rel="noopener">
+            Escribir por WhatsApp
+          </a>
+        )
+      }
     </div>
   </section>
 </BaseLayout>
@@ -413,95 +403,6 @@ const waHref = whatsappUrl(waMessages.flotante);
     }
   }
 
-  .band {
-    border-block-start: var(--hairline) solid var(--hairline-color);
-  }
-
-  /* --- El problema -------------------------------------------------------- */
-  /* two columns of one panel: the right one is the lit one */
-  .contrast {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-    text-align: start;
-    background: var(--bg-chrome);
-    border-radius: var(--radius-xl);
-    box-shadow: var(--shadow-key);
-    overflow: hidden;
-  }
-  .contrast th {
-    padding: var(--space-4) var(--space-5) var(--space-3);
-    text-align: start;
-    font-size: var(--text-small);
-    font-weight: var(--weight-medium);
-    color: var(--fg-secondary);
-    border-block-end: var(--hairline) solid var(--hairline-color);
-  }
-  .contrast th:last-child,
-  .contrast td:last-child {
-    background: linear-gradient(100deg, rgb(var(--rgb-violet) / 0.16), rgb(var(--rgb-blue) / 0.1));
-  }
-  .contrast td {
-    width: 50%;
-    padding: var(--space-4) var(--space-5);
-    vertical-align: top;
-    border-block-end: var(--hairline) solid var(--hairline-color);
-    font-size: var(--text-lead);
-    line-height: var(--leading-lead);
-    letter-spacing: var(--tracking-lead);
-    color: var(--fg-secondary);
-    text-wrap: pretty;
-  }
-  .contrast tr:last-child td {
-    border-block-end: 0;
-  }
-  .contrast td:last-child {
-    color: var(--fg);
-    font-weight: var(--weight-medium);
-  }
-  /* what generic software asks of you gets crossed out as it arrives */
-  .contrast :global(.reveal) td:first-child {
-    text-decoration: line-through;
-    text-decoration-thickness: var(--hairline);
-    text-decoration-color: transparent;
-    transition: text-decoration-color var(--dur-5) var(--ease-out) 500ms;
-  }
-  .contrast :global(.reveal.is-in) td:first-child {
-    text-decoration-color: var(--fg-muted);
-  }
-  @media (width <= 40rem) {
-    .contrast thead {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      overflow: hidden;
-      clip-path: inset(50%);
-    }
-    .contrast,
-    .contrast tbody,
-    .contrast tr,
-    .contrast td {
-      display: block;
-      width: 100%;
-    }
-    .contrast tr {
-      border-block-end: var(--hairline) solid var(--hairline-color);
-    }
-    .contrast tr:last-child {
-      border-block-end: 0;
-    }
-    .contrast td {
-      padding: var(--space-3) var(--space-4);
-      border: 0;
-    }
-    .contrast td::before {
-      content: attr(data-label);
-      display: block;
-      font-size: var(--text-caption);
-      font-weight: var(--weight-text);
-      color: var(--fg-secondary);
-    }
-  }
 
   /* --- Qué construimos ---------------------------------------------------- */
   .build__more {
@@ -530,9 +431,21 @@ const waHref = whatsappUrl(waMessages.flotante);
     border-block-start: var(--hairline) solid var(--hairline-color);
   }
   .track__text {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding-block: var(--space-4);
+  }
+  .track__icon {
     display: grid;
-    gap: var(--space-1);
-    padding-block: var(--space-5);
+    place-items: center;
+    flex: none;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    background: var(--night-800);
+    color: var(--sky);
+    box-shadow: var(--shadow-key);
   }
   .track__text .small {
     max-width: 44ch;
@@ -552,7 +465,7 @@ const waHref = whatsappUrl(waMessages.flotante);
   }
   .track__bar {
     position: absolute;
-    inset-block-start: calc(var(--space-5) + 0.3rem);
+    inset-block-start: calc(var(--space-4) + 0.9rem);
     inset-inline-start: calc(var(--from) * 1%);
     width: calc((var(--to) - var(--from)) * 1%);
     height: 0.625rem;
@@ -608,40 +521,31 @@ const waHref = whatsappUrl(waMessages.flotante);
 
   /* --- Propiedad ----------------------------------------------------------- */
   .own-act {
-    background: radial-gradient(52rem 34rem at 88% 18%, rgb(var(--rgb-violet) / 0.2), transparent 70%);
+    background: radial-gradient(52rem 34rem at 88% 40%, rgb(var(--rgb-violet) / 0.2), transparent 70%);
   }
-  .own {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    padding-inline: var(--space-5);
-    background: rgb(var(--rgb-light) / 0.03);
-    border-radius: var(--radius-xl);
-    box-shadow: var(--shadow-key);
+  .own-grid {
+    align-items: center;
+    row-gap: var(--space-6);
   }
-  .own__cell {
-    display: grid;
-    gap: var(--space-2);
-    padding: var(--space-5) var(--space-4) var(--space-5) 0;
+  .own-grid__head {
+    --col: 1 / span 7;
   }
-  .own__cell + .own__cell {
-    padding-inline-start: var(--space-4);
-    border-inline-start: var(--hairline) solid var(--hairline-color);
+  .own-grid__head .sec__name {
+    margin-block-end: var(--space-4);
   }
+  .own-grid__head .head {
+    margin-block-end: 0;
+  }
+  .own-title {
+    font-size: min(var(--text-display), 5.9vw);
+  }
+  .own-grid__pass {
+    --col: 8 / -1;
+  }
+  /* a narrow window has room for a bigger title again */
   @media (width <= 56rem) {
-    .own {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-    .own__cell,
-    .own__cell + .own__cell {
-      padding: var(--space-4) var(--space-3) var(--space-4) 0;
-      border-inline-start: 0;
-    }
-    .own__cell:nth-child(even) {
-      padding-inline-start: var(--space-3);
-      border-inline-start: var(--hairline) solid var(--hairline-color);
-    }
-    .own__cell:nth-child(n + 3) {
-      border-block-start: var(--hairline) solid var(--hairline-color);
+    .own-title {
+      font-size: min(var(--text-display), 11vw);
     }
   }
 
@@ -727,6 +631,19 @@ const waHref = whatsappUrl(waMessages.flotante);
   .qa[open] .qa__icon {
     rotate: 45deg;
   }
+  /* --- Cierre ---------------------------------------------------------------- */
+  .closing-prompt {
+    display: grid;
+    justify-items: start;
+    gap: var(--space-5);
+  }
+  .closing-prompt .closing__title {
+    max-width: 14ch;
+  }
+  .closing-prompt .lead {
+    color: var(--fg);
+  }
+
   .qa__a {
     max-width: var(--measure);
     padding-block-end: var(--space-5);

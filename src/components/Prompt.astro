@@ -1,0 +1,122 @@
+---
+/**
+ * La pregunta del cierre se contesta aquí mismo: una barra de comandos que
+ * escribe ejemplos sola. Lo que la persona escriba viaja a /contacto ya puesto
+ * en el formulario, por sessionStorage y nunca en la URL. Sin JS es un botón
+ * que lleva al formulario.
+ */
+const examples = [
+  "Pagamos un sistema caro y solo usamos una parte.",
+  "Alguien teclea lo que ya venía escrito.",
+  "El reporte de cada semana se arma a mano.",
+  "El mismo dato se captura dos veces.",
+];
+---
+
+<form class="prompt" action="/contacto" data-prompt data-examples={JSON.stringify(examples)}>
+  <label class="prompt__label" for="prompt-idea">¿Qué quieres resolver?</label>
+  <input id="prompt-idea" type="text" autocomplete="off" placeholder={examples[0]} />
+  <button class="btn btn--primary" type="submit">Cuéntanos tu idea</button>
+</form>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>("[data-prompt]");
+  const input = form?.querySelector("input");
+  if (form && input) {
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const idea = input.value.trim();
+      try {
+        if (idea) sessionStorage.setItem("pragmasyn:idea", idea);
+      } catch {
+        // Private mode can refuse storage; the form still opens, just empty.
+      }
+      window.location.href = "/contacto";
+    });
+
+    const calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!calm) {
+      const examples = JSON.parse(form.dataset["examples"] ?? "[]") as string[];
+      let which = 0;
+      let length = 0;
+      let erasing = false;
+      let visible = false;
+
+      const type = (): void => {
+        const text = examples[which] ?? "";
+        let wait = erasing ? 18 : 42;
+        if (visible && !input.value && document.activeElement !== input) {
+          length += erasing ? -1 : 1;
+          input.placeholder = text.slice(0, Math.max(0, length));
+          if (!erasing && length >= text.length) {
+            erasing = true;
+            wait = 1900;
+          } else if (erasing && length <= 0) {
+            erasing = false;
+            which = (which + 1) % examples.length;
+            wait = 350;
+          }
+        }
+        window.setTimeout(type, wait);
+      };
+
+      new IntersectionObserver(([entry]) => {
+        visible = Boolean(entry?.isIntersecting);
+      }).observe(form);
+      input.placeholder = "";
+      type();
+    }
+  }
+</script>
+
+<style>
+  .prompt {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    width: 100%;
+    max-width: 46rem;
+    padding: var(--space-2);
+    background: rgb(var(--rgb-ink) / 0.72);
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+    border-radius: var(--radius-l);
+    box-shadow: var(--shadow-key), 0 0 90px -20px rgb(var(--rgb-blue) / 0.6);
+    transition: box-shadow var(--dur-3) var(--ease-out);
+  }
+  .prompt:focus-within {
+    box-shadow: var(--shadow-key), 0 0 0 1px var(--sky), 0 0 110px -14px rgb(var(--rgb-blue) / 0.85);
+  }
+  .prompt__label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+  .prompt input {
+    flex: 1;
+    min-width: 0;
+    min-height: 44px;
+    padding-inline: var(--space-3);
+    border: 0;
+    background: none;
+    font: inherit;
+    font-size: var(--text-lead);
+    color: var(--fg);
+    outline: none;
+  }
+  .prompt input::placeholder {
+    color: var(--fg-muted);
+  }
+  @media (width <= 40rem) {
+    .prompt {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .prompt input {
+      font-size: var(--text-body);
+    }
+  }
+</style>

@@ -1,0 +1,123 @@
+---
+/**
+ * Los cuatro pasos como un flujo de nodos: la luz recorre la línea y enciende
+ * cada paso al pasar.
+ */
+import Icon from "./Icon.astro";
+import type { IconName } from "./Icon.astro";
+
+const steps: [IconName, string][] = [
+  ["wave", "Escuchar"],
+  ["pen", "Diseñar"],
+  ["code", "Construir"],
+  ["people", "Acompañar"],
+];
+---
+
+<ol class="flow panel">
+  <span class="flow__rail" aria-hidden="true"><i></i></span>
+  {
+    steps.map(([icon, name], i) => (
+      <li class="flow__node" style={`--i: ${i};`}>
+        <span class="flow__icon">
+          <Icon name={icon} />
+        </span>
+        <span class="flow__name">{name}</span>
+      </li>
+    ))
+  }
+</ol>
+
+<style>
+  .flow {
+    --period: 8s;
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    padding: var(--space-7) var(--space-4);
+  }
+  .flow__rail {
+    position: absolute;
+    inset-block-start: calc(var(--space-7) + 2rem);
+    inset-inline: 12.5%;
+    height: 2px;
+    background: var(--night-700);
+    overflow: hidden;
+  }
+  .flow__rail i {
+    display: block;
+    width: 34%;
+    height: 100%;
+    background: var(--strand);
+    box-shadow: 0 0 14px rgb(var(--rgb-blue));
+    animation: flow-rail var(--period) var(--ease-in-out) infinite;
+  }
+  .flow__node {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    gap: var(--space-3);
+  }
+  .flow__icon {
+    display: grid;
+    place-items: center;
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    background: var(--night-800);
+    color: var(--fg-secondary);
+    box-shadow: var(--shadow-key);
+    animation: flow-node var(--period) linear infinite;
+    animation-delay: calc(var(--i) * 1.6s);
+  }
+  .flow__icon :global(.icon) {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+  .flow__name {
+    font-size: var(--text-h3);
+    line-height: var(--leading-h3);
+    letter-spacing: var(--tracking-h3);
+    font-weight: var(--weight-medium);
+  }
+  @keyframes flow-rail {
+    from {
+      translate: -100% 0;
+    }
+    to {
+      translate: 300% 0;
+    }
+  }
+  @keyframes flow-node {
+    0%,
+    26%,
+    100% {
+      color: var(--fg-secondary);
+      box-shadow: var(--shadow-key);
+    }
+    6%,
+    18% {
+      color: var(--white);
+      box-shadow: var(--shadow-key), 0 0 0 1px rgb(var(--rgb-blue)), 0 0 34px rgb(var(--rgb-blue) / 0.7);
+    }
+  }
+  @media (width <= 40rem) {
+    .flow {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      row-gap: var(--space-6);
+      padding-block: var(--space-6);
+    }
+    .flow__rail {
+      display: none;
+    }
+    .flow__name {
+      font-size: var(--text-lead);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .flow__rail i,
+    .flow__icon {
+      animation: none;
+    }
+  }
+</style>

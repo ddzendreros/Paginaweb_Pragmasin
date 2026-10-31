@@ -1,0 +1,55 @@
+---
+/** La hora real donde estamos. Sin JS no se pinta: una hora fija sería mentira. */
+---
+
+<p class="clock caption" data-clock hidden>
+  <span class="clock__led" aria-hidden="true"></span>
+  Ciudad de México
+  <time class="numeral"></time>
+</p>
+
+<script>
+  const clock = document.querySelector<HTMLElement>("[data-clock]");
+  const time = clock?.querySelector("time");
+  if (clock && time) {
+    const format = new Intl.DateTimeFormat("es-MX", {
+      timeZone: "America/Mexico_City",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false,
+    });
+    const tick = (): void => {
+      time.textContent = format.format(new Date());
+    };
+    tick();
+    clock.hidden = false;
+    window.setInterval(tick, 1000);
+  }
+</script>
+
+<style>
+  .clock {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+  .clock__led {
+    width: 0.4375rem;
+    height: 0.4375rem;
+    border-radius: 50%;
+    background: #15c26b;
+    box-shadow: 0 0 10px #15c26b;
+    animation: clock-pulse 2s var(--ease-in-out) infinite;
+  }
+  @keyframes clock-pulse {
+    50% {
+      opacity: 0.4;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .clock__led {
+      animation: none;
+    }
+  }
+</style>
