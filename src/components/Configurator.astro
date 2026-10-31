@@ -202,6 +202,7 @@ const kpiValue = (business: Business, kpi: Kpi): number => {
   <fieldset class="cfg__top">
     <legend class="cfg__legend">Elige un negocio y mira cómo cambia.</legend>
     <div class="cfg__picker">
+      <span class="cfg__pill" aria-hidden="true"></span>
       {
         businesses.map((b, i) => (
           <label class="cfg__option">
@@ -213,7 +214,7 @@ const kpiValue = (business: Business, kpi: Kpi): number => {
     </div>
   </fieldset>
 
-  <div class="cfg__frame">
+  <div class="cfg__frame ground-light">
     {
       businesses.map((b) => (
         <article
@@ -415,8 +416,63 @@ const kpiValue = (business: Business, kpi: Kpi): number => {
     place: "start" | "end";
   }
 
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const SETTLE = "cubic-bezier(0.22, 1.1, 0.36, 1)";
+
   const controlOf = (item: HTMLElement): HTMLElement =>
     item.matches("button") ? item : (item.querySelector<HTMLElement>("button") ?? item);
+
+  /** Lets each element travel from where it was to where the change left it. */
+  function travel(elements: () => HTMLElement[], change: () => void): void {
+    if (reduced.matches) {
+      change();
+      return;
+    }
+    const before = new Map(elements().map((el) => [el, el.getBoundingClientRect()]));
+    change();
+    for (const el of elements()) {
+      const from = before.get(el);
+      if (!from) continue;
+      const to = el.getBoundingClientRect();
+      const dx = from.left - to.left;
+      const dy = from.top - to.top;
+      if (dx === 0 && dy === 0) continue;
+      el.animate([{ translate: `${dx}px ${dy}px` }, { translate: "0 0" }], {
+        duration: 460,
+        easing: SETTLE,
+      });
+    }
+  }
+
+  /** A changed figure rolls in; the old one has already left. */
+  function popNumber(output: Element): void {
+    if (reduced.matches) return;
+    output.animate(
+      [
+        { opacity: 0, translate: "0 0.45em", filter: "blur(4px)" },
+        { opacity: 1, translate: "0 0", filter: "blur(0)" },
+      ],
+      { duration: 380, easing: SETTLE },
+    );
+  }
+
+  /** The app assembles itself when it changes business. */
+  function assemble(panel: HTMLElement): void {
+    if (reduced.matches) return;
+    panel.animate({ opacity: [0, 1] }, { duration: 240, easing: "ease-out" });
+    const parts = panel.querySelectorAll<HTMLElement>(
+      ".app__tab, .app__head, .app__kpi, [data-item], .board__head, .app__detail > *",
+    );
+    parts.forEach((part, i) => {
+      part.animate(
+        [
+          { opacity: 0, translate: "0 0.625rem" },
+          { opacity: 1, translate: "0 0" },
+        ],
+        { duration: 420, delay: Math.min(i, 18) * 16, easing: SETTLE, fill: "backwards" },
+      );
+    });
+  }
 
   function setupPanel(panel: HTMLElement): void {
     const draft = JSON.parse(panel.dataset["draft"] ?? "{}") as Draft;
@@ -462,14 +518,15 @@ const kpiValue = (business: Business, kpi: Kpi): number => {
         const output = kpi.querySelector("dd");
         if (!output || output.textContent === value) continue;
         output.textContent = value;
-        // restart the flash on every change
-        output.classList.remove("is-bumped");
-        void output.offsetWidth;
-        output.classList.add("is-bumped");
+        popNumber(output);
       }
       for (const column of panel.querySelectorAll<HTMLElement>("[data-col]")) {
         const count = column.querySelector("[data-col-count]");
-        if (count) count.textContent = String(column.querySelectorAll("[data-item]").length);
+        if (!count) continue;
+        const value = String(column.querySelectorAll("[data-item]").length);
+        if (count.textContent === value) continue;
+        count.textContent = value;
+        popNumber(count);
       }
     };
 
@@ -485,6 +542,15 @@ const kpiValue = (business: Business, kpi: Kpi): number => {
       showDetail("detail", field(item, "detail"));
       showDetail("extra", field(item, "extra"));
       syncStatusButtons();
+      if (!reduced.matches) {
+        panel.querySelector(".app__detail")?.animate(
+          [
+            { opacity: 0.4, translate: "0.375rem 0" },
+            { opacity: 1, translate: "0 0" },
+          ],
+          { duration: 260, easing: SETTLE },
+        );
+      }
     };
 
     const setStatus = (item: HTMLElement, status: string): void => {
@@ -494,8 +560,11 @@ const kpiValue = (business: Business, kpi: Kpi): number => {
         label.textContent = status;
         label.dataset["tone"] = toneByStatus.get(status) ?? "";
       }
-      // On the board a change of status is a change of column.
-      panel.querySelector(`[data-col="${status}"] [data-list]`)?.prepend(item);
+      // On the board a change of status is a change of column, and the card
+      // flies there; its neighbors close the gap behind it.
+      travel(items, () => {
+        panel.querySelector(`[data-col="${status}"] [data-list]`)?.prepend(item);
+      });
       refresh();
       syncStatusButtons();
     };
@@ -518,11 +587,22 @@ const kpiValue = (business: Business, kpi: Kpi): number => {
       fill("title", title);
       fill("detail", draft.detail);
       fill("extra", draft.extra);
-      if (draft.place === "start") list.prepend(item);
-      else list.append(item);
+      travel(items, () => {
+        if (draft.place === "start") list.prepend(item);
+        else list.append(item);
+      });
 
       setStatus(item, draft.status);
       select(item);
+      if (!reduced.matches) {
+        item.animate(
+          [
+            { opacity: 0, scale: 0.94, filter: "blur(3px)" },
+            { opacity: 1, scale: 1, filter: "blur(0)" },
+          ],
+          { duration: 420, easing: SETTLE },
+        );
+      }
       if (view) view.scrollTop = draft.place === "start" ? 0 : view.scrollHeight;
       if (draft.titles.length === 0) button.disabled = true;
     };
@@ -533,6 +613,12 @@ const kpiValue = (business: Business, kpi: Kpi): number => {
       panel.classList.toggle("is-empty", tab !== tabs[0]);
       const title = panel.querySelector("[data-empty-title]");
       if (title) title.textContent = tab.textContent?.trim() ?? "";
+      if (!reduced.matches) {
+        panel.querySelector(".app__main")?.animate(
+          { opacity: [0, 1], translate: ["0 0.375rem", "0 0"] },
+          { duration: 300, easing: SETTLE },
+        );
+      }
     };
 
     panel.addEventListener("click", (event) => {
@@ -555,21 +641,38 @@ const kpiValue = (business: Business, kpi: Kpi): number => {
 
   const root = document.querySelector<HTMLElement>("[data-cfg]");
   if (root) {
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const picker = root.querySelector<HTMLElement>(".cfg__picker");
+
+    const movePill = (): void => {
+      const label = root
+        .querySelector<HTMLInputElement>('input[name="cfg"]:checked')
+        ?.closest("label");
+      if (!label || !picker) return;
+      picker.style.setProperty("--pill-x", `${label.offsetLeft}px`);
+      picker.style.setProperty("--pill-w", `${label.offsetWidth}px`);
+    };
+
     const apply = (value: string): void => {
       root.dataset["active"] = value;
+      movePill();
     };
 
     root.querySelectorAll<HTMLElement>("[data-panel]").forEach(setupPanel);
     apply(root.querySelector<HTMLInputElement>('input[name="cfg"]:checked')?.value ?? "taller");
+    // the first placement is not a movement
+    requestAnimationFrame(() => requestAnimationFrame(() => root.setAttribute("data-ready", "")));
 
     root.addEventListener("change", (event) => {
       if (!(event.target instanceof HTMLInputElement)) return;
       const { value } = event.target;
       apply(value);
-      if (reduced.matches) return;
-      root.querySelector(`[data-panel="${value}"]`)?.animate({ opacity: [0, 1] }, 220);
+      const panel = root.querySelector<HTMLElement>(`[data-panel="${value}"]`);
+      if (panel) assemble(panel);
     });
+
+    // Labels change width when the font loads or the window resizes.
+    const observer = new ResizeObserver(movePill);
+    root.querySelectorAll(".cfg__option").forEach((option) => observer.observe(option));
   }
 </script>
 
@@ -594,17 +697,36 @@ const kpiValue = (business: Business, kpi: Kpi): number => {
     padding: 0;
     font-size: var(--text-small);
     font-weight: var(--weight-medium);
-    color: var(--fg);
+    color: var(--fg-secondary);
   }
   .cfg__picker {
+    position: relative;
     display: inline-flex;
     gap: 2px;
-    padding: 2px;
-    background: var(--bg-sunken);
+    padding: 3px;
+    background: rgb(var(--rgb-ink) / 0.55);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
     border-radius: var(--radius-m);
+    box-shadow: var(--shadow-key);
     max-width: 100%;
     overflow-x: auto;
     scrollbar-width: none;
+  }
+  .cfg__pill {
+    position: absolute;
+    inset-block: 3px;
+    inset-inline-start: 0;
+    width: var(--pill-w, 0);
+    translate: var(--pill-x, 0) 0;
+    background: var(--action-bg);
+    border-radius: var(--radius-s);
+  }
+  .cfg[data-ready] .cfg__pill {
+    transition: translate var(--dur-3) var(--ease-spring), width var(--dur-3) var(--ease-spring);
+  }
+  .cfg:not([data-active]) .cfg__pill {
+    display: none;
   }
   .cfg__option {
     position: relative;
@@ -618,6 +740,8 @@ const kpiValue = (business: Business, kpi: Kpi): number => {
     cursor: pointer;
   }
   .cfg__option span {
+    position: relative;
+    z-index: 1;
     display: flex;
     align-items: center;
     min-height: 40px;
@@ -626,28 +750,47 @@ const kpiValue = (business: Business, kpi: Kpi): number => {
     font-size: var(--text-small);
     font-weight: var(--weight-medium);
     color: var(--fg-secondary);
-    transition: color var(--dur-1) var(--ease-out);
+    transition: color var(--dur-2) var(--ease-out);
   }
   .cfg__option:hover span {
     color: var(--fg);
   }
   .cfg__option input:checked + span {
-    background: var(--bg-raised);
-    color: var(--fg);
-    box-shadow: 0 0 0 var(--hairline) var(--hairline-color);
+    color: var(--action-fg);
+  }
+  /* without JavaScript there is no sliding piece: the option itself is lit */
+  .cfg:not([data-active]) .cfg__option input:checked + span {
+    background: var(--action-bg);
   }
   .cfg__option input:focus-visible + span {
     outline: var(--focus-width) solid var(--focus-ring);
     outline-offset: calc(-1 * var(--focus-width));
   }
   .cfg__frame {
-    height: 35rem;
+    height: 36rem;
     background: var(--bg-raised);
-    border: var(--hairline) solid var(--fog-400);
     border-radius: var(--radius-l);
+    box-shadow: var(--glow-app);
     overflow: hidden;
   }
+  /* The window leans back and settles flat as it comes up the page. */
+  @supports (animation-timeline: view()) {
+    @media (width > 56rem) and (prefers-reduced-motion: no-preference) {
+      .cfg__frame {
+        transform-origin: 50% 0;
+        animation: cfg-settle linear both;
+        animation-timeline: view();
+        animation-range: entry 0% cover 34%;
+      }
+      @keyframes cfg-settle {
+        from {
+          transform: perspective(1500px) rotateX(13deg) scale(0.95);
+        }
+      }
+    }
+  }
   .cfg__foot {
+    position: relative;
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
@@ -735,6 +878,7 @@ const kpiValue = (business: Business, kpi: Kpi): number => {
   }
   .st::before {
     content: "";
+    transition: background-color var(--dur-3) var(--ease-out);
     flex: none;
     width: 0.4375rem;
     height: 0.4375rem;
@@ -765,6 +909,9 @@ const kpiValue = (business: Business, kpi: Kpi): number => {
     border-radius: var(--radius-s);
     color: var(--fg-secondary) !important;
     font-weight: var(--weight-medium) !important;
+  }
+  .app__tab {
+    transition: color var(--dur-2) var(--ease-out), background-color var(--dur-2) var(--ease-out);
   }
   .app__tab:hover {
     color: var(--fg) !important;
@@ -801,6 +948,15 @@ const kpiValue = (business: Business, kpi: Kpi): number => {
     color: var(--white) !important;
     font-weight: var(--weight-medium) !important;
   }
+  .app__action {
+    transition: filter var(--dur-2) var(--ease-out), scale var(--dur-1) var(--ease-out);
+  }
+  .app__action:hover {
+    filter: brightness(1.12);
+  }
+  .app__action:active {
+    scale: 0.97;
+  }
   .app__action:disabled {
     opacity: 0.45;
     cursor: not-allowed !important;
@@ -824,14 +980,6 @@ const kpiValue = (business: Business, kpi: Kpi): number => {
     line-height: 1.3;
     font-weight: var(--weight-medium);
     letter-spacing: var(--tracking-h3);
-  }
-  .app__kpi dd.is-bumped {
-    animation: cfg-bump var(--dur-3) var(--ease-out) 2;
-  }
-  @keyframes cfg-bump {
-    50% {
-      color: var(--brand);
-    }
   }
   .app__view {
     min-height: 0;
@@ -899,7 +1047,7 @@ const kpiValue = (business: Business, kpi: Kpi): number => {
     border: var(--hairline) solid var(--hairline-color) !important;
     border-radius: var(--radius-m);
     font-weight: var(--weight-medium) !important;
-    transition: border-color var(--dur-1) var(--ease-out);
+    transition: border-color var(--dur-2) var(--ease-out), background-color var(--dur-2) var(--ease-out);
   }
   .app__status:hover {
     border-color: var(--fog-400) !important;
@@ -940,13 +1088,14 @@ const kpiValue = (business: Business, kpi: Kpi): number => {
     padding: var(--space-2) var(--space-3) !important;
     border: var(--hairline) solid var(--hairline-color) !important;
     border-radius: var(--radius-s);
-    transition: border-color var(--dur-1) var(--ease-out);
+    transition: border-color var(--dur-2) var(--ease-out), translate var(--dur-2) var(--ease-out);
   }
   .card b {
     font-weight: var(--weight-strong);
   }
   .card:hover {
     border-color: var(--fog-400) !important;
+    translate: 0 -1px;
   }
   .card.is-selected {
     border-color: var(--brand) !important;
