@@ -1,5 +1,6 @@
 ---
 import "../styles/base.css";
+import Constellation from "../components/Constellation.astro";
 import SiteFooter from "../components/SiteFooter.astro";
 import SiteHeader from "../components/SiteHeader.astro";
 import WhatsAppButton from "../components/WhatsAppButton.astro";
@@ -91,6 +92,7 @@ const organizationSchema = {
   </head>
   <body class="ground-dark">
     <a class="skip-link" href="#contenido">Saltar al contenido</a>
+    <Constellation />
     <SiteHeader />
     <main id="contenido">
       <slot />
@@ -103,7 +105,7 @@ const organizationSchema = {
       // here, so a page without JavaScript never hides anything.
       const calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       const blocks =
-        ".sec__name, .head > .lead, .spec__row, .qa, .track__row, .own__cell, .contrast tr, .closing__aside, .not, .line__body, .steps tr, .notice__section, .build__more";
+        ".sec__name, .head > .lead, .spec__row, .qa, .track__row, .closing__aside, .closing-prompt > .lead, .closing-prompt > form, .not, .line, .rule, .notice__section, .build__more, .versus, .flow, .own-grid__pass, .method__tabs";
       const titles = "main > section:not(:first-child) :is(.h2, .display)";
 
       const splitWords = (title: Element): void => {

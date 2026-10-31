@@ -79,6 +79,14 @@ const { class: className } = Astro.props;
   }
   .strands__form {
     opacity: 0.92;
+    transition: opacity var(--dur-5) var(--ease-out);
+  }
+  /* once the particles draw the mark, this layer only lends them its light */
+  :global(.has-constellation) .strands__form {
+    opacity: 0;
+  }
+  :global(.has-constellation) .strands__glow {
+    opacity: 0.42;
   }
   @keyframes strands-turn {
     to {
