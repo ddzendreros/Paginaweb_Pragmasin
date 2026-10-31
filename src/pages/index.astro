@@ -1,4 +1,5 @@
 ---
+import AgentStage from "../components/AgentStage.astro";
 import BuildTiles from "../components/BuildTiles.astro";
 import Configurator from "../components/Configurator.astro";
 import Journey from "../components/Journey.astro";
@@ -98,17 +99,18 @@ const waHref = whatsappUrl(waMessages.flotante);
 
   <section class="act" id="construir" aria-labelledby="construir-title">
     <div class="act__inner">
-      <div class="grid-12">
+      <div class="build__head">
         <p class="sec__name">Qué construimos</p>
-        <div class="sec__body head">
+        <div class="head">
           <h2 id="construir-title" class="h2">Si hoy te estorba, se puede construir.</h2>
           <p class="lead">
             No tenemos catálogo. Estos son puntos de partida; lo tuyo puede no parecerse a ninguno.
           </p>
         </div>
       </div>
+      <AgentStage />
       <BuildTiles />
-      <p class="build__more">
+      <p class="build__more build__more--center">
         <a class="link link--plain" href="/contacto">¿No ves lo tuyo? Mejor. Cuéntanos.</a>
       </p>
     </div>
@@ -393,6 +395,21 @@ const waHref = whatsappUrl(waMessages.flotante);
   /* --- Qué construimos ---------------------------------------------------- */
   .build__more {
     margin-block-start: var(--space-4);
+  }
+  .build__more--center {
+    margin-block-start: var(--space-6);
+    text-align: center;
+  }
+  .build__head {
+    display: grid;
+    justify-items: center;
+    text-align: center;
+  }
+  .build__head .sec__name {
+    margin-block-end: var(--space-4);
+  }
+  .build__head .head {
+    justify-items: center;
   }
 
   /* --- Acompañamiento: centrado, como una ceremonia ----------------------- */

@@ -1,0 +1,822 @@
+---
+/**
+ * Qué es un agente, mostrado trabajando. La ventana flota al centro con las
+ * apps de las que lee alrededor, y cada caso termina en un aviso sobre la mesa:
+ * dos resueltos y uno que se detiene a preguntarte. El HTML trae el resultado
+ * completo: sin JavaScript o con movimiento reducido se lee sin esperar, y el
+ * script solo agrega la corrida. Los datos son genéricos, como en el Configurador.
+ */
+type Glyph = "chat" | "mail" | "sheet" | "bank" | "done" | "ask";
+
+interface Scene {
+  from: string;
+  fromGlyph: Glyph;
+  /** Cuál app se enciende al leer y cuál al decidir. */
+  source: Glyph;
+  consult: Glyph;
+  message: string;
+  log: [string, string][];
+}
+interface Note {
+  glyph: Glyph;
+  title: string;
+  meta: string;
+  ask?: boolean;
+}
+
+const glyphs: Record<Glyph, string> = {
+  chat: "M4 5h16v11H9l-5 4z",
+  mail: "M3 6h18v12H3z M3 7l9 7 9-7",
+  sheet: "M4 4h16v16H4z M4 10h16 M4 15h16 M10 4v16",
+  bank: "M3 10l9-6 9 6z M5 10v8 M10 10v8 M14 10v8 M19 10v8 M3 20h18",
+  done: "M5 13l4 4 10-10",
+  ask: "M12 18h.01 M9 9a3 3 0 1 1 4.5 2.6c-.9.5-1.5 1.2-1.5 2.4",
+};
+
+const apps: { glyph: Glyph; name: string }[] = [
+  { glyph: "chat", name: "WhatsApp" },
+  { glyph: "mail", name: "Correo" },
+  { glyph: "sheet", name: "Excel" },
+  { glyph: "bank", name: "Banco" },
+];
+
+const scenes: Scene[] = [
+  {
+    from: "WhatsApp",
+    fromGlyph: "chat",
+    source: "chat",
+    consult: "sheet",
+    message: "¿Ya salió mi pedido 5214?",
+    log: [
+      ["Lee", "Pregunta por su pedido"],
+      ["Decide", "El 5214 va en Ruta Oriente"],
+      ["Resuelve", "Le contesta con su ruta"],
+    ],
+  },
+  {
+    from: "Correo",
+    fromGlyph: "mail",
+    source: "mail",
+    consult: "bank",
+    message: "Te mando el comprobante de pago.",
+    log: [
+      ["Lee", "Es un comprobante de pago"],
+      ["Decide", "Coincide con tu banco"],
+      ["Resuelve", "Registra el pago"],
+    ],
+  },
+  {
+    from: "WhatsApp",
+    fromGlyph: "chat",
+    source: "chat",
+    consult: "sheet",
+    message: "¿Me dejas 20 % si compro hoy?",
+    log: [
+      ["Lee", "Pide un descuento"],
+      ["Decide", "Tu regla llega a 10 %"],
+      ["Pregunta", "Te consulta antes de contestar"],
+    ],
+  },
+];
+
+const notes: Note[] = [
+  { glyph: "done", title: "Cliente atendido", meta: "WhatsApp · Pedido 5214" },
+  { glyph: "done", title: "Pago registrado", meta: "Correo · Coincide con tu banco" },
+  { glyph: "ask", title: "Te pregunta", meta: "Pide 20 %. Tu regla llega a 10 %.", ask: true },
+];
+---
+
+<article class="agent" data-agent aria-labelledby="agente-title">
+  <div class="agent__copy">
+    <h3 id="agente-title" class="h3 agent__title">Poner agentes a trabajar</h3>
+    <p class="agent__text">
+      Un agente lee lo que llega, decide con tus reglas y lo resuelve. Si no está seguro, te
+      pregunta.
+    </p>
+    <ol class="agent__steps">
+      <li data-step="1">Lee</li>
+      <li data-step="2">Decide</li>
+      <li data-step="3">Resuelve o te pregunta</li>
+    </ol>
+    <p class="agent__contrast">
+      Automatizar sigue pasos fijos. Un agente atiende lo que no llega igual dos veces.
+    </p>
+  </div>
+
+  <div class="agent__stage" aria-hidden="true">
+    {
+      apps.map((app, i) => (
+        <span class:list={["orbit", `orbit--${i}`]} data-app={app.glyph} style={`--i: ${i};`}>
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d={glyphs[app.glyph]} />
+          </svg>
+          <b>{app.name}</b>
+        </span>
+      ))
+    }
+
+    <div class="window">
+      <p class="window__bar">
+        <i />
+        <i />
+        <i />
+        <span>Agente</span>
+        <b>Trabajando</b>
+      </p>
+      <div class="window__screen">
+        {
+          scenes.map((scene, i) => (
+            <div
+              class:list={["run ground-light", { "is-current": i === 0 }]}
+              data-run
+              data-source={scene.source}
+              data-consult={scene.consult}
+            >
+              <p class="run__from">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d={glyphs[scene.fromGlyph]} />
+                </svg>
+                {scene.from}
+              </p>
+              <p class="run__message">{scene.message}</p>
+              <ul class="run__log">
+                {scene.log.map(([verb, text], line) => (
+                  <li class="run__line is-on" data-at={line + 1}>
+                    <i class="run__tick" />
+                    <span>
+                      <b>{verb}</b> {text}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+
+    <div class="agent__notes">
+      {
+        notes.map((note, i) => (
+          <div class:list={["note", `note--${i}`]} data-note style={`--i: ${i};`}>
+            <div class="note__card ground-light">
+              <span class:list={["note__glyph", { "note__glyph--ask": note.ask }]}>
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d={glyphs[note.glyph]} />
+                </svg>
+              </span>
+              <p class="note__body">
+                <b>{note.title}</b>
+                <span>{note.meta}</span>
+              </p>
+              {note.ask && (
+                <p class="note__actions">
+                  <span class="note__yes" data-press>
+                    Autorizar
+                  </span>
+                  <span>Rechazar</span>
+                </p>
+              )}
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</article>
+
+<script>
+  const agent = document.querySelector<HTMLElement>("[data-agent]");
+  if (agent) {
+    // Nothing floats off screen, with or without a run going.
+    new IntersectionObserver(([entry]) => {
+      agent.classList.toggle("is-live", Boolean(entry?.isIntersecting));
+    }).observe(agent);
+
+    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      const beat = 1300;
+      const hold = 2600;
+      const runs = Array.from(agent.querySelectorAll<HTMLElement>("[data-run]"));
+      const notes = Array.from(agent.querySelectorAll<HTMLElement>("[data-note]"));
+      const steps = Array.from(agent.querySelectorAll<HTMLElement>("[data-step]"));
+      const apps = Array.from(agent.querySelectorAll<HTMLElement>("[data-app]"));
+      const press = agent.querySelector<HTMLElement>("[data-press]");
+      const noteBeat = 4;
+
+      let run = 0;
+      let at = 0;
+      let timer = 0;
+
+      const paint = (): void => {
+        const current = runs[run];
+        if (!current) return;
+        runs.forEach((item, i) => {
+          item.classList.toggle("is-current", i === run);
+          item.querySelectorAll<HTMLElement>("[data-at]").forEach((line) => {
+            line.classList.toggle("is-on", i === run && Number(line.dataset.at) <= at);
+          });
+        });
+        steps.forEach((step) => {
+          step.classList.toggle("is-on", Number(step.dataset.step) <= at);
+        });
+        notes.forEach((note, i) => {
+          note.classList.toggle("is-on", i < run || (i === run && at >= noteBeat));
+        });
+        apps.forEach((app) => {
+          const reading = at < 2 && app.dataset.app === current.dataset.source;
+          const deciding = at === 2 && app.dataset.app === current.dataset.consult;
+          app.classList.toggle("is-on", reading || deciding);
+        });
+        press?.classList.toggle("is-on", run === runs.length - 1 && at > noteBeat);
+      };
+
+      const lastBeat = (): number => noteBeat + (run === runs.length - 1 ? 1 : 0);
+
+      const advance = (): void => {
+        if (at < lastBeat()) {
+          at += 1;
+        } else {
+          run = (run + 1) % runs.length;
+          at = 0;
+        }
+        paint();
+        timer = window.setTimeout(advance, at === lastBeat() ? hold : beat);
+      };
+
+      const stop = (): void => {
+        window.clearTimeout(timer);
+        timer = 0;
+      };
+
+      new IntersectionObserver(
+        ([entry]) => {
+          if (entry?.isIntersecting && !document.hidden) {
+            agent.classList.add("is-running");
+            if (!timer) {
+              paint();
+              timer = window.setTimeout(advance, beat);
+            }
+          } else {
+            stop();
+          }
+        },
+        { threshold: 0.25 },
+      ).observe(agent);
+
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden) stop();
+        else if (!timer && agent.classList.contains("is-live")) {
+          timer = window.setTimeout(advance, beat);
+        }
+      });
+    }
+  }
+</script>
+
+<style>
+  .agent {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 8fr);
+    gap: var(--space-6);
+    align-items: center;
+    padding: clamp(var(--space-5), 4vw, var(--space-7));
+    margin-block-end: var(--space-3);
+    border-radius: var(--radius-2xl);
+    background: var(--bg-chrome);
+    box-shadow: var(--shadow-key);
+    isolation: isolate;
+  }
+  /* the screen lights the room: the only light in the panel comes from it */
+  .agent::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background:
+      radial-gradient(52% 72% at 68% 48%, rgb(var(--rgb-violet) / 0.5), transparent 72%),
+      radial-gradient(34% 54% at 92% 84%, rgb(var(--rgb-blue) / 0.26), transparent 72%);
+    animation: agent-breathe 7s var(--ease-in-out) infinite;
+  }
+  @keyframes agent-breathe {
+    50% {
+      opacity: 0.68;
+    }
+  }
+
+  /* --- La explicación ------------------------------------------------------ */
+  .agent__copy {
+    display: grid;
+    gap: var(--space-4);
+    justify-items: start;
+  }
+  .agent__title {
+    font-size: var(--text-statement);
+    line-height: var(--leading-statement);
+  }
+  .agent__text {
+    color: var(--fg-secondary);
+    max-width: 44ch;
+    text-wrap: pretty;
+  }
+  .agent__steps {
+    display: grid;
+    margin-block: var(--space-1);
+  }
+  .agent__steps li {
+    position: relative;
+    padding-block: var(--space-2);
+    padding-inline-start: var(--space-5);
+    color: var(--fg);
+    font-weight: var(--weight-medium);
+    transition: color var(--dur-3) var(--ease-out);
+  }
+  .agent__steps li::before {
+    content: "";
+    position: absolute;
+    inset-block-start: 1.0625rem;
+    inset-inline-start: 0;
+    width: 0.625rem;
+    height: 0.625rem;
+    border-radius: 50%;
+    background: var(--strand);
+    box-shadow: 0 0 14px rgb(var(--rgb-blue));
+    transition:
+      background var(--dur-3) var(--ease-out),
+      box-shadow var(--dur-3) var(--ease-out);
+  }
+  .agent__steps li:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    inset-block: 1.875rem -0.8125rem;
+    inset-inline-start: calc(0.3125rem - 0.5px);
+    width: 1px;
+    background: var(--night-500);
+  }
+  .is-running .agent__steps li:not(.is-on) {
+    color: var(--fg-muted);
+  }
+  .is-running .agent__steps li:not(.is-on)::before {
+    background: var(--night-700);
+    box-shadow: none;
+  }
+  .agent__contrast {
+    padding-block-start: var(--space-4);
+    border-block-start: var(--hairline) solid var(--hairline-color);
+    font-size: var(--text-small);
+    line-height: var(--leading-small);
+    color: var(--fg-secondary);
+    max-width: 44ch;
+    text-wrap: pretty;
+  }
+
+  /* --- La mesa ------------------------------------------------------------- */
+  .agent__stage {
+    position: relative;
+    display: grid;
+    place-items: center;
+    min-height: 34rem;
+  }
+
+  /* apps that orbit the window; the one the agent is reading lights up */
+  .orbit {
+    position: absolute;
+    z-index: 2;
+    display: grid;
+    justify-items: center;
+    gap: var(--space-1);
+    animation: agent-float 7s var(--ease-in-out) infinite;
+    animation-delay: calc(var(--i) * -1.7s);
+  }
+  .orbit svg {
+    width: 4rem;
+    height: 4rem;
+    padding: 1rem;
+    border-radius: 1.125rem;
+    background: linear-gradient(150deg, rgb(var(--rgb-light) / 0.16), rgb(var(--rgb-light) / 0.04));
+    box-shadow: var(--shadow-key);
+    backdrop-filter: blur(6px);
+    rotate: var(--tilt);
+    transition:
+      background var(--dur-3) var(--ease-out),
+      box-shadow var(--dur-3) var(--ease-out),
+      scale var(--dur-3) var(--ease-spring);
+  }
+  .orbit path {
+    stroke: var(--white);
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .orbit b {
+    font-size: var(--text-caption);
+    font-weight: var(--weight-medium);
+    color: var(--fg-secondary);
+  }
+  .orbit.is-on svg {
+    background: var(--strand);
+    box-shadow: 0 0 34px rgb(var(--rgb-blue) / 0.8);
+    scale: 1.12;
+  }
+  .orbit--0 {
+    --tilt: -12deg;
+    inset-block-start: 0.5rem;
+    inset-inline-start: 1rem;
+  }
+  .orbit--1 {
+    --tilt: 9deg;
+    inset-block-start: 41%;
+    inset-inline-start: -1.5rem;
+  }
+  .orbit--2 {
+    --tilt: 11deg;
+    inset-block-start: 37%;
+    inset-inline-end: -1.25rem;
+  }
+  .orbit--3 {
+    --tilt: -8deg;
+    inset-block-end: 0;
+    inset-inline-start: 50%;
+    translate: -50% 0;
+  }
+  @keyframes agent-float {
+    50% {
+      transform: translateY(-0.5rem);
+    }
+  }
+
+  /* the window */
+  .window {
+    position: relative;
+    z-index: 1;
+    width: min(26rem, 100%);
+    margin-block-end: var(--space-5);
+    border-radius: var(--radius-2xl);
+    background: var(--night-800);
+    box-shadow: var(--glow-app);
+    overflow: hidden;
+  }
+  .window__bar {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--text-caption);
+    color: var(--fg-secondary);
+  }
+  .window__bar i {
+    width: 0.625rem;
+    height: 0.625rem;
+    border-radius: 50%;
+    background: rgb(var(--rgb-light) / 0.2);
+  }
+  .window__bar span {
+    margin-inline-start: var(--space-2);
+    font-weight: var(--weight-medium);
+    color: var(--fg);
+  }
+  .window__bar b {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    margin-inline-start: auto;
+    font-weight: var(--weight-text);
+  }
+  .window__bar b::before {
+    content: "";
+    width: 0.4375rem;
+    height: 0.4375rem;
+    border-radius: 50%;
+    background: rgb(var(--rgb-cyan));
+    box-shadow: 0 0 10px rgb(var(--rgb-cyan));
+    animation: agent-live 2s var(--ease-in-out) infinite;
+  }
+  @keyframes agent-live {
+    50% {
+      opacity: 0.35;
+    }
+  }
+  .window__screen {
+    display: grid;
+    padding: var(--space-5);
+    background: var(--strand);
+  }
+
+  /* one case at a time, in the same spot */
+  .run {
+    grid-area: 1 / 1;
+    display: grid;
+    gap: var(--space-2);
+    padding: var(--space-4);
+    border-radius: var(--radius-l);
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity var(--dur-3) var(--ease-out),
+      translate var(--dur-3) var(--ease-out),
+      visibility var(--dur-3);
+    translate: 0 0.5rem;
+  }
+  .run.is-current {
+    opacity: 1;
+    visibility: visible;
+    translate: 0 0;
+  }
+  .run__from {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: var(--text-caption);
+    color: var(--fg-muted);
+  }
+  .run__from svg {
+    width: 0.9375rem;
+    height: 0.9375rem;
+  }
+  .run__from path {
+    stroke: currentcolor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .run__message {
+    font-weight: var(--weight-medium);
+    color: var(--fg);
+  }
+  .run__log {
+    display: grid;
+    gap: var(--space-2);
+    margin-block-start: var(--space-1);
+    padding-block-start: var(--space-3);
+    border-block-start: var(--hairline) solid var(--hairline-color);
+  }
+  .run__line {
+    display: grid;
+    grid-template-columns: 1.125rem minmax(0, 1fr);
+    gap: var(--space-2);
+    align-items: start;
+    font-size: var(--text-small);
+    line-height: var(--leading-small);
+    color: var(--fg-secondary);
+    transition:
+      opacity var(--dur-3) var(--ease-out),
+      translate var(--dur-3) var(--ease-out);
+  }
+  .run__line b {
+    font-weight: var(--weight-strong);
+    color: var(--fg);
+  }
+  .run__tick {
+    position: relative;
+    width: 1.125rem;
+    height: 1.125rem;
+    margin-block-start: 0.0625rem;
+    border-radius: 50%;
+    background: var(--gradient-lit);
+  }
+  /* the tick is drawn with borders, so it reads the same with no script */
+  .run__tick::after {
+    content: "";
+    position: absolute;
+    inset-block-start: 45%;
+    inset-inline-start: 50%;
+    width: 0.3125rem;
+    height: 0.5625rem;
+    translate: -50% -50%;
+    rotate: 42deg;
+    border-inline-end: 2px solid var(--white);
+    border-block-end: 2px solid var(--white);
+  }
+  .is-running .run__line:not(.is-on) {
+    opacity: 0;
+    translate: 0 0.375rem;
+  }
+  /* the agent works for a moment before the tick lands */
+  .is-running .run__line.is-on .run__tick {
+    animation: agent-work 800ms var(--ease-in-out) both;
+  }
+  .is-running .run__line.is-on .run__tick::after {
+    animation: agent-tick 800ms var(--ease-out) both;
+  }
+  @keyframes agent-work {
+    0%,
+    60% {
+      background: var(--fog-200);
+      scale: 0.82;
+    }
+    30% {
+      scale: 1;
+    }
+    100% {
+      scale: 1;
+    }
+  }
+  @keyframes agent-tick {
+    0%,
+    70% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  /* notices left on the table, tilted, the newest on top */
+  .agent__notes {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+  }
+  .note {
+    position: absolute;
+    width: 16.75rem;
+    rotate: var(--tilt);
+    animation: agent-float 8s var(--ease-in-out) infinite;
+    animation-delay: calc(var(--i) * -2.4s);
+  }
+  .note--0 {
+    --tilt: 3deg;
+    inset-block-start: 0.75rem;
+    inset-inline-end: -1.75rem;
+  }
+  .note--1 {
+    --tilt: -3deg;
+    inset-block-end: 2rem;
+    inset-inline-start: -1rem;
+  }
+  .note--2 {
+    --tilt: 2deg;
+    inset-block-end: 0.25rem;
+    inset-inline-end: -1.25rem;
+  }
+  .note__card {
+    display: grid;
+    grid-template-columns: 2rem minmax(0, 1fr);
+    gap: var(--space-2) var(--space-3);
+    align-items: center;
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-lit);
+    transition:
+      opacity var(--dur-3) var(--ease-out),
+      scale var(--dur-4) var(--ease-spring),
+      translate var(--dur-4) var(--ease-spring);
+  }
+  .is-running .note:not(.is-on) .note__card {
+    opacity: 0;
+    scale: 0.88;
+    translate: 0 0.875rem;
+  }
+  .note__glyph {
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.625rem;
+    background: var(--gradient-lit);
+  }
+  .note__glyph--ask {
+    background: var(--violet-night);
+  }
+  .note__glyph svg {
+    width: 1.125rem;
+    height: 1.125rem;
+  }
+  .note__glyph path {
+    stroke: var(--white);
+    stroke-width: 2.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .note__body {
+    display: grid;
+    min-width: 0;
+    font-size: var(--text-caption);
+    line-height: var(--leading-caption);
+    color: var(--fg-muted);
+  }
+  .note__body b {
+    font-size: var(--text-small);
+    font-weight: var(--weight-strong);
+    color: var(--fg);
+  }
+  .note__actions {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-2);
+    font-size: var(--text-caption);
+    font-weight: var(--weight-medium);
+    text-align: center;
+    color: var(--fg-secondary);
+  }
+  .note__actions span {
+    padding-block: 0.375rem;
+    border-radius: var(--radius-m);
+    background: var(--bg-sunken);
+    transition:
+      background var(--dur-2) var(--ease-out),
+      color var(--dur-2) var(--ease-out),
+      scale var(--dur-2) var(--ease-spring);
+  }
+  .note__yes.is-on {
+    background: var(--gradient-lit);
+    color: var(--white);
+    scale: 1.04;
+  }
+
+  @media (width <= 64rem) {
+    .agent {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .agent__stage {
+      margin-inline: auto;
+      width: min(40rem, 100%);
+    }
+    .note--0 {
+      inset-inline-end: 0;
+    }
+    .note--1 {
+      inset-inline-start: 0;
+    }
+    .note--2 {
+      inset-inline-end: 0;
+    }
+    .orbit--1 {
+      inset-inline-start: 0;
+    }
+    .orbit--2 {
+      inset-inline-end: 0;
+    }
+  }
+
+  /* on a phone the notices pile up under the window instead of around it */
+  @media (width <= 40rem) {
+    .agent__stage {
+      display: block;
+      min-height: 0;
+      padding-block-start: var(--space-6);
+    }
+    .window {
+      margin-block-end: 0;
+    }
+    .window__screen {
+      padding: var(--space-3);
+    }
+    .agent__notes {
+      position: relative;
+      inset: auto;
+      display: grid;
+      margin-block-start: calc(var(--space-5) * -1);
+    }
+    .note {
+      position: relative;
+      inset: auto;
+      grid-area: 1 / 1;
+      align-self: end;
+      justify-self: center;
+      width: min(17rem, 94%);
+    }
+    .orbit {
+      z-index: 2;
+    }
+    .orbit svg {
+      width: 2.75rem;
+      height: 2.75rem;
+      padding: 0.6875rem;
+      border-radius: 0.8125rem;
+    }
+    .orbit b {
+      display: none;
+    }
+    .orbit--0 {
+      inset-block-start: 0.25rem;
+      inset-inline-start: 0.5rem;
+    }
+    .orbit--1 {
+      inset-block-start: 0.25rem;
+      inset-inline-start: 3.75rem;
+    }
+    .orbit--2 {
+      inset-block-start: 0.25rem;
+      inset-inline-end: 3.75rem;
+    }
+    .orbit--3 {
+      inset-block: 0.25rem auto;
+      inset-inline: auto 0.5rem;
+      translate: none;
+    }
+  }
+
+  .agent:not(.is-live) *,
+  .agent:not(.is-live)::before {
+    animation-play-state: paused !important;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .agent *,
+    .agent::before {
+      animation: none !important;
+    }
+  }
+</style>
