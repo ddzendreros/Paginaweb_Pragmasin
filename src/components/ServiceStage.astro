@@ -1,0 +1,790 @@
+---
+/**
+ * /servicios como una sola pieza en el vacío: un bloque de triángulos que se
+ * talla en cada servicio y una idea por pantalla. Avanza con el scroll, sin clic
+ * ni temporizador, y todo el texto sigue en la página: lo que no está a la vista
+ * solo es transparente. Sin JS o con movimiento reducido no hay pieza y el texto
+ * se lee completo, de corrido.
+ */
+interface Props {
+  lines: { num: string; name: string; text: string; signals: string[] }[];
+  rules: [string, string][];
+}
+
+const { lines, rules } = Astro.props;
+
+// One beat per signal and per rule: the page scrolls through them in order.
+let step = 1;
+const beats = lines.map((line) => {
+  const from = step;
+  step += line.signals.length;
+  return { ...line, from, to: step - 1 };
+});
+const heading = step;
+const firstRule = heading + 1;
+const steps = firstRule + rules.length;
+
+const forms = [
+  0,
+  ...beats.flatMap((line, i) => line.signals.map(() => i + 1)),
+  ...Array.from({ length: rules.length + 1 }, () => beats.length + 1),
+];
+---
+
+<section
+  class="stage"
+  style={`--steps: ${steps};`}
+  aria-labelledby="servicios-title"
+  data-stage
+  data-forms={forms.join(",")}
+  data-first-rule={firstRule}
+>
+  <script is:inline>
+    // Before the first paint, so the page never jumps from one layout to the other.
+    if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      document.documentElement.classList.add("stage-on");
+    }
+  </script>
+
+  <div class="stage__pin" data-stage-pin>
+    <canvas class="stage__piece" aria-hidden="true" data-piece></canvas>
+    <span class="stage__line" aria-hidden="true"></span>
+
+    <div class="scene scene--opening beat is-at" data-from="0" data-to="0">
+      <div class="scene__name">
+        <p class="scene__label">Qué construimos</p>
+        <h1 id="servicios-title" class="stage__title stage__title--first">
+          No tenemos catálogo. Tenemos oficio.
+        </h1>
+      </div>
+      <p class="scene__text">
+        Cada empresa tiene variables distintas. Por eso no vendemos paquetes: escuchamos qué
+        necesitas y lo construimos.
+      </p>
+    </div>
+
+    <ol class="stage__group" aria-label="Líneas de trabajo">
+      {
+        beats.map((line) => (
+          <li class="scene beat" data-from={line.from} data-to={line.to}>
+            <div class="scene__name">
+              <span class="scene__label numeral">{line.num}</span>
+              <h2 class="stage__title" set:html={line.name} />
+            </div>
+            <p class="scene__text">{line.text}</p>
+            <div class="scene__strip">
+              <p class="scene__label">Es para ti si…</p>
+              <ul class="scene__signals">
+                {line.signals.map((signal, i) => (
+                  <li class="beat" data-from={line.from + i} data-to={line.from + i}>
+                    {signal}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+
+    <div class="stage__group">
+      <p class="scene__label scene__strip beat" data-from={heading} data-to={steps - 1}>
+        Cómo decidimos
+      </p>
+      <div class="scene beat" data-from={heading} data-to={heading}>
+        <div class="scene__name">
+          <h2 class="stage__title">Cinco reglas que no negociamos.</h2>
+        </div>
+      </div>
+      <ol>
+        {
+          rules.map(([rule, text], i) => (
+            <li class="scene beat" data-from={firstRule + i} data-to={firstRule + i}>
+              <div class="scene__name">
+                <h3 class="stage__title">{rule}</h3>
+              </div>
+              <p class="scene__text">{text}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </div>
+</section>
+
+<script>
+  const VERTEX = `#version 300 es
+  in vec2 aCorner;
+  in vec3 aBary;
+  in vec4 aForm0;
+  in vec4 aForm1;
+  in vec4 aForm2;
+  in vec4 aForm3;
+  in vec4 aForm4;
+  in vec4 aSeed;
+  in vec2 aMark;
+  uniform vec2 uRes;
+  uniform vec2 uCenter;
+  uniform float uScale, uTime, uStep, uArrive, uPitch, uYaw, uRule, uRules, uReach;
+  out vec3 vColor;
+  out vec3 vBary;
+  out float vAlpha;
+  out float vSolid;
+
+  void main() {
+    vec4 forms[5] = vec4[5](aForm0, aForm1, aForm2, aForm3, aForm4);
+    float whole = clamp(uStep, 0.0, 4.0);
+    int from = int(min(floor(whole), 3.0));
+    float moved = clamp((whole - float(from)) * 1.5 - aSeed.z * 0.5, 0.0, 1.0);
+    moved = moved * moved * (3.0 - 2.0 * moved);
+    vec4 shape = mix(forms[from], forms[from + 1], moved);
+    vec3 p = shape.xyz;
+    float lit = shape.w;
+
+    // A piece does not slide into the next one: it comes apart on the way.
+    p += (aSeed.xyz - 0.5) * sin(moved * 3.14159) * 0.7;
+
+    // The rule being read slides out of the stack, toward its words.
+    float apart = aMark.y - uRule;
+    float rule = exp(-apart * apart * 5.0) * smoothstep(3.0, 4.0, whole) * uRules * step(0.0, aMark.y);
+    p.x += rule * uReach;
+    lit = mix(lit, mix(lit * 0.5, 1.7, rule), uRules * step(3.5, whole));
+
+    // Light running down the connections.
+    float running = max(0.0, 1.0 - abs(whole - 3.0));
+    lit += pow(fract(aMark.x - uTime * 0.32), 12.0) * 2.2 * running * step(0.0, aMark.x);
+
+    // The first thing the page does is pull the block together out of the stars.
+    vec3 loose = (aSeed.yzx - 0.5) * vec3(7.0, 4.2, 2.4);
+    float gathered = clamp(uArrive * 1.5 - aSeed.w * 0.5, 0.0, 1.0);
+    p = mix(loose, p, gathered * gathered * (3.0 - 2.0 * gathered));
+
+    float cy = cos(uYaw);
+    float sy = sin(uYaw);
+    float cx = cos(uPitch);
+    float sx = sin(uPitch);
+    vec3 r = vec3(cy * p.x + sy * p.z, p.y, cy * p.z - sy * p.x);
+    r = vec3(r.x, cx * r.y - sx * r.z, sx * r.y + cx * r.z);
+    float depth = 3.6 / (3.6 - r.z);
+
+    vec2 position = uCenter + vec2(r.x, -r.y) * depth * uScale;
+    float turn = aSeed.x * 6.28 + uTime * (0.15 + aSeed.y * 0.3);
+    float size = mix(1.5, 3.8, aSeed.y) * depth;
+    vec2 corner = mat2(cos(turn), -sin(turn), sin(turn), cos(turn)) * aCorner * size;
+    vec2 clip = (position + corner) / uRes * 2.0 - 1.0;
+    gl_Position = vec4(clip.x, -clip.y, 0.0, 1.0);
+
+    // The logo's three colors, laid across the object; the light comes from the
+    // upper right, so that side is the one that goes pale.
+    float along = clamp(0.5 + 0.34 * (r.x + r.y * 0.5), 0.0, 1.0);
+    vec3 violet = vec3(0.357, 0.098, 0.945);
+    vec3 blue = vec3(0.106, 0.498, 0.988);
+    vec3 cyan = vec3(0.0, 0.78, 0.973);
+    vec3 ink = along < 0.5 ? mix(violet, blue, along * 2.0) : mix(blue, cyan, along * 2.0 - 1.0);
+    float light = clamp(dot(normalize(r + 0.001), normalize(vec3(0.62, 0.66, 0.42))), -1.0, 1.0);
+    vColor = mix(ink, vec3(0.93, 0.95, 1.0), smoothstep(0.4, 1.0, light) * 0.6);
+    vBary = aBary;
+    vSolid = aSeed.w;
+    float twinkle = 0.78 + 0.22 * sin(uTime * (0.6 + aSeed.y) + aSeed.x * 30.0);
+    vAlpha = lit * (0.56 + 0.34 * light) * twinkle;
+  }`;
+
+  const FRAGMENT = `#version 300 es
+  precision mediump float;
+  in vec3 vColor;
+  in vec3 vBary;
+  in float vAlpha;
+  in float vSolid;
+  out vec4 color;
+
+  void main() {
+    float edge = min(vBary.x, min(vBary.y, vBary.z));
+    if (vSolid < 0.68 && edge > 0.17) discard;
+    color = vec4(vColor * vAlpha, vAlpha);
+  }`;
+
+  /** x, y, z, how lit it is, and an optional mark for the shader. */
+  type Point = [number, number, number, number, number?];
+  type Part = [number, () => Point];
+
+  const between = (low: number, high: number): number => low + Math.random() * (high - low);
+  const oneOf = (low: number, high: number): number => (Math.random() < 0.5 ? low : high);
+  const smooth = (edge0: number, edge1: number, x: number): number => {
+    const t = Math.min(1, Math.max(0, (x - edge0) / (edge1 - edge0)));
+    return t * t * (3 - 2 * t);
+  };
+
+  /** Spreads `count` points over the parts, each according to its weight. */
+  const carve = (count: number, parts: Part[]): Point[] => {
+    const whole = parts.reduce((sum, [weight]) => sum + weight, 0);
+    return Array.from({ length: count }, () => {
+      let left = Math.random() * whole;
+      for (const [weight, point] of parts) {
+        left -= weight;
+        if (left <= 0) return point();
+      }
+      return [0, 0, 0, 0];
+    });
+  };
+
+  /** A flat plate: mostly its outline, which is what gives it a shape. */
+  const plate = (
+    [x0, y0, x1, y1]: [number, number, number, number],
+    z: number,
+    lit = 1,
+    outline = 0.72,
+  ): (() => Point) => {
+    return () => {
+      if (Math.random() > outline) return [between(x0, x1), between(y0, y1), z, lit * 0.7];
+      return Math.random() < (x1 - x0) / (x1 - x0 + y1 - y0)
+        ? [between(x0, x1), oneOf(y0, y1), z, lit]
+        : [oneOf(x0, x1), between(y0, y1), z, lit];
+    };
+  };
+
+  /** The raw block: no catalog, nothing cut yet. Only the three faces seen are
+      drawn, each with the light it gets, so it reads as a solid and not a wire. */
+  const block = (count: number): Point[] => {
+    const s = 0.68;
+    const face = (axis: number, lit: number) => (): Point => {
+      const p: [number, number, number] = [between(-s, s), between(-s, s), between(-s, s)];
+      p[axis] = s;
+      return [p[0], p[1], p[2], lit];
+    };
+    const edge = (axis: number, other: number) => (): Point => {
+      const p: [number, number, number] = [oneOf(-s, s), oneOf(-s, s), oneOf(-s, s)];
+      p[3 - axis - other] = s;
+      p[axis] = between(-s, s);
+      return [p[0], p[1], p[2], 2.2];
+    };
+    return carve(count, [
+      [0.28, face(1, 1.3)],
+      [0.2, face(0, 0.92)],
+      [0.16, face(2, 0.5)],
+      ...[0, 1, 2].flatMap((axis) =>
+        [0, 1, 2]
+          .filter((other) => other !== axis)
+          .map((other): Part => [0.06, edge(axis, other)]),
+      ),
+    ]);
+  };
+
+  /** Software a la medida: a real screen, taken apart in layers. */
+  const screen = (count: number): Point[] =>
+    carve(count, [
+      [3, plate([-1.05, -0.72, 1.05, 0.72], -0.34, 1, 0.8)],
+      [1.2, plate([-1.05, -0.72, -0.5, 0.72], -0.34, 0.8, 0.6)],
+      [1, plate([-0.36, 0.36, 0.08, 0.6], 0, 1.1)],
+      [1, plate([0.2, 0.36, 0.92, 0.6], 0, 1.1)],
+      [1.3, plate([-0.36, 0.04, 0.92, 0.22], 0, 0.9)],
+      [1.3, plate([-0.36, -0.28, 0.92, -0.1], 0, 0.9)],
+      [1.3, plate([-0.36, -0.6, 0.92, -0.42], 0, 0.9)],
+      [1.2, plate([-0.92, 0.26, -0.62, 0.56], 0.38, 1.2)],
+      [1.2, plate([-0.92, -0.14, -0.62, 0.16], 0.38, 1.2)],
+      [1.2, plate([-0.92, -0.54, -0.62, -0.24], 0.38, 1.2)],
+    ]);
+
+  /** Reemplazo de SaaS: everything you pay for, and the few modules you use. */
+  const suite = (count: number): Point[] => {
+    const kept = new Set(["1,2", "2,2", "1,1"]);
+    const parts: Part[] = [];
+    for (let row = 0; row < 4; row++) {
+      for (let column = 0; column < 4; column++) {
+        const x = -1 + column * 0.52;
+        const y = -1 + row * 0.52;
+        const box: [number, number, number, number] = [x, y, x + 0.42, y + 0.42];
+        if (kept.has(`${column},${row}`)) {
+          parts.push([3.4, plate(box, 0.42, 1.25, 0.6)]);
+        } else {
+          parts.push([0.55, plate(box, -0.22 - Math.random() * 0.24, 0.2, 0.85)]);
+        }
+      }
+    }
+    return carve(count, parts);
+  };
+
+  /** Automatización e integración: what used to be separate, now connected. */
+  const links = (count: number): Point[] => {
+    const hub: [number, number, number] = [0, 0, 0.1];
+    const ends: [number, number, number][] = [
+      [-1.05, 0.62, -0.14],
+      [-1.12, -0.06, 0.24],
+      [-0.98, -0.68, -0.08],
+      [1.05, 0.5, 0.18],
+      [1.08, -0.5, -0.16],
+    ];
+    const node = (center: [number, number, number], radius: number, lit: number) => (): Point => {
+      const z = between(-1, 1);
+      const angle = between(0, Math.PI * 2);
+      const ring = Math.sqrt(1 - z * z);
+      return [
+        center[0] + radius * ring * Math.cos(angle),
+        center[1] + radius * ring * Math.sin(angle),
+        center[2] + radius * z,
+        lit,
+      ];
+    };
+    const link = (a: [number, number, number], b: [number, number, number]) => (): Point => {
+      const t = Math.random();
+      const bend = 1 - t;
+      const mx = (a[0] + b[0]) / 2;
+      return [
+        bend * bend * a[0] + 2 * bend * t * mx + t * t * b[0] + between(-0.012, 0.012),
+        bend * bend * a[1] + 2 * bend * t * a[1] + t * t * b[1] + between(-0.012, 0.012),
+        bend * bend * a[2] + 2 * bend * t * b[2] + t * t * b[2],
+        0.62,
+        t,
+      ];
+    };
+    return carve(count, [
+      [2.4, node(hub, 0.24, 1.15)],
+      ...ends.map((end): Part => [0.9, node(end, 0.11, 1.05)]),
+      ...ends
+        .slice(0, 3)
+        .map((end): Part => [1.5, link(end, hub)]),
+      ...ends
+        .slice(3)
+        .map((end): Part => [1.5, link(hub, end)]),
+    ]);
+  };
+
+  /** The rules: five sheets, one on top of the other. */
+  const sheets = (count: number): Point[] =>
+    carve(
+      count,
+      Array.from({ length: 5 }, (_, i): Part => {
+        const y = (2 - i) * 0.34;
+        return [
+          1,
+          () => {
+            const point = plate([-0.86, -0.62, 0.86, 0.62], 0, 1.3, 0.72)();
+            return [point[0], y, point[1], point[3], i];
+          },
+        ];
+      }),
+    );
+
+  function compile(gl: WebGL2RenderingContext, type: number, source: string): WebGLShader {
+    const shader = gl.createShader(type);
+    if (!shader) throw new Error("no shader");
+    gl.shaderSource(shader, source);
+    gl.compileShader(shader);
+    return shader;
+  }
+
+  // pitch, yaw: each piece turns to the angle that explains it.
+  const ANGLES: [number, number][] = [
+    [0.52, -0.72],
+    [-0.74, 0.46],
+    [-0.62, -0.34],
+    [-0.18, 0.3],
+    [0.46, -0.62],
+  ];
+
+  const root = document.querySelector<HTMLElement>("[data-stage]");
+  const pin = document.querySelector<HTMLElement>("[data-stage-pin]");
+  const canvas = document.querySelector<HTMLCanvasElement>("[data-piece]");
+
+  if (root && pin && canvas && document.documentElement.classList.contains("stage-on")) {
+    const beats = Array.from(root.querySelectorAll<HTMLElement>("[data-from]"));
+    const forms = (root.dataset["forms"] ?? "").split(",").map(Number);
+    const steps = forms.length;
+    const firstRule = Number(root.dataset["firstRule"]);
+    let place = 0;
+    let at = -1;
+
+    const read = (): void => {
+      const travel = root.offsetHeight - pin.offsetHeight;
+      place = (Math.min(1, Math.max(0, -root.getBoundingClientRect().top / travel)) * steps);
+      root.style.setProperty("--progress", (place / steps).toFixed(4));
+      const step = Math.min(Math.floor(place), steps - 1);
+      if (step === at) return;
+      at = step;
+      for (const beat of beats) {
+        const from = Number(beat.dataset["from"]);
+        const to = Number(beat.dataset["to"]);
+        beat.classList.toggle("is-at", step >= from && step <= to);
+      }
+    };
+    read();
+    window.addEventListener("scroll", read, { passive: true });
+    window.addEventListener("resize", read, { passive: true });
+
+    /** Which form this scroll asks for; it only changes at the end of a step. */
+    const formAt = (): number => {
+      const step = Math.min(Math.floor(place), steps - 1);
+      const here = forms[step] ?? 0;
+      const next = forms[step + 1] ?? here;
+      return here + (next - here) * smooth(0.45, 1, place - step);
+    };
+
+    const gl = canvas.getContext("webgl2", { alpha: true, antialias: true });
+    const program = gl?.createProgram();
+    if (gl && program) {
+      gl.attachShader(program, compile(gl, gl.VERTEX_SHADER, VERTEX));
+      gl.attachShader(program, compile(gl, gl.FRAGMENT_SHADER, FRAGMENT));
+      gl.linkProgram(program);
+    }
+
+    if (gl && program && gl.getProgramParameter(program, gl.LINK_STATUS)) {
+      gl.useProgram(program);
+      gl.bindVertexArray(gl.createVertexArray());
+
+      const attribute = (name: string, data: Float32Array, size: number, divisor: number): void => {
+        gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+        gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+        const location = gl.getAttribLocation(program, name);
+        gl.enableVertexAttribArray(location);
+        gl.vertexAttribPointer(location, size, gl.FLOAT, false, 0, 0);
+        gl.vertexAttribDivisor(location, divisor);
+      };
+
+      const total = window.innerWidth < 900 ? 3000 : 6000;
+      let live = total;
+
+      attribute("aCorner", new Float32Array([0, -1, 0.87, 0.5, -0.87, 0.5]), 2, 0);
+      attribute("aBary", new Float32Array([1, 0, 0, 0, 1, 0, 0, 0, 1]), 3, 0);
+
+      const mark = new Float32Array(total * 2).fill(-1);
+      [block, screen, suite, links, sheets].forEach((build, form) => {
+        const data = new Float32Array(total * 4);
+        build(total).forEach(([x, y, z, lit, extra], i) => {
+          data.set([x, y, z, lit], i * 4);
+          if (extra !== undefined) mark[i * 2 + (form === 3 ? 0 : 1)] = extra;
+        });
+        attribute(`aForm${form}`, data, 4, 1);
+      });
+      attribute("aMark", mark, 2, 1);
+      attribute("aSeed", Float32Array.from({ length: total * 4 }, () => Math.random()), 4, 1);
+
+      const uniform = (name: string): WebGLUniformLocation | null =>
+        gl.getUniformLocation(program, name);
+      const u = {
+        res: uniform("uRes"),
+        center: uniform("uCenter"),
+        scale: uniform("uScale"),
+        time: uniform("uTime"),
+        step: uniform("uStep"),
+        arrive: uniform("uArrive"),
+        pitch: uniform("uPitch"),
+        yaw: uniform("uYaw"),
+        rule: uniform("uRule"),
+        rules: uniform("uRules"),
+        reach: uniform("uReach"),
+      };
+
+      gl.enable(gl.BLEND);
+      gl.blendFunc(gl.ONE, gl.ONE);
+      gl.clearColor(0, 0, 0, 0);
+
+      let width = 0;
+      let height = 0;
+      const resize = (): void => {
+        const ratio = Math.min(window.devicePixelRatio || 1, 2);
+        width = pin.offsetWidth;
+        height = pin.offsetHeight;
+        canvas.width = Math.round(width * ratio);
+        canvas.height = Math.round(height * ratio);
+        gl.viewport(0, 0, canvas.width, canvas.height);
+        gl.uniform2f(u.res, width, height);
+      };
+      resize();
+      window.addEventListener("resize", resize, { passive: true });
+
+      const lean = { x: 0, y: 0, wantedX: 0, wantedY: 0 };
+      if (window.matchMedia("(hover: hover)").matches) {
+        window.addEventListener(
+          "pointermove",
+          (event) => {
+            lean.wantedX = (event.clientX / window.innerWidth - 0.5) * 0.3;
+            lean.wantedY = (event.clientY / window.innerHeight - 0.5) * 0.2;
+          },
+          { passive: true },
+        );
+      }
+
+      const born = performance.now();
+      let last = born;
+      let slowFrames = 0;
+      let shown = formAt();
+      let shownRule = -1;
+      let running = false;
+
+      const frame = (now: number): void => {
+        if (!running) return;
+        requestAnimationFrame(frame);
+        if (document.hidden) {
+          last = now;
+          return;
+        }
+        // A device that can't keep up loses particles, not smoothness.
+        const spent = now - last;
+        last = now;
+        slowFrames = spent > 30 ? slowFrames + 1 : Math.max(0, slowFrames - 1);
+        if (slowFrames > 40 && live > 1200) {
+          live = Math.round(live * 0.75);
+          slowFrames = 0;
+        }
+
+        shown += (formAt() - shown) * 0.08;
+        shownRule += (place - firstRule - 0.5 - shownRule) * 0.1;
+        lean.x += (lean.wantedX - lean.x) * 0.05;
+        lean.y += (lean.wantedY - lean.y) * 0.05;
+
+        const index = Math.min(Math.floor(shown), ANGLES.length - 2);
+        const blend = smooth(0, 1, shown - index);
+        const [pitchA = 0, yawA = 0] = ANGLES[index] ?? [];
+        const [pitchB = 0, yawB = 0] = ANGLES[index + 1] ?? [];
+        const time = (now - born) / 1000;
+        const narrow = width < 900;
+
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.uniform1f(u.time, time);
+        gl.uniform1f(u.step, shown);
+        gl.uniform1f(u.arrive, smooth(120, 2300, now - born));
+        gl.uniform1f(u.pitch, pitchA + (pitchB - pitchA) * blend + lean.y);
+        gl.uniform1f(u.yaw, yawA + (yawB - yawA) * blend + lean.x + Math.sin(time * 0.22) * 0.16);
+        gl.uniform1f(u.rule, shownRule);
+        gl.uniform1f(u.rules, smooth(firstRule - 0.2, firstRule + 0.3, place));
+        gl.uniform1f(u.reach, narrow ? 0.14 : 0.5);
+        gl.uniform2f(u.center, width * (narrow ? 0.5 : 0.55), height * (narrow ? 0.47 : 0.47));
+        gl.uniform1f(u.scale, narrow ? Math.min(width * 0.36, height * 0.19) : Math.min(width * 0.17, height * 0.28));
+        gl.drawArraysInstanced(gl.TRIANGLES, 0, 3, live);
+      };
+
+      // Runs only while in view.
+      new IntersectionObserver(([entry]) => {
+        const seen = entry?.isIntersecting ?? false;
+        if (seen === running) return;
+        running = seen;
+        last = performance.now();
+        if (seen) requestAnimationFrame(frame);
+      }).observe(pin);
+
+      canvas.classList.add("is-on");
+    }
+  }
+</script>
+
+<style>
+  /* --- de corrido: sin JS o con movimiento reducido ------------------------- */
+  .stage {
+    --strip: 5.25rem;
+    padding-block: calc(var(--header-space) + var(--space-7)) var(--space-8);
+  }
+  .stage__piece,
+  .stage__line {
+    display: none;
+  }
+  .stage__group {
+    display: grid;
+  }
+  .scene {
+    display: grid;
+    gap: var(--space-4);
+    max-width: var(--content-max);
+    margin-inline: auto;
+    padding: var(--space-6) var(--margin);
+    border-block-end: var(--hairline) dashed var(--night-500);
+  }
+  .scene__name {
+    display: grid;
+    gap: var(--space-3);
+  }
+  .scene__label {
+    font-size: var(--text-small);
+    line-height: var(--leading-small);
+    font-weight: var(--weight-medium);
+    color: var(--fg-secondary);
+  }
+  :global(html:not(.stage-on)) .stage__group > .scene__label {
+    padding-block-start: var(--space-7);
+    padding-inline: var(--margin);
+  }
+  .stage__title {
+    font-size: var(--text-block);
+    line-height: var(--leading-block);
+    letter-spacing: var(--tracking-block);
+    font-stretch: var(--width-block);
+    font-weight: var(--weight-medium);
+    text-transform: uppercase;
+    text-wrap: balance;
+  }
+  /* a stranded "a" at the end of a line reads as a typo */
+  .stage__title :global(span) {
+    white-space: nowrap;
+  }
+  .stage__title--first {
+    font-size: var(--text-block-first);
+  }
+  .scene__text {
+    max-width: var(--measure);
+    font-size: var(--text-statement);
+    line-height: var(--leading-statement);
+    letter-spacing: var(--tracking-lead);
+    text-wrap: pretty;
+  }
+  .scene__strip {
+    display: grid;
+    gap: var(--space-2);
+  }
+  .scene__signals {
+    display: grid;
+    gap: var(--space-1);
+    color: var(--fg-secondary);
+  }
+
+  /* --- la pieza: una idea por pantalla -------------------------------------- */
+  :global(.stage-on) .stage {
+    position: relative;
+    height: calc(100svh + var(--steps) * 44svh);
+    padding: 0;
+  }
+  :global(.stage-on) .stage__pin {
+    position: sticky;
+    inset-block-start: 0;
+    height: 100svh;
+    overflow: clip;
+  }
+  :global(.stage-on) .stage__piece {
+    display: block;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    opacity: 0;
+    transition: opacity var(--dur-5) var(--ease-out);
+  }
+  :global(.stage-on) .stage__piece.is-on {
+    opacity: 1;
+  }
+  /* The dashed line under every scene, lit as far as the page has come. */
+  :global(.stage-on) .stage__line {
+    display: block;
+    position: absolute;
+    inset-inline: var(--margin);
+    inset-block-end: var(--strip);
+    height: 0;
+    border-block-start: var(--hairline) dashed var(--night-500);
+  }
+  :global(.stage-on) .stage__line::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    inset-block-start: -1px;
+    height: 1px;
+    background: var(--strand);
+    transform: scaleX(var(--progress, 0));
+    transform-origin: left center;
+  }
+  :global(.stage-on) .stage__group {
+    display: contents;
+  }
+  :global(.stage-on) .scene {
+    position: absolute;
+    inset: 0;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 2fr) minmax(0, 3fr);
+    grid-template-rows: minmax(0, 1fr);
+    gap: var(--gutter);
+    max-width: none;
+    margin: 0;
+    padding: calc(var(--header-space) + var(--space-5)) var(--margin)
+      calc(var(--strip) + var(--space-6));
+    border: 0;
+    pointer-events: none;
+  }
+  :global(.stage-on) .scene__name {
+    grid-column: 1;
+    align-self: start;
+    align-content: start;
+  }
+  /* a title with nothing above it starts where the others do */
+  :global(.stage-on) .scene__name > .stage__title:first-child {
+    margin-block-start: calc(var(--text-small) * var(--leading-small) + var(--space-3));
+  }
+  :global(.stage-on) .scene__text {
+    grid-column: 3;
+    align-self: end;
+  }
+  :global(.stage-on) .scene__strip {
+    position: absolute;
+    inset-inline: var(--margin);
+    inset-block-end: 0;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: var(--space-5);
+    height: var(--strip);
+    padding: 0;
+    padding-inline-end: var(--space-9);
+    pointer-events: none;
+  }
+  :global(.stage-on) .scene__signals {
+    display: grid;
+    color: var(--fg);
+  }
+  :global(.stage-on) .scene__signals li {
+    grid-area: 1 / 1;
+  }
+
+  /* The others are only transparent: a screen reader still reads them all. */
+  :global(.stage-on) .beat {
+    opacity: 0;
+    translate: 0 0.625rem;
+    filter: blur(6px);
+    transition: opacity var(--dur-3) var(--ease-out), translate var(--dur-3) var(--ease-out),
+      filter var(--dur-3) var(--ease-out);
+  }
+  :global(.stage-on) .beat.is-at {
+    opacity: 1;
+    translate: 0 0;
+    filter: blur(0);
+  }
+
+  /* a phone on its side keeps the three columns: there is no height to stack */
+  @media (height <= 30rem) {
+    :global(.stage-on) .stage {
+      --strip: 3.25rem;
+    }
+    :global(.stage-on) .scene {
+      padding-block: calc(var(--header-space) - var(--space-3)) calc(var(--strip) + var(--space-2));
+    }
+    :global(.stage-on) .scene__name {
+      gap: var(--space-1);
+    }
+    :global(.stage-on) .scene__name > .stage__title:first-child {
+      margin-block-start: 0;
+    }
+    :global(.stage-on) .scene__text {
+      font-size: var(--text-small);
+      line-height: var(--leading-small);
+    }
+  }
+
+  @media (width <= 56rem) and (height > 30rem) {
+    :global(.stage-on) .stage {
+      --strip: 6.75rem;
+    }
+    :global(.stage-on) .scene {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: auto minmax(0, 1fr) auto;
+      gap: 0;
+      padding: calc(var(--header-space) + var(--space-2)) var(--margin)
+        calc(var(--strip) + var(--space-4));
+    }
+    :global(.stage-on) .scene__name,
+    :global(.stage-on) .scene__text {
+      grid-column: 1;
+    }
+    :global(.stage-on) .scene__text {
+      grid-row: 3;
+    }
+    :global(.stage-on) .scene__strip {
+      grid-template-columns: minmax(0, 1fr);
+      align-content: center;
+      gap: var(--space-1);
+      padding-inline-end: var(--space-8);
+    }
+  }
+</style>

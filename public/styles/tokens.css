@@ -99,10 +99,16 @@
   --text-h2: clamp(2rem, 1.3rem + 2.8vw, 3.75rem);              /* 32 -> 60 */
   --text-display: clamp(2.875rem, 1.6rem + 5.4vw, 6.5rem);      /* 46 -> 104 */
   --text-paper: clamp(2.25rem, 1.85rem + 1.8vw, 3.25rem);       /* 36 -> 52 */
+  /* /servicios: type stacked as a solid block, sized to the screen it fills */
+  --text-block: clamp(2.125rem, min(5.6vw, 12svh), 6rem);
+  --text-block-first: clamp(2.75rem, min(7.2vw, 15svh), 7.5rem);
+  --text-statement: clamp(1.1875rem, 1.05rem + 0.6vw, 1.75rem); /* 19 -> 28 */
 
   --leading-display: 1;
   --leading-h2: 1.06;
   --leading-paper: 1.16;
+  --leading-block: 0.98;     /* tight, with room for the accents on the capitals */
+  --leading-statement: 1.26;
   --leading-h3: 1.25;
   --leading-lead: 1.5;
   --leading-body: 1.6;
@@ -112,6 +118,7 @@
   --tracking-display: -0.034em;
   --tracking-h2: -0.028em;
   --tracking-paper: -0.015em;
+  --tracking-block: -0.012em;
   --tracking-h3: -0.016em;
   --tracking-lead: -0.006em;
 
@@ -121,6 +128,7 @@
   --weight-medium: 500;
   --weight-strong: 600;
   --width-heading: 104%;
+  --width-block: 88%;
 
   /* --- Spacing — 4/8 base ------------------------------------------------ */
   --space-1: 0.25rem;   /*   4 */
