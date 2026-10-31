@@ -1,8 +1,11 @@
 ---
+import Strands from "../components/Strands.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { hasWhatsapp, site, waMessages, whatsappUrl } from "../site";
 
 const waHref = whatsappUrl(waMessages.contacto);
+
+const titleWords = "¿Qué te gustaría dejar de hacer?".split(" ");
 
 const nextSteps = [
   "Leemos tu mensaje. Lo contesta quien trabajaría tu caso, no un vendedor.",
@@ -22,161 +25,180 @@ const emptyMessage = "Sin esto no podemos ayudarte: cuéntanos aunque sea en una
   path="/contacto"
 >
   <section class="opening" aria-labelledby="contact-title">
-    <div class="act__inner">
-      <div class="opening__top grid-12">
-        <div class="opening__main">
-          <p class="label">Contacto</p>
-          <h1 id="contact-title" class="display">
-            ¿Qué te gustaría dejar de hacer?
-          </h1>
-        </div>
-        <div class="opening__aside">
-          <p class="lead">
-            Cuéntanoslo con tus palabras. Te contesta una persona y te decimos con honestidad si
-            te podemos ayudar, incluso si la respuesta es que no nos necesitas.
-          </p>
-        </div>
-      </div>
+    <div class="desk">
+      <p class="label">Contacto</p>
+      <h1 id="contact-title" class="monument">
+        {
+          titleWords.map((word, i) => (
+            <>
+              <span class="monument__word" style={`--i: ${i};`}>
+                {word}
+              </span>{" "}
+            </>
+          ))
+        }
+      </h1>
+      <p class="monument__lead">
+        Cuéntanoslo con tus palabras. Te contesta una persona y te decimos con honestidad si
+        te podemos ayudar, incluso si la respuesta es que no nos necesitas.
+      </p>
     </div>
   </section>
 
-  <section class="act contact-act" aria-labelledby="form-title">
-    <div class="act__inner contact grid-12">
-      <aside class="contact__side">
-        {
-          hasWhatsapp && waHref && (
-            <a
-              class="wa-card ground-cobalt"
-              href={waHref}
-              target="_blank"
-              rel="noopener"
-            >
-              <p class="label">Lo más rápido</p>
-              <p class="h3 wa-card__title">Escríbenos por WhatsApp</p>
-              <p class="wa-card__text">
-                Mándanos tu idea como se la contarías a alguien de confianza. Contesta una persona,
-                en horario hábil.
+  <section class="contact-act" aria-labelledby="form-title">
+    <div class="desk">
+      <div class="gallery ground-paper">
+        <div class="spread">
+          {
+            hasWhatsapp && waHref && (
+              <a class="plate ground-dark" href={waHref} target="_blank" rel="noopener">
+                <Strands class="plate__art" />
+                <div class="plate__head">
+                  <p class="label">Lo más rápido</p>
+                  <p class="plate__title">Escríbenos por WhatsApp</p>
+                </div>
+                <div class="chat" aria-hidden="true" data-chat>
+                  <p class="chat__out">
+                    <span data-chat-typed>{waMessages.contacto}</span><span class="chat__rest" data-chat-rest></span>
+                    <svg class="chat__ticks" viewBox="0 0 18 10" focusable="false">
+                      <path d="M1 5.5 4 8.5 10 1.5M7.5 7 9 8.5 15.5 1.5" />
+                    </svg>
+                  </p>
+                  <p class="chat__in">
+                    <i />
+                    <i />
+                    <i />
+                  </p>
+                </div>
+                <div class="plate__foot">
+                  <p class="plate__text">
+                    Mándanos tu idea como se la contarías a alguien de confianza. Contesta una
+                    persona, en horario hábil.
+                  </p>
+                  <span class="btn btn--primary plate__cta">Abrir WhatsApp</span>
+                </div>
+              </a>
+            )
+          }
+
+          <div class="contact__form">
+            <h2 id="form-title" class="h2 gallery__title">O déjanos tu mensaje</h2>
+            <form class="contact-form" novalidate data-wa-number={site.whatsappNumber}>
+              <div class="field" data-field="name">
+                <label class="small" for="cf-name">Nombre</label>
+                <input
+                  id="cf-name"
+                  name="name"
+                  type="text"
+                  autocomplete="name"
+                  placeholder="¿Cómo te llamamos?"
+                  required
+                />
+                <p class="caption field__msg" id="cf-name-msg" hidden>{emptyMessage}</p>
+              </div>
+              <div class="field" data-field="company">
+                <label class="small" for="cf-company">Empresa</label>
+                <input
+                  id="cf-company"
+                  name="company"
+                  type="text"
+                  autocomplete="organization"
+                  placeholder="Nombre de tu empresa"
+                  required
+                />
+                <p class="caption field__msg" id="cf-company-msg" hidden>{emptyMessage}</p>
+              </div>
+              <div class="field" data-field="email">
+                <label class="small" for="cf-email">Correo</label>
+                <input
+                  id="cf-email"
+                  name="email"
+                  type="email"
+                  autocomplete="email"
+                  placeholder="nombre@empresa.mx"
+                  required
+                />
+                <p class="caption field__msg" id="cf-email-msg" hidden>
+                  Ese correo no parece completo. Revísalo y volvemos a intentar.
+                </p>
+              </div>
+              <div class="field" data-field="size">
+                <label class="small" for="cf-size">Tamaño de tu equipo (opcional)</label>
+                <span class="field__select">
+                  <select id="cf-size" name="size">
+                    <option value="">Selecciona</option>
+                    {sizes.map((s) => <option value={s}>{s}</option>)}
+                  </select>
+                </span>
+              </div>
+              <div class="field" data-field="message">
+                <label class="small" for="cf-message">¿Qué quieres resolver?</label>
+                <textarea
+                  id="cf-message"
+                  name="message"
+                  rows="5"
+                  required
+                  placeholder="Dos o tres líneas bastan. Ej.: ‘Pagamos un sistema caro y solo usamos una parte.’"
+                ></textarea>
+                <p class="caption field__msg" id="cf-message-msg" hidden>{emptyMessage}</p>
+              </div>
+              <div class="field" data-field="consent">
+                <label class="small consent">
+                  <input id="cf-consent" name="consent" type="checkbox" />
+                  <span>
+                    Acepto que Pragmasyn use mis datos para responderme.
+                    <a class="link" href="/privacidad">Aviso de privacidad</a>.
+                  </span>
+                </label>
+              </div>
+              <div class="contact-form__trap" aria-hidden="true">
+                <label>
+                  Sitio web
+                  <input name="website" type="text" tabindex="-1" autocomplete="off" />
+                </label>
+              </div>
+              <button
+                class="btn btn--primary"
+                type="submit"
+                aria-describedby="cf-consent-hint"
+                disabled
+              >
+                Enviar mensaje
+              </button>
+              <p class="caption" id="cf-consent-hint">Para enviarlo, acepta el aviso de privacidad.</p>
+              <p class="caption contact-form__micro">
+                Respondemos en menos de 24 horas hábiles. Sin secuencia de correos automáticos.
               </p>
-              <span class="link link--plain wa-card__cta">Abrir WhatsApp</span>
-            </a>
-          )
-        }
+              <p class="small contact-form__status" role="status" aria-live="polite"></p>
+            </form>
+          </div>
+        </div>
 
         <div class="direct">
-          <h2 class="label" id="direct-title">Directo</h2>
-          <p class="small">
-            ¿Prefieres el correo?
-            <a class="link" href={`mailto:${site.email}`}>{site.email}</a>
-          </p>
+          <div class="direct__side">
+            <h2 class="label" id="direct-title">Directo</h2>
+            <p class="small">¿Prefieres el correo?</p>
+          </div>
+          <div class="direct__main">
+            <a class="direct__mail" href={`mailto:${site.email}`}>{site.email}</a>
+          </div>
         </div>
 
         <div class="next">
-          <h2 class="label" id="next-title">Qué sigue</h2>
+          <h2 class="h2 gallery__title" id="next-title">Qué sigue</h2>
           <ol class="next__list" aria-labelledby="next-title">
             {
               nextSteps.map((step, i) => (
-                <li class="next__item">
-                  <span class="caption numeral" aria-hidden="true">
+                <li class="next__item line" style={`--i: ${i};`}>
+                  <span class="next__num" aria-hidden="true">
                     {String(i + 1).padStart(2, "0")}
                   </span>
-                  <p class="small">{step}</p>
+                  <p>{step}</p>
                 </li>
               ))
             }
           </ol>
         </div>
-      </aside>
-
-      <div class="contact__form">
-        <h2 id="form-title" class="h3">O déjanos tu mensaje</h2>
-        <form class="contact-form" novalidate data-wa-number={site.whatsappNumber}>
-          <div class="field" data-field="name">
-            <label class="small" for="cf-name">Nombre</label>
-            <input
-              id="cf-name"
-              name="name"
-              type="text"
-              autocomplete="name"
-              placeholder="¿Cómo te llamamos?"
-              required
-            />
-            <p class="caption field__msg" id="cf-name-msg" hidden>{emptyMessage}</p>
-          </div>
-          <div class="field" data-field="company">
-            <label class="small" for="cf-company">Empresa</label>
-            <input
-              id="cf-company"
-              name="company"
-              type="text"
-              autocomplete="organization"
-              placeholder="Nombre de tu empresa"
-              required
-            />
-            <p class="caption field__msg" id="cf-company-msg" hidden>{emptyMessage}</p>
-          </div>
-          <div class="field" data-field="email">
-            <label class="small" for="cf-email">Correo</label>
-            <input
-              id="cf-email"
-              name="email"
-              type="email"
-              autocomplete="email"
-              placeholder="nombre@empresa.mx"
-              required
-            />
-            <p class="caption field__msg" id="cf-email-msg" hidden>
-              Ese correo no parece completo. Revísalo y volvemos a intentar.
-            </p>
-          </div>
-          <div class="field" data-field="size">
-            <label class="small" for="cf-size">Tamaño de tu equipo (opcional)</label>
-            <span class="field__select">
-              <select id="cf-size" name="size">
-                <option value="">Selecciona</option>
-                {sizes.map((s) => <option value={s}>{s}</option>)}
-              </select>
-            </span>
-          </div>
-          <div class="field" data-field="message">
-            <label class="small" for="cf-message">¿Qué quieres resolver?</label>
-            <textarea
-              id="cf-message"
-              name="message"
-              rows="5"
-              required
-              placeholder="Dos o tres líneas bastan. Ej.: ‘Pagamos un sistema caro y solo usamos una parte.’"
-            ></textarea>
-            <p class="caption field__msg" id="cf-message-msg" hidden>{emptyMessage}</p>
-          </div>
-          <div class="field" data-field="consent">
-            <label class="small consent">
-              <input id="cf-consent" name="consent" type="checkbox" />
-              <span>
-                Acepto que Pragmasyn use mis datos para responderme.
-                <a class="link" href="/privacidad">Aviso de privacidad</a>.
-              </span>
-            </label>
-          </div>
-          <div class="contact-form__trap" aria-hidden="true">
-            <label>
-              Sitio web
-              <input name="website" type="text" tabindex="-1" autocomplete="off" />
-            </label>
-          </div>
-          <button
-            class="btn btn--primary"
-            type="submit"
-            aria-describedby="cf-consent-hint"
-            disabled
-          >
-            Enviar mensaje
-          </button>
-          <p class="caption" id="cf-consent-hint">Para enviarlo, acepta el aviso de privacidad.</p>
-          <p class="caption contact-form__micro">
-            Respondemos en menos de 24 horas hábiles. Sin secuencia de correos automáticos.
-          </p>
-          <p class="small contact-form__status" role="status" aria-live="polite"></p>
-        </form>
       </div>
     </div>
   </section>
@@ -312,104 +334,399 @@ const emptyMessage = "Sin esto no podemos ayudarte: cuéntanos aunque sea en una
         button.removeAttribute("aria-busy");
       });
   });
+
+  // Glass over white turns gray, so the header goes nearly solid over the sheet.
+  const gallery = document.querySelector(".gallery");
+  if (gallery) {
+    new IntersectionObserver(
+      ([entry]) => {
+        document.documentElement.classList.toggle("over-paper", entry?.isIntersecting ?? false);
+      },
+      { rootMargin: "0px 0px -90% 0px" },
+    ).observe(gallery);
+  }
+
+  // The plate writes the message it will open with, and someone starts to
+  // answer. It runs on its own, in a loop, only while it is on screen. Without
+  // JavaScript or with reduced motion the message simply sits there.
+  const chat = document.querySelector<HTMLElement>("[data-chat]");
+  const typed = chat?.querySelector<HTMLElement>("[data-chat-typed]");
+  const rest = chat?.querySelector<HTMLElement>("[data-chat-rest]");
+  const calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if (chat && typed && rest && !calm) {
+    const text = typed.textContent ?? "";
+    const wait = (ms: number): Promise<void> =>
+      new Promise((resolve) => window.setTimeout(resolve, ms));
+
+    let inView = false;
+    let wake: (() => void) | undefined;
+    const arrival = (): Promise<void> =>
+      inView ? Promise.resolve() : new Promise((resolve) => (wake = resolve));
+    new IntersectionObserver(([entry]) => {
+      inView = entry?.isIntersecting ?? false;
+      if (inView) wake?.();
+    }).observe(chat);
+
+    // the unwritten part stays in the line, hidden, so nothing reflows
+    const write = (count: number): void => {
+      typed.textContent = text.slice(0, count);
+      rest.textContent = text.slice(count);
+    };
+
+    const play = async (): Promise<void> => {
+      for (;;) {
+        await arrival();
+        write(0);
+        chat.dataset["step"] = "writing";
+        await wait(500);
+        for (let count = 1; count <= text.length; count++) {
+          write(count);
+          await wait(30);
+        }
+        await wait(350);
+        chat.dataset["step"] = "sent";
+        await wait(900);
+        chat.dataset["step"] = "answering";
+        await wait(4200);
+        chat.dataset["step"] = "clearing";
+        await wait(420);
+      }
+    };
+    write(0);
+    chat.dataset["step"] = "writing";
+    void play();
+  }
 </script>
 
 <style>
-  .contact-act {
-    padding-block-start: 0;
+  /* Gallery paper on the night: the title stands on the dark page, huge and
+     alone, and everything else is one sheet as wide as the header, so the
+     constellation stays in view around it. */
+  .desk {
+    --form-pad: var(--space-6);
+    --sheet-pad: var(--space-3);
+    container-type: inline-size;
+    max-width: calc(68rem + 2 * var(--margin));
+    margin-inline: auto;
+    padding-inline: var(--margin);
   }
-  .contact {
-    align-items: start;
+
+  /* --- la apertura: el título es la página ---------------------------------- */
+  .monument {
+    margin-block-start: var(--space-3);
+    font-size: 11.6cqi;
+    line-height: var(--leading-display);
+    letter-spacing: var(--tracking-hero);
+    font-weight: var(--weight-light);
+    font-stretch: var(--width-heading);
+    text-wrap: balance;
   }
-  .contact__side {
-    --col: 1 / span 4;
-    position: sticky;
-    inset-block-start: var(--space-9);
-    display: grid;
-    gap: var(--space-6);
+  .monument__word {
+    display: inline-block;
   }
-  .contact__form {
-    --col: 6 / -1;
-    padding: clamp(var(--space-4), 3vw, var(--space-6));
-    background: var(--bg-chrome);
-    border-radius: var(--radius-xl);
-    box-shadow: var(--shadow-key);
+  /* it starts where the form's text starts, inside the sheet */
+  .monument__lead {
+    margin-block-start: var(--space-6);
+    margin-inline-start: calc(
+      (100% - 3 * var(--sheet-pad)) * 5 / 12 + 2 * var(--sheet-pad) + var(--form-pad)
+    );
+    font-size: var(--text-statement);
+    line-height: var(--leading-statement);
+    letter-spacing: var(--tracking-lead);
+    text-shadow: 0 0 24px rgb(var(--rgb-ink));
+    text-wrap: pretty;
   }
-  /* On a phone the order is: WhatsApp, form, Directo, Qué sigue. */
-  @media (width <= 56rem) {
-    .contact {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-7);
+  @media (prefers-reduced-motion: no-preference) {
+    .monument__word {
+      animation: word-in var(--dur-5) var(--ease-out) backwards;
+      animation-delay: calc(var(--i) * 55ms);
     }
-    .contact__side {
-      display: contents;
+    .monument__lead {
+      animation: word-in var(--dur-5) var(--ease-out) 340ms backwards;
     }
-    .wa-card {
-      order: 1;
+    .gallery {
+      animation: gallery-in 1200ms var(--ease-out) 420ms backwards;
     }
-    .contact__form {
-      order: 2;
+  }
+  @keyframes word-in {
+    from {
+      opacity: 0;
+      translate: 0 0.25em;
+      filter: blur(10px);
     }
-    .direct {
-      order: 3;
-    }
-    .next {
-      order: 4;
+  }
+  @keyframes gallery-in {
+    from {
+      opacity: 0;
+      translate: 0 var(--space-8);
     }
   }
 
-  .wa-card {
+  /* --- la hoja ---------------------------------------------------------------- */
+  .contact-act {
+    padding-block-end: clamp(var(--space-8), 8vw, var(--space-10));
+  }
+  .gallery {
+    --hairline-color: var(--paper-ink);
+    --control-border: var(--paper-ink);
+    padding: var(--sheet-pad);
+    border-radius: var(--radius-2xl);
+  }
+  :global(html.over-paper) {
+    --glass-alpha: 0.92;
+  }
+  .spread {
     display: grid;
-    gap: var(--space-2);
+    grid-template-columns: 5fr 7fr;
+    gap: var(--sheet-pad);
+  }
+  .gallery__title {
+    font-size: var(--text-paper);
+    line-height: var(--leading-paper);
+    letter-spacing: var(--tracking-h2);
+    font-weight: var(--weight-light);
+  }
+
+  /* --- la placa: la única superficie oscura de la hoja ------------------------ */
+  .plate {
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    gap: var(--space-5);
+    min-width: 0;
+    overflow: hidden;
     padding: var(--space-5);
     border-radius: var(--radius-l);
+    background: var(--surface-lit);
     color: var(--fg);
     text-decoration: none;
-    transition: background-color var(--dur-1) var(--ease-out);
   }
-  .wa-card:hover {
-    background-color: var(--bg-raised);
-  }
-  /* the ring sits inside the card, where it lands on cobalt, not on white */
-  .wa-card:focus-visible {
+  /* the ring sits inside the plate, where it lands on the dark */
+  .plate:focus-visible {
     border-radius: var(--radius-l);
     outline-offset: calc(-2 * var(--focus-width));
   }
-  .wa-card__text {
+  .plate :global(.plate__art) {
+    inset-block-end: 4%;
+    inset-inline-end: -44%;
+    width: 120%;
+  }
+  /* the mark sinks into the night before it reaches the text */
+  .plate::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(to top, var(--violet-night) 24%, transparent 56%);
+  }
+  /* here the mark has no stars to lend its light to: it stays drawn */
+  :global(.has-constellation) .plate :global(.strands__form) {
+    opacity: 0.92;
+  }
+  :global(.has-constellation) .plate :global(.strands__glow) {
+    opacity: 0.8;
+  }
+  .plate__head {
+    display: grid;
+    gap: var(--space-2);
+  }
+  .plate__title {
+    font-size: var(--text-paper);
+    line-height: var(--leading-paper);
+    letter-spacing: var(--tracking-h2);
+    font-weight: var(--weight-light);
+    font-stretch: var(--width-heading);
+    text-wrap: balance;
+  }
+  .plate__foot {
+    display: grid;
+    gap: var(--space-4);
+    justify-items: start;
+  }
+  .plate__text {
     max-width: var(--measure);
     color: var(--fg-secondary);
     text-wrap: pretty;
   }
-  .wa-card__cta {
+  .plate:hover .plate__cta {
+    background: var(--action-bg-strong);
+    box-shadow:
+      0 0 0 4px rgb(var(--rgb-light) / 0.12),
+      0 0 32px rgb(var(--rgb-blue) / 0.45);
+  }
+
+  /* --- la conversación ------------------------------------------------------- */
+  .chat {
+    align-self: center;
+    display: grid;
+    gap: var(--space-2);
+    font-size: var(--text-small);
+    line-height: var(--leading-small);
+  }
+  .chat__out,
+  .chat__in {
+    transition:
+      opacity var(--dur-3) var(--ease-out),
+      translate var(--dur-3) var(--ease-out),
+      scale var(--dur-3) var(--ease-spring);
+  }
+  .chat__out {
+    justify-self: end;
+    max-width: 88%;
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-l) var(--radius-l) var(--radius-s) var(--radius-l);
+    background: var(--white);
+    color: var(--paper-ink);
+    text-wrap: pretty;
+  }
+  .chat__rest {
+    visibility: hidden;
+  }
+  .chat__ticks {
+    display: inline-block;
+    width: 1.125rem;
+    height: 0.625rem;
+    margin-inline-start: var(--space-2);
+    fill: none;
+    stroke: var(--lit-b);
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity: 0;
+    scale: 0.6;
+    transition:
+      opacity var(--dur-2) var(--ease-out),
+      scale var(--dur-3) var(--ease-spring);
+  }
+  .chat__in {
     justify-self: start;
+    display: flex;
+    gap: var(--space-1);
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-l) var(--radius-l) var(--radius-l) var(--radius-s);
+    background: rgb(var(--rgb-ink) / 0.56);
+    box-shadow: var(--shadow-glass);
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+    transform-origin: 0 100%;
+    opacity: 0;
+    translate: 0 var(--space-2);
+    scale: 0.9;
+  }
+  .chat__in i {
+    width: var(--space-2);
+    height: var(--space-2);
+    border-radius: 50%;
+    background: var(--white);
+  }
+  .chat[data-step="sent"] .chat__ticks,
+  .chat[data-step="answering"] .chat__ticks {
+    opacity: 1;
+    scale: 1;
+  }
+  .chat[data-step="answering"] .chat__in {
+    opacity: 1;
+    translate: 0 0;
+    scale: 1;
+  }
+  .chat[data-step="answering"] .chat__in i {
+    animation: chat-dot 1.2s var(--ease-in-out) infinite;
+  }
+  .chat[data-step="answering"] .chat__in i:nth-child(2) {
+    animation-delay: 160ms;
+  }
+  .chat[data-step="answering"] .chat__in i:nth-child(3) {
+    animation-delay: 320ms;
+  }
+  .chat[data-step="clearing"] .chat__out,
+  .chat[data-step="clearing"] .chat__in {
+    opacity: 0;
+    translate: 0 calc(-1 * var(--space-2));
+  }
+  @keyframes chat-dot {
+    0%,
+    60%,
+    100% {
+      opacity: 0.4;
+      translate: 0 0;
+    }
+    30% {
+      opacity: 1;
+      translate: 0 calc(-1 * var(--space-1));
+    }
   }
 
-  .direct {
-    display: grid;
-    gap: var(--space-2);
+  /* --- el formulario --------------------------------------------------------- */
+  .contact__form {
+    min-width: 0;
+    padding: var(--space-5) var(--form-pad) var(--space-6);
   }
-  .direct .link {
-    display: inline-flex;
-    align-items: center;
-    min-height: 44px;
+  /* without WhatsApp the form takes the whole sheet */
+  .contact__form:only-child {
+    grid-column: 1 / -1;
   }
-  .next {
-    display: grid;
-    gap: var(--space-2);
-  }
-  .next__item {
-    display: grid;
-    grid-template-columns: var(--space-7) 1fr;
-    gap: var(--space-3);
-    padding-block: var(--space-4);
-    border-block-start: var(--hairline) solid var(--hairline-color);
-  }
-
   .contact-form {
     margin-block-start: var(--space-5);
     display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--space-4);
+  }
+  .contact-form > * {
+    grid-column: 1 / -1;
+  }
+  .contact-form > [data-field="name"],
+  .contact-form > [data-field="company"],
+  .contact-form > [data-field="email"],
+  .contact-form > [data-field="size"] {
+    grid-column: auto;
+    align-content: start;
+  }
+  /* an outlined control: ink on paper, and focus only makes the line heavier */
+  .gallery .field > label {
+    font-weight: var(--weight-text);
+  }
+  .gallery .field input:not([type="checkbox"]),
+  .gallery .field textarea,
+  .gallery .field select {
+    min-height: 3.25rem;
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-s);
+    transition: box-shadow var(--dur-1) var(--ease-out);
+  }
+  .gallery .field select {
+    padding-inline-end: var(--space-7);
+  }
+  .gallery .field input:not([type="checkbox"]):hover,
+  .gallery .field textarea:hover,
+  .gallery .field select:hover {
+    border-color: var(--control-border);
+    box-shadow: inset 0 0 0 var(--hairline) var(--control-border);
+  }
+  .gallery .field input:focus-visible,
+  .gallery .field textarea:focus-visible,
+  .gallery .field select:focus-visible {
+    border-color: var(--control-border);
+    border-radius: var(--radius-s);
+    box-shadow: inset 0 0 0 var(--hairline) var(--control-border);
+    outline-width: var(--hairline);
+  }
+  .gallery .field--error input:not([type="checkbox"]),
+  .gallery .field--error textarea {
+    border-color: var(--error-color);
+    box-shadow: none;
+  }
+  .gallery .btn--primary {
+    width: 100%;
+    min-height: 3.25rem;
+    border-radius: var(--radius-s);
+  }
+  .gallery .btn--primary:hover {
+    box-shadow: var(--shadow-lit);
+  }
+  .gallery .btn--primary:disabled {
+    box-shadow: none;
   }
   .contact-form__micro {
     margin-block-start: calc(var(--space-2) * -1);
@@ -424,6 +741,83 @@ const emptyMessage = "Sin esto no podemos ayudarte: cuéntanos aunque sea en una
   }
   .contact-form__status:empty {
     display: none;
+  }
+
+  /* --- directo: el correo a escala de título --------------------------------- */
+  .direct {
+    display: grid;
+    grid-template-columns: 5fr 7fr;
+    column-gap: var(--sheet-pad);
+    align-items: end;
+    margin-block-start: var(--sheet-pad);
+    margin-inline: var(--space-5) var(--form-pad);
+    padding-block: var(--space-6);
+    border-block-start: var(--hairline) solid var(--hairline-color);
+  }
+  .direct__side {
+    display: grid;
+    gap: var(--space-1);
+  }
+  .direct__main {
+    container-type: inline-size;
+    min-width: 0;
+    padding-inline-start: var(--form-pad);
+  }
+  .direct__mail {
+    display: inline-block;
+    font-size: 8.2cqi;
+    line-height: var(--leading-paper);
+    letter-spacing: var(--tracking-h2);
+    font-weight: var(--weight-light);
+    color: var(--fg);
+    text-decoration: underline;
+    text-decoration-thickness: var(--hairline);
+    text-underline-offset: 0.16em;
+    transition: text-underline-offset var(--dur-2) var(--ease-out);
+  }
+  .direct__mail:hover {
+    text-underline-offset: 0.28em;
+  }
+
+  /* --- qué sigue: la zona de color, la única de la hoja ---------------------- */
+  .next {
+    padding: var(--space-6) var(--space-5) var(--space-7);
+    border-radius: var(--radius-l);
+    background: var(--violet-mist);
+  }
+  .next__list {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-5);
+    margin-block-start: var(--space-6);
+  }
+  .next__item {
+    position: relative;
+    display: grid;
+    align-content: start;
+    gap: var(--space-5);
+    padding-block-start: var(--space-3);
+    text-wrap: pretty;
+  }
+  /* each line draws itself in, one step after the other */
+  .next__item::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    height: var(--hairline);
+    background: var(--hairline-color);
+    transform-origin: left center;
+    transition: transform var(--dur-5) var(--ease-in-out);
+    transition-delay: calc(var(--i) * 180ms);
+  }
+  .next__item.reveal:not(.is-in)::before {
+    transform: scaleX(0);
+  }
+  .next__num {
+    font-size: var(--text-h2);
+    line-height: var(--leading-display);
+    letter-spacing: var(--tracking-h2);
+    font-weight: var(--weight-light);
   }
 
   /* A field that fails shakes once, 4px each way. */
@@ -469,5 +863,52 @@ const emptyMessage = "Sin esto no podemos ayudarte: cuéntanos aunque sea en una
   .toast.is-visible {
     opacity: 1;
     translate: 0 0;
+  }
+
+  /* On a phone the order is: WhatsApp, form, Directo, Qué sigue. */
+  @media (width <= 56rem) {
+    .desk {
+      --form-pad: var(--space-3);
+    }
+    .monument__lead {
+      margin-block-start: var(--space-5);
+      margin-inline-start: 0;
+    }
+    .spread,
+    .direct {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .plate {
+      gap: var(--space-6);
+    }
+    .chat {
+      min-height: 9rem;
+      align-content: center;
+    }
+    .direct {
+      row-gap: var(--space-4);
+      margin-inline: var(--form-pad);
+    }
+    .direct__main {
+      padding-inline-start: 0;
+    }
+    .next {
+      padding: var(--space-5) var(--form-pad) var(--space-6);
+    }
+    .next__list {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .next__item {
+      grid-template-columns: var(--space-8) minmax(0, 1fr);
+      gap: var(--space-3);
+    }
+  }
+  @media (width <= 40rem) {
+    .contact-form > [data-field="name"],
+    .contact-form > [data-field="company"],
+    .contact-form > [data-field="email"],
+    .contact-form > [data-field="size"] {
+      grid-column: 1 / -1;
+    }
   }
 </style>
