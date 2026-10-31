@@ -64,6 +64,11 @@ resto de las páginas no la descarga.
 en caja normal. El interlineado es 0.98 y no 0.9 como en la referencia: las mayúsculas del español
 llevan acento. Las etiquetas pequeñas siguen en caja normal, y el resto del sitio no cambia.
 
+`/metodo` abre con la promesa en dos escalas, sin segunda familia ni cursiva: `--text-h2` y
+`--text-hero`, ambas en `--weight-light`. Los nombres de los pasos son sellos: mayúsculas de Mona
+Sans al ancho 125 % (`--width-stamp`), repartidas letra por letra para llenar el pase. Es la lectura
+propia de la referencia dope.security, sin sus fuentes de pago ni su mono.
+
 ## Composición
 
 - Retícula de 12 columnas, máximo 1320 px.
@@ -88,7 +93,8 @@ muestra menos a la vez.
 | `Journey` | El acompañamiento como una línea que cruza «Entrega» y se sale del panel, sobre vidrio esmerilado, con una frase a la vez | Authkit |
 | `OwnPass` | La propiedad como pase perforado que se inclina | dope.security, Boarding Pass |
 | `Prompt` | Barra de comandos que lleva tu idea al formulario | Raycast |
-| `MethodSteps` | Método por pasos, un paso abierto a la vez | n8n, Figure |
+| `MethodPass` | El pase de vidrio de la apertura de `/metodo`: la ruta de cuatro paradas, cada una lleva a su paso | dope.security, Boarding Pass |
+| `MethodSteps` | Cuatro pases que se apilan al bajar, con el nombre sellado y su avance en la ruta | dope.security, Comparison Card |
 | `ServiceStage` | `/servicios` completa: una pieza en el vacío que se talla en cada servicio, con una idea por pantalla | ORYZO |
 | `Clock` | Hora real de Ciudad de México en el pie | Max Yinger |
 | `Icon` | Iconos de línea dibujados aquí | Authkit |
@@ -105,6 +111,7 @@ muestra menos a la vez.
 | Acompañamiento | La luz avanza sola por la línea y enciende cada parada, en ciclo y sin que nadie toque nada. La última dura más, con el resplandor en la salida; luego la luz se apaga y empieza de nuevo. Con movimiento reducido se leen las cuatro juntas. |
 | Servicios | Las piezas corren solo mientras están a la vista. |
 | `/servicios` | El bloque se arma con las estrellas al llegar. El scroll lo talla: pantalla por capas, módulos que se apagan, conexiones con luz y cinco hojas de las que sale la regla que se lee. El texto cambia de una idea a la vez, sin clic ni temporizador, y la línea punteada se enciende con el avance. Sin JavaScript o con movimiento reducido no hay pieza y todo se lee de corrido. |
+| `/metodo` | La ruta del pase se traza al llegar y una luz la recorre. Al bajar, cada pase se queda fijo y el siguiente lo cubre: las letras del sello entran una por una, el código de barras se imprime y la línea avanza hasta su parada. La pila solo se forma si el último pase cabe en la pantalla; si no, o sin JavaScript, se leen de corrido. |
 | Páginas | Transición entre páginas; el encabezado no se mueve. |
 
 Duraciones de 120 a 900 ms (`--dur-1` a `--dur-5`). Con `prefers-reduced-motion` todo se detiene, y
