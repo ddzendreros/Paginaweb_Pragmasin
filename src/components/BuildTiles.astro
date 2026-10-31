@@ -1,9 +1,11 @@
 ---
 /**
  * Lo que construimos, mostrado en vez de descrito. Cada mosaico trae una pieza
- * que se mueve sola mientras está a la vista: el flujo corre, las tareas se
- * resuelven, las cifras se dibujan. Todo es decorativo: el texto es el contenido
- * y las piezas se ocultan a los lectores de pantalla.
+ * que se mueve sola mientras está a la vista: los módulos se apagan, la corrida
+ * avanza, el dato viaja, el portal cambia de pestaña, las cifras se dibujan y
+ * las tareas llegan al teléfono. Todo es decorativo: el texto es el contenido y
+ * las piezas se ocultan a los lectores de pantalla. Sin movimiento cada pieza
+ * queda en su estado final, completa y legible.
  */
 import logoSvg from "../../branding/logo/logo.svg?raw";
 
@@ -50,10 +52,49 @@ const tiles: Tile[] = [
   },
 ];
 
-const sources: [string, number][] = [
-  ["Excel", 34],
-  ["Banco", 104],
-  ["WhatsApp", 174],
+const modules: [string, boolean][] = [
+  ["Pedidos", true],
+  ["Campañas", false],
+  ["Encuestas", false],
+  ["Facturas", true],
+  ["Insignias", false],
+  ["Foros", false],
+];
+const steps = ["Llega", "Se captura", "Se factura", "Se avisa"];
+const sources = ["Excel", "Banco", "WhatsApp"];
+const portal: { tab: string; rows: [string, string][] }[] = [
+  {
+    tab: "Pedidos",
+    rows: [
+      ["Pedido 5214", "En ruta"],
+      ["Pedido 5215", "Cargando"],
+      ["Pedido 5213", "Entregado"],
+    ],
+  },
+  {
+    tab: "Citas",
+    rows: [
+      ["10:30", "Confirmada"],
+      ["11:00", "Por confirmar"],
+      ["11:30", "Confirmada"],
+    ],
+  },
+  {
+    tab: "Estados de cuenta",
+    rows: [
+      ["Agosto", "Pagado"],
+      ["Septiembre", "Pagado"],
+      ["Octubre", "Por pagar"],
+    ],
+  },
+];
+const figures = ["Ventas", "Cobranza", "Inventario"];
+const bars = [62, 88, 74, 104, 92, 126, 110, 142, 134, 168];
+const tasks = ["Surtir", "Cargar", "Entregar"];
+const fieldNotes: [string, string][] = [
+  ["Piso", "Surtido"],
+  ["Ruta Norte", "Entregado"],
+  ["Sucursal", "Al día"],
 ];
 ---
 
@@ -64,9 +105,9 @@ const sources: [string, number][] = [
         <div class="tile__art" aria-hidden="true">
           {t.art === "saas" && (
             <div class="art-saas">
-              {[true, false, false, true, false, false].map((kept) => (
-                <span class:list={["art-saas__row", { "is-kept": kept }]}>
-                  <i class="art-saas__label" />
+              {modules.map(([name, kept], i) => (
+                <span class:list={["art-saas__row", { "is-kept": kept }]} style={`--i: ${i};`}>
+                  <b>{name}</b>
                   <i class="art-saas__switch" />
                 </span>
               ))}
@@ -78,105 +119,184 @@ const sources: [string, number][] = [
               <span class="art-steps__rail">
                 <i class="art-steps__fill" />
               </span>
-              {[0, 1, 2, 3].map((i) => (
+              {steps.map((name, i) => (
                 <span class="art-steps__step" style={`--i: ${i};`}>
                   <i class="art-steps__dot" />
-                  <i class="art-steps__bar" />
+                  <b>{name}</b>
                 </span>
               ))}
+              <p class="art-steps__done ground-light">Listo. Nadie lo tecleó.</p>
             </div>
           )}
 
           {t.art === "flow" && (
-            <svg class="art-flow" viewBox="0 0 640 208" fill="none">
-              <defs>
-                <linearGradient id="flow-pulse" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0" stop-color="#5B19F1" />
-                  <stop offset="1" stop-color="#00C7F8" />
-                </linearGradient>
-              </defs>
-              {sources.map(([, y], i) => (
-                <g>
-                  <path class="art-flow__wire" d={`M132 ${y} C 210 ${y}, 220 104, 292 104`} />
-                  <path
-                    class="art-flow__pulse"
-                    style={`--i: ${i};`}
-                    d={`M132 ${y} C 210 ${y}, 220 104, 292 104`}
-                  />
-                </g>
-              ))}
-              <path class="art-flow__wire" d="M348 104 L 498 104" />
-              <path class="art-flow__pulse" style="--i: 3;" d="M348 104 L 498 104" />
-              {sources.map(([name, y]) => (
-                <g>
-                  <rect class="art-flow__node" x="12" y={y - 21} width="120" height="42" rx="10" />
-                  <circle class="art-flow__led" cx="32" cy={y} r="3.5" />
-                  <text class="art-flow__label" x="46" y={y + 5}>
-                    {name}
-                  </text>
-                </g>
-              ))}
-              <rect class="art-flow__hub" x="292" y="76" width="56" height="56" rx="14" />
-              <rect class="art-flow__node" x="498" y="83" width="130" height="42" rx="10" />
-              <circle class="art-flow__led" cx="518" cy="104" r="3.5" />
-              <text class="art-flow__label" x="532" y="109">
-                Tus sistemas
-              </text>
-            </svg>
-            <span class="art-flow__mark" set:html={logoSvg} />
+            <div class="art-flow">
+              <div class="art-flow__side">
+                {sources.map((name, i) => (
+                  <span class="art-flow__node" style={`--i: ${i};`}>
+                    <b>
+                      <i class="art-flow__led" />
+                      {name}
+                    </b>
+                    <small>Pedido 5214</small>
+                  </span>
+                ))}
+              </div>
+              <svg
+                class="art-flow__wires"
+                viewBox="0 0 160 192"
+                preserveAspectRatio="none"
+                fill="none"
+              >
+                <defs>
+                  <linearGradient
+                    id="flow-pulse"
+                    gradientUnits="userSpaceOnUse"
+                    x1="0"
+                    y1="0"
+                    x2="160"
+                    y2="0"
+                  >
+                    <stop offset="0" stop-color="#5B19F1" />
+                    <stop offset="1" stop-color="#00C7F8" />
+                  </linearGradient>
+                </defs>
+                {[32, 96, 160].map((y, i) => (
+                  <g>
+                    <path class="art-flow__wire" d={`M0 ${y} C 90 ${y}, 70 96, 160 96`} />
+                    <path
+                      class="art-flow__pulse"
+                      pathLength="1"
+                      style={`--i: ${i};`}
+                      d={`M0 ${y} C 90 ${y}, 70 96, 160 96`}
+                    />
+                  </g>
+                ))}
+              </svg>
+              <span class="art-flow__hub" set:html={logoSvg} />
+              <svg
+                class="art-flow__wires"
+                viewBox="0 0 160 192"
+                preserveAspectRatio="none"
+                fill="none"
+              >
+                <path class="art-flow__wire" d="M0 96 H160" />
+                <path class="art-flow__pulse" pathLength="1" style="--i: 3;" d="M0 96 H160" />
+              </svg>
+              <span class="art-flow__node art-flow__node--out" style="--i: 3;">
+                <b>
+                  <i class="art-flow__led" />
+                  Tus sistemas
+                </b>
+                <small>Pedido 5214</small>
+              </span>
+            </div>
           )}
 
           {t.art === "portal" && (
             <div class="art-portal">
               <span class="art-portal__tabs">
-                <b>Pedidos</b>
-                <b>Citas</b>
-                <b>Estados de cuenta</b>
+                {portal.map(({ tab }) => (
+                  <b>{tab}</b>
+                ))}
                 <i class="art-portal__ink" />
               </span>
-              <span class="art-portal__rows">
-                <i />
-                <i />
-                <i />
+              <span class="art-portal__panes">
+                {portal.map(({ rows }, i) => (
+                  <span class="art-portal__pane" style={`--i: ${i};`}>
+                    {rows.map(([name, status], row) => (
+                      <span class="art-portal__row" style={`--r: ${row};`}>
+                        <b>{name}</b>
+                        <small class:list={{ "is-done": row === 0 }}>{status}</small>
+                      </span>
+                    ))}
+                  </span>
+                ))}
               </span>
             </div>
           )}
 
           {t.art === "chart" && (
-            <svg class="art-chart" viewBox="0 0 640 190" fill="none" preserveAspectRatio="none">
-              <defs>
-                <linearGradient id="chart-line" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0" stop-color="#5B19F1" />
-                  <stop offset="0.6" stop-color="#1B7FFC" />
-                  <stop offset="1" stop-color="#00C7F8" />
-                </linearGradient>
-                <linearGradient id="chart-fill" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0" stop-color="#1B7FFC" stop-opacity="0.32" />
-                  <stop offset="1" stop-color="#1B7FFC" stop-opacity="0" />
-                </linearGradient>
-              </defs>
-              {[47, 94, 141].map((y) => (
-                <path class="art-chart__grid" d={`M0 ${y} H640`} />
-              ))}
-              <path
-                class="art-chart__area"
-                d="M0 150 C 60 142, 90 118, 150 122 S 250 150, 310 108 S 420 84, 480 72 S 590 40, 640 22 V190 H0 Z"
-                fill="url(#chart-fill)"
-              />
-              <path
-                class="art-chart__line"
-                pathLength="1"
-                d="M0 150 C 60 142, 90 118, 150 122 S 250 150, 310 108 S 420 84, 480 72 S 590 40, 640 22"
-              />
-            </svg>
+            <div class="art-chart">
+              <ul class="art-chart__figures">
+                {figures.map((name, i) => (
+                  <li style={`--i: ${i};`}>
+                    <b>{name}</b>
+                    <i class="art-chart__meter">
+                      <i />
+                    </i>
+                  </li>
+                ))}
+              </ul>
+              <div class="art-chart__plot">
+                <svg viewBox="0 0 640 220" fill="none">
+                  <defs>
+                    <linearGradient
+                      id="chart-line"
+                      gradientUnits="userSpaceOnUse"
+                      x1="0"
+                      y1="0"
+                      x2="640"
+                      y2="0"
+                    >
+                      <stop offset="0" stop-color="#5B19F1" />
+                      <stop offset="0.6" stop-color="#1B7FFC" />
+                      <stop offset="1" stop-color="#00C7F8" />
+                    </linearGradient>
+                    <linearGradient id="chart-fill" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0" stop-color="#1B7FFC" stop-opacity="0.32" />
+                      <stop offset="1" stop-color="#1B7FFC" stop-opacity="0" />
+                    </linearGradient>
+                  </defs>
+                  {[55, 110, 165].map((y) => (
+                    <path class="art-chart__grid" d={`M0 ${y} H640`} />
+                  ))}
+                  {bars.map((height, i) => (
+                    <rect
+                      class="art-chart__bar"
+                      style={`--i: ${i};`}
+                      x={14 + i * 63}
+                      y={220 - height}
+                      width="38"
+                      height={height}
+                      rx="6"
+                    />
+                  ))}
+                  <path
+                    class="art-chart__area"
+                    d="M0 170 C 60 162, 90 138, 150 142 S 250 170, 310 128 S 420 104, 480 92 S 590 56, 640 34 V220 H0 Z"
+                    fill="url(#chart-fill)"
+                  />
+                  <path
+                    class="art-chart__line"
+                    pathLength="1"
+                    d="M0 170 C 60 162, 90 138, 150 142 S 250 170, 310 128 S 420 104, 480 92 S 590 56, 640 34"
+                  />
+                  <circle class="art-chart__dot" r="7" />
+                </svg>
+                <span class="art-chart__today">Hoy</span>
+              </div>
+            </div>
           )}
 
           {t.art === "phone" && (
             <div class="art-phone">
-              <span class="art-phone__notch" />
-              <i class="art-phone__card" style="--i: 0;" />
-              <i class="art-phone__card" style="--i: 1;" />
-              <i class="art-phone__card" style="--i: 2;" />
+              <div class="art-phone__body">
+                <span class="art-phone__notch" />
+                <b class="art-phone__title">Hoy</b>
+                {tasks.map((task, i) => (
+                  <span class="art-phone__task" style={`--i: ${i};`}>
+                    <i />
+                    {task}
+                  </span>
+                ))}
+              </div>
+              {fieldNotes.map(([place, status], i) => (
+                <span class:list={["art-phone__note ground-light", `art-phone__note--${i}`]}>
+                  <b>{place}</b>
+                  {status}
+                </span>
+              ))}
             </div>
           )}
         </div>
@@ -190,10 +310,13 @@ const sources: [string, number][] = [
 <script>
   const tiles = document.querySelector<HTMLElement>("[data-tiles]");
   if (tiles) {
-    // Nothing loops off screen: the pieces run only while someone can see them.
-    new IntersectionObserver(([entry]) => {
-      tiles.classList.toggle("is-live", Boolean(entry?.isIntersecting));
-    }).observe(tiles);
+    // Nothing loops off screen: each piece runs only while someone can see it.
+    const observer = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        entry.target.classList.toggle("is-live", entry.isIntersecting);
+      }
+    });
+    tiles.querySelectorAll(".tile").forEach((tile) => observer.observe(tile));
 
     // The light on a tile follows the pointer.
     if (window.matchMedia("(hover: hover)").matches) {
@@ -218,10 +341,10 @@ const sources: [string, number][] = [
     position: relative;
     display: flex;
     flex-direction: column;
-    min-height: 25rem;
+    min-height: 27rem;
     padding: var(--space-5);
     background: var(--bg-chrome);
-    border-radius: var(--radius-xl);
+    border-radius: var(--radius-2xl);
     box-shadow: var(--shadow-key);
     overflow: hidden;
     isolation: isolate;
@@ -275,8 +398,13 @@ const sources: [string, number][] = [
     flex: 1;
     display: grid;
     place-items: center;
-    min-height: 13rem;
-    margin-block-end: var(--space-4);
+    min-height: 15rem;
+    margin-block-end: var(--space-5);
+    font-size: var(--text-caption);
+    line-height: var(--leading-caption);
+  }
+  .tile__art b {
+    font-weight: var(--weight-medium);
   }
   .tile__title {
     font-weight: var(--weight-medium);
@@ -309,7 +437,7 @@ const sources: [string, number][] = [
   }
 
   /* The pieces only run in view, and never when motion is unwelcome. */
-  .tiles:not(.is-live) * {
+  .tile:not(.is-live) * {
     animation-play-state: paused !important;
   }
   @media (prefers-reduced-motion: reduce) {
@@ -318,50 +446,51 @@ const sources: [string, number][] = [
     }
   }
 
-  /* --- Un SaaS: casi todo se apaga, queda lo que usas -------------------- */
+  /* --- Un SaaS: se apaga lo que nunca abres y lo tuyo se queda ------------- */
   .art-saas {
+    --period: 9s;
+    /* fixed height: the rows collapse inside, the page never moves */
     display: grid;
-    gap: var(--space-2);
-    width: min(16rem, 100%);
+    align-content: center;
+    width: min(17rem, 100%);
+    height: 16.5rem;
+    padding: var(--space-3);
+    border-radius: var(--radius-l);
+    background: var(--night-800);
+    box-shadow: var(--shadow-key);
   }
   .art-saas__row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0.5rem 0.75rem;
+    height: 2.25rem;
+    margin-block-end: var(--space-1);
+    padding-inline: var(--space-3);
     border-radius: var(--radius-m);
-    background: rgb(var(--rgb-light) / 0.04);
-    box-shadow: inset 0 0 0 1px rgb(var(--rgb-light) / 0.07);
-    animation: saas-off 7s var(--ease-in-out) infinite;
+    color: var(--fg-muted);
+    overflow: hidden;
+    animation: saas-row var(--period) var(--ease-in-out) infinite;
+    animation-delay: calc(var(--i) * 180ms);
   }
-  .art-saas__row:nth-child(3) {
-    animation-delay: 300ms;
-  }
-  .art-saas__row:nth-child(5) {
-    animation-delay: 600ms;
-  }
-  .art-saas__row:nth-child(6) {
-    animation-delay: 900ms;
+  .art-saas__row:last-child {
+    margin-block-end: 0;
   }
   .art-saas__row.is-kept {
-    animation: none;
+    color: var(--fg);
     background: rgb(var(--rgb-blue) / 0.14);
     box-shadow: inset 0 0 0 1px rgb(var(--rgb-blue) / 0.5);
-  }
-  .art-saas__label {
-    display: block;
-    width: 55%;
-    height: 0.4375rem;
-    border-radius: var(--radius-s);
-    background: rgb(var(--rgb-light) / 0.32);
+    animation: saas-kept var(--period) var(--ease-in-out) infinite;
   }
   .art-saas__switch {
     position: relative;
     display: block;
+    flex: none;
     width: 1.75rem;
     height: 1rem;
-    border-radius: 1rem;
+    border-radius: var(--radius-pill);
     background: rgb(var(--rgb-light) / 0.14);
+    animation: saas-switch var(--period) var(--ease-in-out) infinite;
+    animation-delay: inherit;
   }
   .art-saas__switch::after {
     content: "";
@@ -372,39 +501,99 @@ const sources: [string, number][] = [
     height: 0.75rem;
     border-radius: 50%;
     background: var(--mist-300);
+    animation: saas-knob var(--period) var(--ease-in-out) infinite;
+    animation-delay: inherit;
   }
   .is-kept .art-saas__switch {
     background: #1b7ffc;
+    animation: none;
   }
   .is-kept .art-saas__switch::after {
     translate: 0.75rem 0;
     background: var(--white);
+    animation: none;
   }
-  @keyframes saas-off {
+  @keyframes saas-row {
     0%,
-    30% {
+    12% {
+      height: 2.25rem;
+      margin-block-end: var(--space-1);
       opacity: 1;
     }
-    45%,
-    85% {
-      opacity: 0.28;
+    26%,
+    36% {
+      height: 2.25rem;
+      margin-block-end: var(--space-1);
+      opacity: 0.4;
+    }
+    46%,
+    88% {
+      height: 0;
+      margin-block-end: 0;
+      opacity: 0;
     }
     100% {
+      height: 2.25rem;
+      margin-block-end: var(--space-1);
       opacity: 1;
+    }
+  }
+  @keyframes saas-kept {
+    0%,
+    40% {
+      height: 2.25rem;
+      box-shadow: inset 0 0 0 1px rgb(var(--rgb-blue) / 0.5);
+    }
+    52%,
+    86% {
+      height: 3.25rem;
+      box-shadow:
+        inset 0 0 0 1px rgb(var(--rgb-blue)),
+        0 0 28px rgb(var(--rgb-blue) / 0.45);
+    }
+    100% {
+      height: 2.25rem;
+      box-shadow: inset 0 0 0 1px rgb(var(--rgb-blue) / 0.5);
+    }
+  }
+  @keyframes saas-switch {
+    0%,
+    12%,
+    100% {
+      background: #1b7ffc;
+    }
+    20%,
+    92% {
+      background: rgb(var(--rgb-light) / 0.14);
+    }
+  }
+  @keyframes saas-knob {
+    0%,
+    12%,
+    100% {
+      translate: 0.75rem 0;
+      background: var(--white);
+    }
+    20%,
+    92% {
+      translate: 0 0;
+      background: var(--mist-300);
     }
   }
 
-  /* --- Automatizar: la corrida avanza sola -------------------------------- */
+  /* --- Automatizar: siempre los mismos pasos, y nadie teclea ---------------- */
   .art-steps {
-    --period: 6s;
+    --period: 7s;
     position: relative;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
+    justify-items: center;
+    row-gap: var(--space-5);
     width: min(38rem, 100%);
   }
   .art-steps__rail {
     position: absolute;
-    inset-block-start: 1.0625rem;
+    inset-block-start: 1.125rem;
     inset-inline: 12.5%;
     height: 2px;
     background: var(--night-700);
@@ -422,17 +611,19 @@ const sources: [string, number][] = [
     position: relative;
     display: grid;
     justify-items: center;
-    gap: var(--space-3);
+    gap: var(--space-2);
+    color: var(--fg);
+    animation: steps-label var(--period) linear infinite;
+    animation-delay: calc(var(--i) * 1.15s);
   }
   .art-steps__dot {
     position: relative;
     width: 2.25rem;
     height: 2.25rem;
     border-radius: 50%;
-    background: var(--night-800);
-    box-shadow: inset 0 0 0 1px rgb(var(--rgb-light) / 0.14);
+    background: #1b7ffc;
     animation: steps-dot var(--period) linear infinite;
-    animation-delay: calc(var(--i) * 1.05s);
+    animation-delay: calc(var(--i) * 1.15s);
   }
   .art-steps__dot::after {
     content: "";
@@ -445,23 +636,26 @@ const sources: [string, number][] = [
     rotate: 42deg;
     border-inline-end: 2px solid var(--white);
     border-block-end: 2px solid var(--white);
-    opacity: 0;
     animation: steps-check var(--period) linear infinite;
-    animation-delay: calc(var(--i) * 1.05s);
+    animation-delay: calc(var(--i) * 1.15s);
   }
-  .art-steps__bar {
-    display: block;
-    width: 3.5rem;
-    height: 0.4375rem;
-    border-radius: var(--radius-s);
-    background: rgb(var(--rgb-light) / 0.14);
+  .art-steps__done {
+    grid-column: 1 / -1;
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-l);
+    font-weight: var(--weight-medium);
+    box-shadow: var(--shadow-lit);
+    rotate: -2deg;
+    transition: none;
+    animation: steps-done var(--period) var(--ease-spring) infinite;
   }
   @keyframes steps-fill {
     0% {
       transform: scaleX(0);
+      opacity: 1;
     }
-    55%,
-    85% {
+    50%,
+    88% {
       transform: scaleX(1);
       opacity: 1;
     }
@@ -473,15 +667,17 @@ const sources: [string, number][] = [
   @keyframes steps-dot {
     0% {
       background: var(--night-800);
+      box-shadow: inset 0 0 0 1px rgb(var(--rgb-light) / 0.14);
     }
     4%,
-    60% {
+    58% {
       background: #1b7ffc;
       box-shadow: 0 0 22px rgb(var(--rgb-blue) / 0.8);
     }
-    72%,
+    70%,
     100% {
       background: var(--night-800);
+      box-shadow: inset 0 0 0 1px rgb(var(--rgb-light) / 0.14);
     }
   }
   @keyframes steps-check {
@@ -490,20 +686,97 @@ const sources: [string, number][] = [
       opacity: 0;
     }
     6%,
-    60% {
+    58% {
       opacity: 1;
     }
-    72%,
+    70%,
     100% {
       opacity: 0;
     }
   }
+  @keyframes steps-label {
+    0%,
+    100% {
+      color: var(--fg-muted);
+    }
+    6%,
+    58% {
+      color: var(--fg);
+    }
+    70% {
+      color: var(--fg-muted);
+    }
+  }
+  @keyframes steps-done {
+    0%,
+    54% {
+      opacity: 0;
+      scale: 0.86;
+      translate: 0 0.625rem;
+    }
+    62%,
+    90% {
+      opacity: 1;
+      scale: 1;
+      translate: 0 0;
+    }
+    100% {
+      opacity: 0;
+      scale: 0.96;
+      translate: 0 0;
+    }
+  }
 
-  /* --- Conectar: los datos corren por los cables --------------------------- */
+  /* --- Conectar: un solo dato, y cada sistema se entera --------------------- */
   .art-flow {
+    --period: 5s;
+    display: grid;
+    grid-template-columns: 7rem minmax(0, 1fr) 3.5rem minmax(0, 1fr) 7rem;
+    align-items: center;
+    width: min(42rem, 100%);
+    height: 12rem;
+  }
+  .art-flow__side {
+    display: grid;
+    align-content: space-between;
+    height: 100%;
+  }
+  .art-flow__node {
+    display: grid;
+    gap: 0.0625rem;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-m);
+    background: var(--night-800);
+    box-shadow: var(--shadow-key);
+    animation: flow-node var(--period) var(--ease-out) infinite;
+    animation-delay: calc(var(--i) * 0.4s);
+  }
+  .art-flow__node--out {
+    animation-delay: 1.9s;
+  }
+  .art-flow__node b {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    color: var(--fg);
+    white-space: nowrap;
+  }
+  .art-flow__node small {
+    font-size: var(--text-caption);
+    color: var(--fg-muted);
+    white-space: nowrap;
+  }
+  .art-flow__led {
+    flex: none;
+    width: 0.4375rem;
+    height: 0.4375rem;
+    border-radius: 50%;
+    background: rgb(var(--rgb-cyan));
+    box-shadow: 0 0 8px rgb(var(--rgb-cyan));
+  }
+  .art-flow__wires {
     width: 100%;
-    max-width: 40rem;
-    height: auto;
+    height: 100%;
     overflow: visible;
   }
   .art-flow__wire {
@@ -512,47 +785,61 @@ const sources: [string, number][] = [
   }
   .art-flow__pulse {
     stroke: url(#flow-pulse);
-    stroke-width: 2;
+    stroke-width: 2.5;
     stroke-linecap: round;
-    stroke-dasharray: 26 300;
-    stroke-dashoffset: 326;
-    filter: drop-shadow(0 0 5px rgb(var(--rgb-blue)));
-    animation: flow-run 3.2s linear infinite;
-    animation-delay: calc(var(--i) * 0.55s);
-  }
-  .art-flow__node {
-    fill: var(--night-800);
-    stroke: rgb(var(--rgb-light) / 0.12);
+    stroke-dasharray: 0.2 1;
+    stroke-dashoffset: 0.2;
+    animation: flow-run var(--period) var(--ease-in-out) infinite;
+    animation-delay: calc(var(--i) * 0.4s);
   }
   .art-flow__hub {
-    fill: var(--night-800);
-    stroke: rgb(var(--rgb-blue) / 0.7);
+    display: grid;
+    place-items: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 1rem;
+    background: var(--night-800);
+    box-shadow: inset 0 0 0 1px rgb(var(--rgb-blue) / 0.7);
+    animation: flow-hub var(--period) var(--ease-out) infinite;
   }
-  .art-flow__led {
-    fill: #15c26b;
-  }
-  .art-flow__label {
-    fill: var(--fg);
-    font-family: var(--font-sans);
-    font-size: 14px;
-    font-weight: 500;
-  }
-  .art-flow__mark {
-    position: absolute;
-    inset-block-start: 50%;
-    inset-inline-start: 50%;
-    width: 1.75rem;
-    translate: -50% -50%;
-    animation: flow-mark 12s var(--ease-in-out) infinite;
-  }
-  .art-flow__mark :global(svg) {
+  .art-flow__hub :global(svg) {
     display: block;
-    width: 100%;
+    width: 1.75rem;
     height: auto;
+    animation: flow-mark 15s var(--ease-in-out) infinite;
   }
   @keyframes flow-run {
-    to {
-      stroke-dashoffset: 0;
+    0% {
+      stroke-dashoffset: 0.2;
+    }
+    30%,
+    100% {
+      stroke-dashoffset: -1;
+    }
+  }
+  @keyframes flow-node {
+    0%,
+    26%,
+    100% {
+      box-shadow: var(--shadow-key);
+    }
+    8% {
+      box-shadow:
+        inset 0 0 0 1px rgb(var(--rgb-blue)),
+        0 0 22px rgb(var(--rgb-blue) / 0.5);
+    }
+  }
+  @keyframes flow-hub {
+    0%,
+    26%,
+    60%,
+    100% {
+      box-shadow: inset 0 0 0 1px rgb(var(--rgb-blue) / 0.7);
+    }
+    38% {
+      box-shadow:
+        inset 0 0 0 1px rgb(var(--rgb-cyan)),
+        0 0 36px rgb(var(--rgb-blue) / 0.8);
     }
   }
   @keyframes flow-mark {
@@ -568,10 +855,34 @@ const sources: [string, number][] = [
       rotate: 360deg;
     }
   }
+  @media (width <= 40rem) {
+    .art-flow {
+      grid-template-columns: 5.75rem minmax(0, 1fr) 2.75rem minmax(0, 1fr) 5.75rem;
+    }
+    .art-flow__node {
+      padding: var(--space-1) var(--space-2);
+    }
+    .art-flow__node b,
+    .art-flow__node small {
+      font-size: 0.6875rem;
+    }
+    .art-flow__node b {
+      white-space: normal;
+    }
+    .art-flow__hub {
+      width: 2.75rem;
+      height: 2.75rem;
+      border-radius: 0.8125rem;
+    }
+    .art-flow__hub :global(svg) {
+      width: 1.375rem;
+    }
+  }
 
-  /* --- Portal: las pestañas se recorren solas ----------------------------- */
+  /* --- Portal: cada pestaña trae su pantalla -------------------------------- */
   .art-portal {
-    width: min(18rem, 100%);
+    --period: 9.6s;
+    width: min(20rem, 100%);
     padding: var(--space-3);
     border-radius: var(--radius-l);
     background: var(--night-800);
@@ -579,145 +890,311 @@ const sources: [string, number][] = [
   }
   .art-portal__tabs {
     position: relative;
-    display: flex;
-    justify-content: space-between;
-    gap: var(--space-2);
+    display: grid;
+    grid-template-columns: 4.25rem 3rem 1fr;
     padding-block-end: var(--space-2);
     border-block-end: 1px solid var(--night-700);
-    font-size: var(--text-caption);
+    color: var(--fg-secondary);
   }
   .art-portal__tabs b {
-    font-weight: var(--weight-medium);
-    color: var(--fg-secondary);
     white-space: nowrap;
   }
   .art-portal__ink {
     position: absolute;
     inset-block-end: -1px;
     inset-inline-start: 0;
-    width: 3.25rem;
+    width: 3.125rem;
     height: 2px;
     background: var(--strand);
-    animation: portal-ink 7.5s var(--ease-in-out) infinite;
+    box-shadow: 0 0 10px rgb(var(--rgb-blue));
+    animation: portal-ink var(--period) var(--ease-in-out) infinite;
   }
-  .art-portal__rows {
+  .art-portal__panes {
     display: grid;
-    gap: var(--space-2);
     padding-block-start: var(--space-3);
   }
-  .art-portal__rows i {
-    display: block;
-    height: 2rem;
+  .art-portal__pane {
+    grid-area: 1 / 1;
+    display: grid;
+    gap: var(--space-2);
+    opacity: 0;
+    animation: portal-pane var(--period) linear infinite;
+    animation-delay: calc(var(--i) * var(--period) / 3);
+  }
+  .art-portal__pane:first-child {
+    opacity: 1;
+  }
+  .art-portal__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+    height: 2.5rem;
+    padding-inline: var(--space-3);
     border-radius: var(--radius-m);
     background: rgb(var(--rgb-light) / 0.05);
-    transform-origin: left;
-    animation: portal-row 2.5s var(--ease-out) infinite;
+    color: var(--fg);
+    animation: portal-row var(--period) var(--ease-out) infinite;
+    animation-delay: calc(var(--i) * var(--period) / 3 + var(--r) * 90ms);
   }
-  .art-portal__rows i:nth-child(2) {
-    animation-delay: 80ms;
+  .art-portal__row small {
+    font-size: var(--text-caption);
+    color: var(--fg-muted);
   }
-  .art-portal__rows i:nth-child(3) {
-    animation-delay: 160ms;
+  .art-portal__row small.is-done {
+    color: var(--sky);
   }
   @keyframes portal-ink {
     0%,
-    26% {
+    30% {
       translate: 0 0;
-      width: 3.25rem;
+      width: 3.125rem;
     }
-    33%,
-    59% {
-      translate: 4.5rem 0;
-      width: 2.25rem;
+    33.3%,
+    63.6% {
+      translate: 4.25rem 0;
+      width: 2.125rem;
     }
-    66%,
-    92% {
-      translate: 8.125rem 0;
+    66.6%,
+    96% {
+      translate: 7.25rem 0;
       width: 7rem;
     }
     100% {
       translate: 0 0;
-      width: 3.25rem;
+      width: 3.125rem;
+    }
+  }
+  @keyframes portal-pane {
+    0%,
+    31% {
+      opacity: 1;
+    }
+    33.3%,
+    97.5% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
     }
   }
   @keyframes portal-row {
     0% {
-      opacity: 0.3;
-      scale: 0.96 1;
+      opacity: 0;
+      translate: 0.75rem 0;
     }
-    30%,
+    5%,
     100% {
       opacity: 1;
-      scale: 1 1;
+      translate: 0 0;
     }
   }
 
-  /* --- Tu negocio: la línea se dibuja ------------------------------------- */
+  /* --- Tu negocio: las barras suben y la línea llega a hoy ------------------- */
   .art-chart {
-    position: absolute;
-    inset: 0;
+    --period: 8s;
+    display: grid;
+    grid-template-columns: 8.5rem minmax(0, 1fr);
+    gap: var(--space-5);
+    align-items: end;
     width: 100%;
+  }
+  .art-chart__figures {
+    display: grid;
+    gap: var(--space-4);
+    align-self: center;
+  }
+  .art-chart__figures b {
+    display: block;
+    margin-block-end: var(--space-1);
+    color: var(--fg);
+  }
+  .art-chart__meter {
+    display: block;
+    height: 0.375rem;
+    border-radius: var(--radius-pill);
+    background: var(--night-700);
+    overflow: hidden;
+  }
+  .art-chart__meter i {
+    display: block;
+    width: calc(92% - var(--i) * 18%);
     height: 100%;
+    border-radius: inherit;
+    background: var(--strand);
+    transform-origin: left;
+    animation: chart-meter var(--period) var(--ease-out) infinite;
+    animation-delay: calc(var(--i) * 160ms);
+  }
+  .art-chart__plot {
+    position: relative;
+  }
+  .art-chart__plot svg {
+    display: block;
+    width: 100%;
+    height: auto;
     overflow: visible;
   }
   .art-chart__grid {
     stroke: var(--night-700);
     stroke-dasharray: 3 5;
-    vector-effect: non-scaling-stroke;
+  }
+  .art-chart__bar {
+    fill: rgb(var(--rgb-light) / 0.07);
+    transform-box: fill-box;
+    transform-origin: bottom;
+    animation: chart-bar var(--period) var(--ease-out) infinite;
+    animation-delay: calc(var(--i) * 60ms);
   }
   .art-chart__line {
     stroke: url(#chart-line);
-    stroke-width: 2.5;
+    stroke-width: 3.5;
     stroke-linecap: round;
-    vector-effect: non-scaling-stroke;
     stroke-dasharray: 1;
-    stroke-dashoffset: 1;
     filter: drop-shadow(0 0 7px rgb(var(--rgb-blue) / 0.8));
-    animation: chart-draw 7s var(--ease-in-out) infinite;
+    animation: chart-draw var(--period) var(--ease-in-out) infinite;
   }
   .art-chart__area {
-    opacity: 0;
-    animation: chart-fill 7s var(--ease-in-out) infinite;
+    animation: chart-fill var(--period) var(--ease-in-out) infinite;
+  }
+  .art-chart__dot {
+    fill: var(--white);
+    filter: drop-shadow(0 0 8px rgb(var(--rgb-cyan)));
+    offset-path: path(
+      "M0 170 C 60 162, 90 138, 150 142 S 250 170, 310 128 S 420 104, 480 92 S 590 56, 640 34"
+    );
+    offset-distance: 100%;
+    offset-rotate: 0deg;
+    animation: chart-dot var(--period) var(--ease-in-out) infinite;
+  }
+  .art-chart__today {
+    position: absolute;
+    inset-block-start: -1.25rem;
+    inset-inline-end: -0.25rem;
+    padding: 0.125rem var(--space-2);
+    border-radius: var(--radius-m);
+    background: var(--white);
+    color: var(--ink-900);
+    font-weight: var(--weight-medium);
+    box-shadow: var(--shadow-lit);
+    animation: chart-today var(--period) var(--ease-spring) infinite;
+  }
+  @keyframes chart-meter {
+    0% {
+      transform: scaleX(0);
+    }
+    22%,
+    92% {
+      transform: scaleX(1);
+    }
+    100% {
+      transform: scaleX(0);
+    }
+  }
+  @keyframes chart-bar {
+    0% {
+      transform: scaleY(0);
+    }
+    18%,
+    92% {
+      transform: scaleY(1);
+    }
+    100% {
+      transform: scaleY(0);
+    }
   }
   @keyframes chart-draw {
-    0% {
+    0%,
+    8% {
       stroke-dashoffset: 1;
       opacity: 1;
     }
-    45%,
-    88% {
+    52%,
+    92% {
       stroke-dashoffset: 0;
       opacity: 1;
     }
     100% {
       stroke-dashoffset: 0;
+      opacity: 0;
+    }
+  }
+  @keyframes chart-dot {
+    0%,
+    8% {
+      offset-distance: 0%;
+      opacity: 1;
+    }
+    52%,
+    92% {
+      offset-distance: 100%;
+      opacity: 1;
+    }
+    100% {
+      offset-distance: 100%;
       opacity: 0;
     }
   }
   @keyframes chart-fill {
     0%,
-    25% {
+    30% {
       opacity: 0;
     }
-    50%,
-    88% {
+    56%,
+    92% {
       opacity: 1;
     }
     100% {
       opacity: 0;
     }
   }
+  @keyframes chart-today {
+    0%,
+    50% {
+      opacity: 0;
+      scale: 0.7;
+    }
+    56%,
+    92% {
+      opacity: 1;
+      scale: 1;
+    }
+    100% {
+      opacity: 0;
+      scale: 0.95;
+    }
+  }
+  @media (width <= 40rem) {
+    .art-chart {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--space-6);
+    }
+    .art-chart__figures {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--space-3);
+    }
+  }
 
-  /* --- App: las tareas pasan por el teléfono ------------------------------ */
+  /* --- App: las tareas se cierran y el aviso sale al equipo ------------------ */
   .art-phone {
+    --period: 8.4s;
     position: relative;
+    display: grid;
+    place-items: center;
+    width: min(20rem, 100%);
+    height: 14.5rem;
+  }
+  .art-phone__body {
+    position: relative;
+    display: grid;
+    align-content: start;
+    gap: var(--space-2);
     width: 8.5rem;
-    height: 13rem;
-    padding: 1.625rem 0.625rem 0.625rem;
+    height: 100%;
+    padding: 1.75rem var(--space-3) var(--space-3);
     border-radius: 1.5rem;
     background: var(--night-800);
     box-shadow: var(--shadow-key);
-    overflow: hidden;
   }
   .art-phone__notch {
     position: absolute;
@@ -726,42 +1203,120 @@ const sources: [string, number][] = [
     width: 2.5rem;
     height: 0.3125rem;
     translate: -50% 0;
-    border-radius: 1rem;
+    border-radius: var(--radius-pill);
     background: rgb(var(--rgb-light) / 0.16);
   }
-  .art-phone__card {
-    position: absolute;
-    inset-inline: 0.625rem;
-    inset-block-start: 1.625rem;
-    height: 3rem;
-    border-radius: var(--radius-m);
-    background: rgb(var(--rgb-light) / 0.07);
-    box-shadow: inset 0 0 0 1px rgb(var(--rgb-light) / 0.08);
-    animation: phone-card 7.5s var(--ease-in-out) infinite;
-    animation-delay: calc(var(--i) * -2.5s);
+  .art-phone__title {
+    color: var(--fg);
+    font-size: var(--text-small);
   }
-  @keyframes phone-card {
+  .art-phone__task {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    height: 2.25rem;
+    padding-inline: var(--space-2);
+    border-radius: var(--radius-m);
+    background: rgb(var(--rgb-light) / 0.06);
+    color: var(--fg);
+    animation: phone-task var(--period) var(--ease-out) infinite;
+    animation-delay: calc(var(--i) * var(--period) / 4);
+  }
+  .art-phone__task i {
+    position: relative;
+    flex: none;
+    width: 1.125rem;
+    height: 1.125rem;
+    border-radius: 50%;
+    background: #1b7ffc;
+    animation: phone-check var(--period) var(--ease-spring) infinite;
+    animation-delay: calc(var(--i) * var(--period) / 4);
+  }
+  .art-phone__task i::after {
+    content: "";
+    position: absolute;
+    inset-block-start: 45%;
+    inset-inline-start: 50%;
+    width: 0.3125rem;
+    height: 0.5625rem;
+    translate: -50% -50%;
+    rotate: 42deg;
+    border-inline-end: 2px solid var(--white);
+    border-block-end: 2px solid var(--white);
+  }
+  .art-phone__note {
+    position: absolute;
+    display: grid;
+    width: 6rem;
+    padding: var(--space-2);
+    border-radius: var(--radius-l);
+    color: var(--fg-muted);
+    box-shadow: var(--shadow-lit);
+    animation: phone-note var(--period) var(--ease-spring) infinite;
+  }
+  .art-phone__note b {
+    color: var(--fg);
+  }
+  .art-phone__note--0 {
+    inset-block-start: 1rem;
+    inset-inline-start: 0;
+    rotate: -3deg;
+    animation-delay: 0.3s;
+  }
+  .art-phone__note--1 {
+    inset-block-start: 5.75rem;
+    inset-inline-end: 0;
+    rotate: 3deg;
+    animation-delay: calc(var(--period) / 4 + 0.3s);
+  }
+  .art-phone__note--2 {
+    inset-block-end: 0.75rem;
+    inset-inline-start: 0.5rem;
+    rotate: -2deg;
+    animation-delay: calc(var(--period) / 2 + 0.3s);
+  }
+  @keyframes phone-task {
     0% {
-      translate: 0 12rem;
-      background: rgb(var(--rgb-blue) / 0.3);
+      background: rgb(var(--rgb-light) / 0.06);
     }
-    10%,
-    30% {
-      translate: 0 7.25rem;
-    }
-    40%,
-    60% {
-      translate: 0 3.625rem;
-      background: rgb(var(--rgb-light) / 0.07);
-    }
-    70%,
+    6%,
     90% {
-      translate: 0 0;
-      opacity: 1;
+      background: rgb(var(--rgb-blue) / 0.22);
     }
     100% {
-      translate: -9rem 0;
+      background: rgb(var(--rgb-light) / 0.06);
+    }
+  }
+  @keyframes phone-check {
+    0% {
+      scale: 0;
+    }
+    8%,
+    90% {
+      scale: 1;
+    }
+    100% {
+      scale: 0;
+    }
+  }
+  @keyframes phone-note {
+    0%,
+    6% {
       opacity: 0;
+      scale: 0.8;
+      translate: 0 0.625rem;
+    }
+    14%,
+    84% {
+      opacity: 1;
+      scale: 1;
+      translate: 0 0;
+    }
+    92%,
+    100% {
+      opacity: 0;
+      scale: 0.95;
+      translate: 0 0;
     }
   }
 </style>
