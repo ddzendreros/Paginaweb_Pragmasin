@@ -18,6 +18,16 @@
   src: url("/fonts/mona-sans-latin-var.woff2") format("woff2-variations");
 }
 
+/* The serif belongs to the paper sheet alone. Nothing else names it, so no
+   other page downloads it. */
+@font-face {
+  font-family: "Newsreader";
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url("/fonts/newsreader-latin-var.woff2") format("woff2-variations");
+}
+
 :root {
   interpolate-size: allow-keywords;
 
@@ -47,6 +57,14 @@
   --cobalt-300: #D9DAFF;
   --sky: #A9C1FF;            /* links on night */
 
+  /* The paper sheet: one light, editorial moment inside the dark page. */
+  --paper-ink: #17191C;      /* text and the only dark surface on the sheet */
+  --paper-slate: #636772;    /* muted text: passes 4.5:1 on white and on mist */
+  --paper-mist: #F2F2F3;     /* quiet cards */
+  --paper-rule: #ECECEC;     /* hairlines */
+  --blush: #FBE1D1;          /* the single warm surface */
+  --sienna: #5D2A1A;         /* ink for blush and for chart strokes */
+
   --strand: linear-gradient(100deg, #5B19F1, #1B7FFC 55%, #00C7F8);
 
   --error: #B3261E;
@@ -61,6 +79,7 @@
   /* --- Typography --------------------------------------------------------
      One family. Large type stays light and lets the scale do the talking.  */
   --font-sans: "Mona Sans", "Segoe UI", system-ui, sans-serif;
+  --font-serif: "Newsreader", Georgia, "Times New Roman", serif;
 
   --text-caption: 0.8125rem;                                    /* 13 */
   --text-small: 0.875rem;                                       /* 14 */
@@ -69,9 +88,11 @@
   --text-h3: clamp(1.25rem, 1.16rem + 0.4vw, 1.5rem);           /* 20 -> 24 */
   --text-h2: clamp(2rem, 1.3rem + 2.8vw, 3.75rem);              /* 32 -> 60 */
   --text-display: clamp(2.875rem, 1.6rem + 5.4vw, 6.5rem);      /* 46 -> 104 */
+  --text-paper: clamp(2.5rem, 1.9rem + 2.6vw, 4rem);            /* 40 -> 64 */
 
   --leading-display: 1;
   --leading-h2: 1.06;
+  --leading-paper: 1.16;
   --leading-h3: 1.25;
   --leading-lead: 1.5;
   --leading-body: 1.6;
@@ -80,10 +101,12 @@
 
   --tracking-display: -0.034em;
   --tracking-h2: -0.028em;
+  --tracking-paper: -0.015em;
   --tracking-h3: -0.016em;
   --tracking-lead: -0.006em;
 
   --weight-text: 400;
+  --weight-paper: 430;
   --weight-display: 440;
   --weight-medium: 500;
   --weight-strong: 600;
@@ -115,6 +138,8 @@
   --radius-m: 0.5rem;      /*  8: controls */
   --radius-l: 0.875rem;    /* 14: the header, the app frame */
   --radius-xl: 1.25rem;    /* 20: panels */
+  --radius-2xl: 1.5rem;    /* 24: cards on the paper sheet */
+  --radius-pill: 9999px;
 
   /* --- Depth: light from inside the surface, never a drop shadow ---------- */
   --shadow-key:
@@ -125,6 +150,11 @@
     0 0 0 1px rgb(var(--rgb-light) / 0.14),
     0 32px 120px -24px rgb(var(--rgb-violet) / 0.6),
     0 0 180px -30px rgb(var(--rgb-blue) / 0.5);
+  /* the only drop shadow on the site: the object that floats on the paper */
+  --shadow-float:
+    0 0 0 1px rgb(4 23 43 / 0.05),
+    0 20px 25px -5px rgb(0 0 0 / 0.1),
+    0 8px 10px -6px rgb(0 0 0 / 0.1);
 
   /* --- Motion ---------------------------------------------------------------
      Fast on what you touch, slow on what you read.                         */
@@ -194,6 +224,28 @@
   background-color: var(--bg);
   color: var(--fg);
 }
+.ground-paper {
+  --bg: var(--white);
+  --bg-raised: var(--white);
+  --bg-sunken: var(--paper-mist);
+  --bg-chrome: var(--paper-mist);
+  --fg: var(--paper-ink);
+  --fg-secondary: var(--paper-slate);
+  --fg-muted: var(--paper-slate);
+  --hairline-color: var(--paper-rule);
+  --control-border: var(--paper-slate);
+  --interactive: var(--paper-ink);
+  --interactive-strong: var(--paper-ink);
+  --action-bg: var(--paper-ink);
+  --action-bg-strong: var(--paper-ink);
+  --action-fg: var(--white);
+  --error-color: var(--error);
+  --focus-ring: var(--paper-ink);
+  --selection-bg: var(--paper-ink);
+  --selection-fg: var(--white);
+  background-color: var(--bg);
+  color: var(--fg);
+}
 .ground-cobalt {
   --bg: var(--cobalt);
   --bg-raised: var(--cobalt-strong);
@@ -219,6 +271,7 @@
 
 .ground-light ::selection,
 .ground-dark ::selection,
+.ground-paper ::selection,
 .ground-cobalt ::selection {
   background: var(--selection-bg);
   color: var(--selection-fg);

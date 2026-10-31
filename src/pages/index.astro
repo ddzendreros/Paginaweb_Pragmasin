@@ -122,13 +122,15 @@ const waHref = whatsappUrl(waMessages.flotante);
 
   <Marquee />
 
-  <section class="act" aria-labelledby="contraste-title">
-    <div class="act__inner grid-12">
-      <p class="sec__name">El problema</p>
-      <div class="sec__body">
-        <h2 id="contraste-title" class="h2 head">Un SaaS te pide que cambies. Nosotros no.</h2>
-        <Versus />
+  <section class="act problema ground-paper" aria-labelledby="contraste-title">
+    <div class="act__inner">
+      <div class="problema__head">
+        <p class="sec__name">El problema</p>
+        <h2 id="contraste-title" class="h2 problema__title">
+          Un SaaS te pide que cambies.<br /> Nosotros no.
+        </h2>
       </div>
+      <Versus />
     </div>
   </section>
 
@@ -302,6 +304,20 @@ const waHref = whatsappUrl(waMessages.flotante);
   </section>
 </BaseLayout>
 
+<script>
+  // Glass over white turns gray and takes the menu's contrast with it, so the
+  // header goes nearly solid while it sits on the paper sheet.
+  const sheet = document.querySelector(".problema");
+  if (sheet) {
+    new IntersectionObserver(
+      ([entry]) => {
+        document.documentElement.classList.toggle("over-paper", entry?.isIntersecting ?? false);
+      },
+      { rootMargin: "0px 0px -90% 0px" },
+    ).observe(sheet);
+  }
+</script>
+
 <style>
   /* --- Hero: the page opens in the dark, lit by the mark ------------------- */
   .hero {
@@ -403,6 +419,35 @@ const waHref = whatsappUrl(waMessages.flotante);
     }
   }
 
+
+  /* --- El problema: una hoja de papel dentro de la página oscura ------------ */
+  .problema {
+    margin-block-start: clamp(var(--space-5), 4vw, var(--space-8));
+    margin-inline: clamp(var(--space-2), 1.4vw, var(--space-4));
+    border-radius: var(--radius-2xl);
+  }
+  .problema__head {
+    display: grid;
+    justify-items: center;
+    gap: var(--space-4);
+    margin-block-end: clamp(var(--space-6), 4vw, var(--space-7));
+    text-align: center;
+  }
+  .problema .sec__name {
+    margin-block-end: 0;
+    font-weight: var(--weight-text);
+  }
+  .problema__title {
+    font-family: var(--font-serif);
+    font-size: var(--text-paper);
+    font-weight: var(--weight-text);
+    font-stretch: normal;
+    line-height: var(--leading-paper);
+    letter-spacing: var(--tracking-paper);
+  }
+  :global(html.over-paper) {
+    --glass-alpha: 0.92;
+  }
 
   /* --- Qué construimos ---------------------------------------------------- */
   .build__more {
