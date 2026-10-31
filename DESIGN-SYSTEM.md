@@ -59,6 +59,11 @@ resto de las páginas no la descarga.
 | `.lead` | 17 → 20 | Entrada de sección |
 | `.small` / `.caption` | 14 / 13 | Apoyo |
 
+`/servicios` compone sus títulos en mayúsculas, peso 500 y ancho 88 % (`--text-block`,
+`--leading-block`), para que el texto se apile como un bloque. Las frases van a `--text-statement`,
+en caja normal. El interlineado es 0.98 y no 0.9 como en la referencia: las mayúsculas del español
+llevan acento. Las etiquetas pequeñas siguen en caja normal, y el resto del sitio no cambia.
+
 ## Composición
 
 - Retícula de 12 columnas, máximo 1320 px.
@@ -84,6 +89,7 @@ muestra menos a la vez.
 | `OwnPass` | La propiedad como pase perforado que se inclina | dope.security, Boarding Pass |
 | `Prompt` | Barra de comandos que lleva tu idea al formulario | Raycast |
 | `MethodSteps` | Método por pasos, un paso abierto a la vez | n8n, Figure |
+| `ServiceStage` | `/servicios` completa: una pieza en el vacío que se talla en cada servicio, con una idea por pantalla | ORYZO |
 | `Clock` | Hora real de Ciudad de México en el pie | Max Yinger |
 | `Icon` | Iconos de línea dibujados aquí | Authkit |
 
@@ -98,6 +104,7 @@ muestra menos a la vez.
 | Comparación | Los módulos sobrantes se van, los tuyos crecen y dibujan su pieza, y la lista se enciende en morado. «A tu medida» dura el doble en pantalla. Cambia solo hasta que lo tocas. |
 | Acompañamiento | La luz avanza sola por la línea y enciende cada parada, en ciclo y sin que nadie toque nada. La última dura más, con el resplandor en la salida; luego la luz se apaga y empieza de nuevo. Con movimiento reducido se leen las cuatro juntas. |
 | Servicios | Las piezas corren solo mientras están a la vista. |
+| `/servicios` | El bloque se arma con las estrellas al llegar. El scroll lo talla: pantalla por capas, módulos que se apagan, conexiones con luz y cinco hojas de las que sale la regla que se lee. El texto cambia de una idea a la vez, sin clic ni temporizador, y la línea punteada se enciende con el avance. Sin JavaScript o con movimiento reducido no hay pieza y todo se lee de corrido. |
 | Páginas | Transición entre páginas; el encabezado no se mueve. |
 
 Duraciones de 120 a 900 ms (`--dur-1` a `--dur-5`). Con `prefers-reduced-motion` todo se detiene, y
