@@ -1,59 +1,8 @@
 ---
+import Icon from "../components/Icon.astro";
+import MethodSteps from "../components/MethodSteps.astro";
 import Strands from "../components/Strands.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
-
-const steps = [
-  {
-    num: "01",
-    name: "Escuchar",
-    rows: [
-      [
-        "Qué hacemos",
-        "Hablamos contigo y con quien hace el trabajo. Queremos ver cómo opera tu negocio hoy, no cómo se supone que opera.",
-      ],
-      ["Qué recibes", "El problema y lo que vamos a construir, en una página."],
-      [
-        "Qué necesitamos de ti",
-        "Acceso a quien hace el trabajo. No a quien lo describe: a quien lo hace.",
-      ],
-    ],
-  },
-  {
-    num: "02",
-    name: "Diseñar",
-    rows: [
-      [
-        "Qué hacemos",
-        "Dibujamos las pantallas y el flujo antes de programar. Cambiar un dibujo no cuesta nada.",
-      ],
-      ["Qué recibes", "Las pantallas, el alcance y el costo, por escrito."],
-      ["Qué necesitamos de ti", "Una decisión. Para eso está hecho."],
-    ],
-  },
-  {
-    num: "03",
-    name: "Construir",
-    rows: [
-      [
-        "Qué hacemos",
-        "Programamos por partes. Ves y pruebas cada avance, y lo ajustamos contigo.",
-      ],
-      ["Qué recibes", "Software funcionando en tu operación, no una presentación."],
-      ["Qué necesitamos de ti", "Una persona de tu lado que pueda decidir."],
-    ],
-  },
-  {
-    num: "04",
-    name: "Acompañar",
-    rows: [
-      ["Qué hacemos", "Capacitamos a tu equipo y seguimos cerca después de entregar."],
-      ["Qué recibes", "Tu equipo usando el sistema y un canal directo con nosotros."],
-      ["Qué necesitamos de ti", "Que nos digas qué no está funcionando."],
-    ],
-  },
-];
-
-const columns = ["Qué hacemos", "Qué recibes", "Qué necesitamos de ti"];
 
 const nots = [
   "Reportes de ochenta láminas que nadie abre dos veces.",
@@ -88,29 +37,7 @@ const nots = [
 
   <section class="steps-act" aria-label="Cuatro pasos">
     <div class="act__inner">
-      <table class="steps">
-        <thead>
-          <tr>
-            <td></td>
-            {columns.map((c) => <th scope="col">{c}</th>)}
-          </tr>
-        </thead>
-        <tbody>
-          {
-            steps.map((s) => (
-              <tr>
-                <th scope="row">
-                  <span class="caption numeral">{s.num}</span>
-                  <span class="h3 steps__name">{s.name}</span>
-                </th>
-                {s.rows.map(([label, text]) => (
-                  <td data-label={label}>{text}</td>
-                ))}
-              </tr>
-            ))
-          }
-        </tbody>
-      </table>
+      <MethodSteps />
     </div>
   </section>
 
@@ -120,7 +47,16 @@ const nots = [
       <div class="sec__body">
         <h2 id="nots-title" class="h2 head">También hay que decirlo.</h2>
         <ul class="nots">
-          {nots.map((n) => <li class="not h3">{n}</li>)}
+          {
+            nots.map((n) => (
+              <li class="not">
+                <span class="not__mark">
+                  <Icon name="x" />
+                </span>
+                <span class="h3">{n}</span>
+              </li>
+            ))
+          }
         </ul>
       </div>
     </div>
@@ -142,99 +78,37 @@ const nots = [
   .steps-act {
     padding-block-end: clamp(var(--space-8), 8vw, var(--space-10));
   }
-  .steps {
-    width: 100%;
-    border-collapse: collapse;
-    table-layout: fixed;
-  }
-  .steps thead th {
-    padding-block-end: var(--space-3);
-    text-align: start;
-    font-size: var(--text-small);
-    font-weight: var(--weight-medium);
-    color: var(--fg-secondary);
-  }
-  .steps thead td {
-    width: 17%;
-  }
-  .steps tbody th,
-  .steps tbody td {
-    padding: var(--space-5) var(--gutter) var(--space-6) 0;
-    text-align: start;
-    vertical-align: top;
-    font-weight: var(--weight-text);
-    border-block-start: var(--hairline) solid var(--hairline-color);
-    text-wrap: pretty;
-  }
-  .steps tbody tr:last-child th,
-  .steps tbody tr:last-child td {
-    border-block-end: var(--hairline) solid var(--hairline-color);
-  }
-  .steps tbody td:last-child {
-    padding-inline-end: 0;
-  }
-  .steps tbody th span {
-    display: block;
-  }
-  .steps__name {
-    margin-block-start: var(--space-1);
-  }
-  /* each step stacks on a phone: the column names travel with the text */
-  @media (width <= 56rem) {
-    .steps thead {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      overflow: hidden;
-      clip-path: inset(50%);
-    }
-    .steps,
-    .steps tbody,
-    .steps tr,
-    .steps tbody th,
-    .steps tbody td {
-      display: block;
-      width: 100%;
-    }
-    .steps tr {
-      padding-block: var(--space-5);
-      border-block-start: var(--hairline) solid var(--hairline-color);
-    }
-    .steps tbody th,
-    .steps tbody td {
-      padding: 0;
-      border: 0;
-    }
-    .steps tbody tr:last-child th,
-    .steps tbody tr:last-child td {
-      border: 0;
-    }
-    .steps tbody td {
-      margin-block-start: var(--space-3);
-    }
-    .steps tbody td::before {
-      content: attr(data-label);
-      display: block;
-      font-size: var(--text-small);
-      font-weight: var(--weight-medium);
-      color: var(--fg-secondary);
-    }
-  }
-
   .nots-act {
-    background: var(--bg-chrome);
     border-block-start: var(--hairline) solid var(--hairline-color);
   }
   .nots {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    column-gap: var(--gutter);
-    border-block-end: var(--hairline) solid var(--hairline-color);
+    gap: var(--space-3);
   }
   .not {
-    padding-block: var(--space-4);
-    border-block-start: var(--hairline) solid var(--hairline-color);
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    background: rgb(var(--rgb-light) / 0.03);
+    border-radius: var(--radius-l);
+    box-shadow: var(--shadow-key);
     text-wrap: pretty;
+  }
+  .not__mark {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background: rgb(var(--rgb-light) / 0.07);
+    color: var(--error-on-dark);
+  }
+  .not__mark :global(.icon) {
+    width: 1rem;
+    height: 1rem;
   }
   @media (width <= 40rem) {
     .nots {

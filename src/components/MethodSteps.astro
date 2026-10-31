@@ -1,0 +1,306 @@
+---
+/**
+ * El método como un recorrido: cuatro nodos y un paso abierto a la vez, en vez
+ * de una tabla con todo a la vista. Sin JS se muestran todos los pasos.
+ */
+import Icon from "./Icon.astro";
+import type { IconName } from "./Icon.astro";
+
+interface Step {
+  num: string;
+  icon: IconName;
+  name: string;
+  rows: [string, string][];
+}
+
+const steps: Step[] = [
+  {
+    num: "01",
+    icon: "wave",
+    name: "Escuchar",
+    rows: [
+      [
+        "Qué hacemos",
+        "Hablamos contigo y con quien hace el trabajo. Queremos ver cómo opera tu negocio hoy, no cómo se supone que opera.",
+      ],
+      ["Qué recibes", "El problema y lo que vamos a construir, en una página."],
+      [
+        "Qué necesitamos de ti",
+        "Acceso a quien hace el trabajo. No a quien lo describe: a quien lo hace.",
+      ],
+    ],
+  },
+  {
+    num: "02",
+    icon: "pen",
+    name: "Diseñar",
+    rows: [
+      [
+        "Qué hacemos",
+        "Dibujamos las pantallas y el flujo antes de programar. Cambiar un dibujo no cuesta nada.",
+      ],
+      ["Qué recibes", "Las pantallas, el alcance y el costo, por escrito."],
+      ["Qué necesitamos de ti", "Una decisión. Para eso está hecho."],
+    ],
+  },
+  {
+    num: "03",
+    icon: "code",
+    name: "Construir",
+    rows: [
+      [
+        "Qué hacemos",
+        "Programamos por partes. Ves y pruebas cada avance, y lo ajustamos contigo.",
+      ],
+      ["Qué recibes", "Software funcionando en tu operación, no una presentación."],
+      ["Qué necesitamos de ti", "Una persona de tu lado que pueda decidir."],
+    ],
+  },
+  {
+    num: "04",
+    icon: "people",
+    name: "Acompañar",
+    rows: [
+      ["Qué hacemos", "Capacitamos a tu equipo y seguimos cerca después de entregar."],
+      ["Qué recibes", "Tu equipo usando el sistema y un canal directo con nosotros."],
+      ["Qué necesitamos de ti", "Que nos digas qué no está funcionando."],
+    ],
+  },
+];
+
+const rowIcons: IconName[] = ["play", "receipt", "chat"];
+---
+
+<div class="method" data-method>
+  <div class="method__tabs" role="tablist" aria-label="Cuatro pasos">
+    <span class="method__rail" aria-hidden="true"><i></i></span>
+    {
+      steps.map((s, i) => (
+        <button
+          type="button"
+          class="method__tab"
+          role="tab"
+          id={`step-tab-${i}`}
+          aria-controls={`step-panel-${i}`}
+          aria-selected={i === 0 ? "true" : "false"}
+          tabindex={i === 0 ? 0 : -1}
+        >
+          <span class="method__icon">
+            <Icon name={s.icon} />
+          </span>
+          <span class="caption numeral">{s.num}</span>
+          <span class="method__name">{s.name}</span>
+        </button>
+      ))
+    }
+  </div>
+
+  {
+    steps.map((s, i) => (
+      <div
+        class="method__panel"
+        role="tabpanel"
+        id={`step-panel-${i}`}
+        aria-labelledby={`step-tab-${i}`}
+        data-panel-step
+      >
+        <h2 class="method__heading">{s.name}</h2>
+        <dl class="method__cards">
+          {s.rows.map(([label, text], r) => (
+            <div class="method__card panel">
+              <dt>
+                <Icon name={rowIcons[r] ?? "check"} />
+                {label}
+              </dt>
+              <dd>{text}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    ))
+  }
+</div>
+
+<script>
+  const root = document.querySelector<HTMLElement>("[data-method]");
+  if (root) {
+    const calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const tabs = Array.from(root.querySelectorAll<HTMLButtonElement>('[role="tab"]'));
+    const panels = Array.from(root.querySelectorAll<HTMLElement>("[data-panel-step]"));
+
+    const open = (index: number, focus = false): void => {
+      tabs.forEach((tab, i) => {
+        const on = i === index;
+        tab.setAttribute("aria-selected", String(on));
+        tab.tabIndex = on ? 0 : -1;
+      });
+      panels.forEach((panel, i) => {
+        panel.hidden = i !== index;
+      });
+      root.style.setProperty("--done", String(index / (tabs.length - 1)));
+      if (focus) tabs[index]?.focus();
+      if (calm) return;
+      panels[index]?.querySelectorAll(".method__card").forEach((card, i) => {
+        card.animate(
+          [
+            { opacity: 0, translate: "0 0.875rem" },
+            { opacity: 1, translate: "0 0" },
+          ],
+          { duration: 480, delay: i * 70, easing: "cubic-bezier(0.22, 1.1, 0.36, 1)", fill: "backwards" },
+        );
+      });
+    };
+
+    root.classList.add("is-ready");
+    open(0);
+    tabs.forEach((tab, i) => {
+      tab.addEventListener("click", () => open(i));
+      tab.addEventListener("keydown", (event) => {
+        const step = event.key === "ArrowRight" ? 1 : event.key === "ArrowLeft" ? -1 : 0;
+        if (!step) return;
+        event.preventDefault();
+        open((i + step + tabs.length) % tabs.length, true);
+      });
+    });
+  }
+</script>
+
+<style>
+  .method__tabs {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .method__rail {
+    position: absolute;
+    inset-block-start: 1.75rem;
+    inset-inline: 12.5%;
+    height: 2px;
+    background: var(--night-700);
+  }
+  .method__rail i {
+    display: block;
+    height: 100%;
+    background: var(--strand);
+    box-shadow: 0 0 14px rgb(var(--rgb-blue));
+    transform-origin: left;
+    transform: scaleX(var(--done, 0));
+    transition: transform var(--dur-4) var(--ease-out);
+  }
+  .method__tab {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    gap: var(--space-1);
+    padding: 0 var(--space-1) var(--space-2);
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+  }
+  .method__tab:focus-visible {
+    border-radius: var(--radius-m);
+  }
+  .method__icon {
+    display: grid;
+    place-items: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    margin-block-end: var(--space-2);
+    border-radius: 50%;
+    background: var(--night-800);
+    color: var(--fg-secondary);
+    box-shadow: var(--shadow-key);
+    transition: color var(--dur-2) var(--ease-out), box-shadow var(--dur-3) var(--ease-out),
+      scale var(--dur-3) var(--ease-spring);
+  }
+  .method__tab:hover .method__icon {
+    color: var(--fg);
+  }
+  .method__tab[aria-selected="true"] .method__icon {
+    color: var(--white);
+    scale: 1.08;
+    box-shadow: var(--shadow-key), 0 0 0 1px rgb(var(--rgb-blue)), 0 0 34px rgb(var(--rgb-blue) / 0.7);
+  }
+  .method__name {
+    font-size: var(--text-h3);
+    line-height: var(--leading-h3);
+    letter-spacing: var(--tracking-h3);
+    font-weight: var(--weight-medium);
+    color: var(--fg-secondary);
+    transition: color var(--dur-2) var(--ease-out);
+  }
+  .method__tab[aria-selected="true"] .method__name {
+    color: var(--fg);
+  }
+
+  .method__panel {
+    margin-block-start: var(--space-6);
+  }
+  .method__panel + .method__panel {
+    margin-block-start: var(--space-6);
+  }
+  /* The name is already on the node once the tabs work. */
+  .is-ready .method__heading {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+  .method__heading {
+    margin-block-end: var(--space-3);
+    font-size: var(--text-h3);
+    font-weight: var(--weight-medium);
+  }
+  .method:not(.is-ready) .method__tabs {
+    display: none;
+  }
+  .method__cards {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-3);
+  }
+  .method__card {
+    display: grid;
+    align-content: start;
+    gap: var(--space-3);
+    padding: var(--space-5);
+    min-height: 13rem;
+  }
+  .method__card dt {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-small);
+    font-weight: var(--weight-medium);
+    color: var(--sky);
+  }
+  .method__card dd {
+    font-size: var(--text-lead);
+    line-height: var(--leading-lead);
+    letter-spacing: var(--tracking-lead);
+    text-wrap: pretty;
+  }
+  @media (width <= 56rem) {
+    .method__cards {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .method__card {
+      min-height: 0;
+    }
+  }
+  @media (width <= 40rem) {
+    .method__icon {
+      width: 2.75rem;
+      height: 2.75rem;
+    }
+    .method__rail {
+      inset-block-start: 1.375rem;
+    }
+    .method__name {
+      font-size: var(--text-small);
+    }
+  }
+</style>
